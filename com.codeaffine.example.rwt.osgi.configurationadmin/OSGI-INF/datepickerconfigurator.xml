@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" configuration-policy="require" name="datePicker">
+   <implementation class="com.codeaffine.example.rwt.osgi.configurationadmin.applications.DatePickerApplicationConfigurator"/>
+   <service>
+      <provide interface="org.eclipse.rwt.application.ApplicationConfigurator"/>
+   </service>
+</scr:component>
