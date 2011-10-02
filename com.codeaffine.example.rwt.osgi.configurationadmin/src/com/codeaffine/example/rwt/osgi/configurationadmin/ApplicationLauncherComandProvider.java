@@ -107,9 +107,9 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
   }
   
   private void deployApplication( CommandInterpreter ci,
-                                 String configurator,
-                                 String port,
-                                 String contextName )
+                                  String configurator,
+                                  String port,
+                                  String contextName )
   {
     String key = createApplicationKey( configurator, port, contextName );
     try {
