@@ -61,7 +61,7 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
     String port = getPort( commandInterpreter );
     String contextName = commandInterpreter.nextArgument();
     if( port != null && configurator != null ) {
-      deployRWTContext( commandInterpreter, configurator, port, contextName );
+      deployApplication( commandInterpreter, configurator, port, contextName );
     }
   }
 
@@ -106,7 +106,7 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
     return result;
   }
   
-  private void deployRWTContext( CommandInterpreter ci,
+  private void deployApplication( CommandInterpreter ci,
                                  String configurator,
                                  String port,
                                  String contextName )
