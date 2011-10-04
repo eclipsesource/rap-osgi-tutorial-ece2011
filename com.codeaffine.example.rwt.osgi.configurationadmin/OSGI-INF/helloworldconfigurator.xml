@@ -6,5 +6,7 @@
    <service>
       <provide interface="org.eclipse.rwt.application.ApplicationConfigurator"/>
    </service>
+   <!--
    <property name="httpService.target" type="String" value="(http.port=80)"/>
+   -->
 </scr:component>

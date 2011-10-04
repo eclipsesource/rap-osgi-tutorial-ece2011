@@ -128,8 +128,7 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
 
   private String createApplicationFilter( String configurator, String port, String contextName ) {
     String key = createApplicationKey( configurator, port, contextName );
-    String filter = "(" + key + "=" + port + ")";
-    return filter;
+    return "(" + key + "=" + port + ")";
   }
   
   private String createApplicationKey( String configurator, String port, String contextName ) {
