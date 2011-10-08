@@ -1,6 +1,5 @@
 package com.codeaffine.example.rwt.osgi.configurationadmin.console;
 
-import org.eclipse.rwt.RWT;
 import org.eclipse.rwt.lifecycle.IEntryPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
@@ -19,8 +18,6 @@ public class OSGiConsoleEntryPoint implements IEntryPoint {
     
     OSGiConsole console = new OSGiConsole();
     console.create( shell );
-    ConsoleCloser consoleCloser = new ConsoleCloser( console );
-    RWT.getSessionStore().addSessionStoreListener( consoleCloser );
     console.getControl().setFocus();
     
     shell.open();

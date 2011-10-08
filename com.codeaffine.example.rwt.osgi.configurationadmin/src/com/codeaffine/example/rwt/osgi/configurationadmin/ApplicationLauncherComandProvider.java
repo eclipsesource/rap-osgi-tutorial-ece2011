@@ -16,6 +16,7 @@ import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.eclipse.rap.rwt.osgi.ApplicationLauncher;
+import org.eclipse.rwt.application.ApplicationConfigurator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -61,13 +62,35 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
       undeployApplication( commandInterpreter, configurator, port, contextName );
     }
   }
+  
+  public void _deployUIContribution( CommandInterpreter commandInterpreter ) {
+    String contributor = getUIContributor( commandInterpreter );
+    String configurator = getApplicationConfigurator( commandInterpreter );
+    String port = getPort( commandInterpreter );
+    String contextName = commandInterpreter.nextArgument();
+    if( contributor != null && port != null && configurator != null ) {
+      deployUIContribution( commandInterpreter, contributor, configurator, port, contextName );
+    }
+  }
+
+  public void _undeployUIContribution( CommandInterpreter commandInterpreter ) {
+    String contributor = getUIContributor( commandInterpreter );
+    String configurator = getApplicationConfigurator( commandInterpreter );
+    String port = getPort( commandInterpreter );
+    String contextName = commandInterpreter.nextArgument();
+    if( contributor != null && port != null && configurator != null ) {
+      undeployUIContribution( commandInterpreter, contributor, configurator, port, contextName );
+    }
+  }
 
   public String getHelp() {
     return   "---Configuration of ApplicationLauncher---\n"
            + "\tstartHttpService <port>\n"
            + "\tstopHttpService <port>\n"
-           + "\tdeployApplication <configurator name>|<port>|<contextName(optional)>\n"
-           + "\tundeployApplication <configurator name>|<port>|<contextName(optional)>\n";
+           + "\tdeployApplication <configurator name>|<port>|<context name(optional)>\n"
+           + "\tundeployApplication <configurator name>|<port>|<context name(optional)>\n"
+           + "\tdeployUIContribution <contributor name>|<configurator name>|<port>|<context name(optional)>\n"
+           + "\tundeployUIContribution <contributor name>|<configurator name>|<port>|<context name(optional)>\n";
   }
   
   public void activate( BundleContext bundleContext ) {
@@ -79,21 +102,89 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
   }
   
   private String getPort( CommandInterpreter commandInterpreter ) {
-    String result = commandInterpreter.nextArgument();
-    if( result == null ) {
-      commandInterpreter.println( "Parameter port must not be null" );
-    }
-    return result;
+    return getArgument( commandInterpreter, "Parameter port must not be null" );
   }
 
   private String getApplicationConfigurator( CommandInterpreter commandInterpreter ) {
+    return getArgument( commandInterpreter, "Parameter configurator must not be null" );
+  }
+  
+  private String getUIContributor( CommandInterpreter commandInterpreter ) {
+    return getArgument( commandInterpreter, "Parameter contributor must not be null" );
+  }
+  
+  private String getArgument( CommandInterpreter commandInterpreter, String message ) {
     String result = commandInterpreter.nextArgument();
     if( result == null ) {
-      commandInterpreter.println( "Parameter configurator must not be null" );
+      commandInterpreter.println( message );
     }
     return result;
   }
   
+  private void deployUIContribution( CommandInterpreter commandInterpreter,
+                                     String contributor,
+                                     String configurator,
+                                     String port,
+                                     String contextName )
+  {
+    try {
+      Configuration configuration = createUIContributionConfiguration( contributor );
+      configuration.update( createSettings( contributor, configurator, port, contextName ) );
+    } catch( IOException ioe ) {
+      commandInterpreter.println( "Unable to update configuration for " + contributor );
+      commandInterpreter.println( ioe.getMessage() );
+    }
+  }
+
+  private void undeployUIContribution( CommandInterpreter commandInterpreter,
+                                       String contributor,
+                                       String configurator,
+                                       String port,
+                                       String contextName )
+  {
+    String filter = createUIContributorFilter( contributor, configurator, port, contextName );
+    deleteConfiguration( commandInterpreter, filter );
+  }
+
+  private String createUIContributorFilter( String contributor,
+                                            String configurator,
+                                            String port,
+                                            String contextName )
+  {
+    String key = createUIContributorKey( contributor, configurator, port, contextName );
+    String value = createApplicationKey( configurator, port, contextName );
+    return "(" + key + "=" + value + ")";
+  }
+
+  @SuppressWarnings( {
+    "rawtypes", "unchecked"
+  } )
+  private Dictionary createSettings( String contributor,
+                                     String configurator,
+                                     String port,
+                                     String contextName )
+  {
+    String key = createUIContributorKey( contributor, configurator, port, contextName );
+    String value = createApplicationKey( configurator, port, contextName );
+    Hashtable result = new Hashtable();
+    result.put( key, value );
+    result.put( getConfiguratorKey(), value );
+    return result;
+  }
+
+  private String createUIContributorKey( String contributor,
+                                         String configurator,
+                                         String port,
+                                         String contextName )
+  {
+    return contributor + "_" + createApplicationKey( configurator, port, contextName );
+  }
+  
+  private Configuration createUIContributionConfiguration( String contributor ) throws IOException {
+    ConfigurationAdmin configurationAdmin = getConfigurationAdmin();
+    return configurationAdmin.createFactoryConfiguration( contributor );
+  }
+
   private void deployApplication( CommandInterpreter ci,
                                   String configurator,
                                   String port,
@@ -113,14 +204,17 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
                                     String configurator,
                                     String port,
                                     String contextName ) {
-    String filter = createApplicationFilter( configurator, port, contextName );
+    deleteConfiguration( ci, createApplicationFilter( configurator, port, contextName ) );
+  }
+
+  private void deleteConfiguration( CommandInterpreter ci, String filter ) {
     try {
       ConfigurationAdmin configurationAdmin = getConfigurationAdmin();
       Configuration[] configurations = configurationAdmin.listConfigurations( filter );
       if( configurations.length >= 1 ) {
         configurations[ 0 ].delete();
       }
-    } catch( Exception exception) {
+    } catch( Exception exception ) {
       ci.println( "Unable to delete configuration for " + filter );
       ci.println( exception.getMessage() );
     }
@@ -148,11 +242,16 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
   {
     Dictionary<String,Object> result = new Hashtable<String, Object>();
     result.put( createTargetKey( HttpService.class ), createPortFilter( port ) );
+    result.put( getConfiguratorKey(), key );
     result.put( key, port );
     if( contextName != null ) {
       result.put( ApplicationLauncher.PROPERTY_CONTEXT_NAME, contextName );
     }
     return result;
+  }
+
+  private String getConfiguratorKey() {
+    return ApplicationConfigurator.class.getSimpleName();
   }
 
   private String createPortFilter( String port ) {

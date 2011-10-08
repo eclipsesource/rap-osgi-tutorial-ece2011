@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" configuration-policy="require" name="HomePageTab">
+   <implementation class="com.codeaffine.example.rwt.osgi.ui.example.HomePageTab"/>
+   <service>
+      <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributor"/>
+   </service>
+   <reference bind="setServiceProvider" cardinality="1..1" interface="com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider" name="ServiceProvider" policy="static"/>
+</scr:component>

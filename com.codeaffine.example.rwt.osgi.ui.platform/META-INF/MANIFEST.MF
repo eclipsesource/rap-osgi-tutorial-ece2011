@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CodeAffine UI Platform
+Bundle-SymbolicName: com.codeaffine.example.rwt.osgi.ui.platform
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: CODEAFFINE.com
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.osgi.framework;version="1.3.0",
+ org.osgi.util.tracker;version="1.5.0"
+Require-Bundle: org.eclipse.rap.rwt;bundle-version="1.5.0"
+Export-Package: com.codeaffine.example.rwt.osgi.ui.platform;version="1.0.0"
+Bundle-Activator: com.codeaffine.example.rwt.osgi.ui.platform.Activator

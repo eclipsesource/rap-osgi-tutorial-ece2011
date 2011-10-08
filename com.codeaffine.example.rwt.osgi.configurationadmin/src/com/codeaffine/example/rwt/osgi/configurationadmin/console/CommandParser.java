@@ -36,7 +36,7 @@ class CommandParser implements KeyListener {
     }
     consoleWidget.setText( newValue );
     consoleWidget.setSelection( consoleWidget.getText().length() );
-    consoleWidget.getParent().layout();
+//    consoleWidget.getParent().layout( true, true );
   }
 
   private String appendLastCommandCharacter( KeyEvent event, String value ) {

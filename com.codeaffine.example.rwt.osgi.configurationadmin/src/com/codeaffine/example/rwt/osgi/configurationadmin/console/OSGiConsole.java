@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.osgi.framework.console.ConsoleSession;
+import org.eclipse.rwt.RWT;
 import org.eclipse.rwt.lifecycle.UICallBack;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -30,12 +31,14 @@ public class OSGiConsole {
     composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new FillLayout() );
     UICallBack.activate( String.valueOf( composite.hashCode() ) );
-    consoleWidget = new Text( composite, SWT.MULTI );
+    consoleWidget = new Text( composite, SWT.MULTI | SWT.BORDER );
     File consoleIn = createTempFile( "consoleIn" );
     File consoleOut = createTempFile( "consoleOut" );
     registerInputProcessor( consoleWidget, consoleIn );
     registerOutputProcessor( consoleWidget, consoleOut );
     registerConsoleSession( consoleIn, consoleOut );
+    ConsoleCloser consoleCloser = new ConsoleCloser( this );
+    RWT.getSessionStore().addSessionStoreListener( consoleCloser );
   }
   
   public Control getControl() {
@@ -63,7 +66,9 @@ public class OSGiConsole {
   
   private File createTempFile( String prefix ) {
     try {
-      return File.createTempFile( prefix, "tmp" );
+      File result = File.createTempFile( prefix, "tmp" );
+      result.deleteOnExit();
+      return result;
     } catch( IOException shouldNotHappen ) {
       throw new IllegalStateException( shouldNotHappen );
     }
