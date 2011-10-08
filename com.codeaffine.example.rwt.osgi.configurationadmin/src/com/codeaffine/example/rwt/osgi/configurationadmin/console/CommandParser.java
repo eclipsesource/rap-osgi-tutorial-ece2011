@@ -2,6 +2,7 @@ package com.codeaffine.example.rwt.osgi.configurationadmin.console;
 
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Text;
 
 
@@ -21,6 +22,7 @@ class CommandParser implements KeyListener {
     if( enterPressed( event ) ) {
       inputProcessor.processCommand();
     }
+    consoleWidget.getParent().layout( true, true );
   }
 
   public void keyPressed( KeyEvent event ) {
@@ -36,7 +38,7 @@ class CommandParser implements KeyListener {
     }
     consoleWidget.setText( newValue );
     consoleWidget.setSelection( consoleWidget.getText().length() );
-//    consoleWidget.getParent().layout( true, true );
+    consoleWidget.getParent().layout( true, true );
   }
 
   private String appendLastCommandCharacter( KeyEvent event, String value ) {

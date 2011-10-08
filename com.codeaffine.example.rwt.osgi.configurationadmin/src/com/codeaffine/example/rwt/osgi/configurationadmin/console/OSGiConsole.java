@@ -31,7 +31,7 @@ public class OSGiConsole {
     composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new FillLayout() );
     UICallBack.activate( String.valueOf( composite.hashCode() ) );
-    consoleWidget = new Text( composite, SWT.MULTI | SWT.BORDER );
+    consoleWidget = new Text( composite, SWT.MULTI );
     File consoleIn = createTempFile( "consoleIn" );
     File consoleOut = createTempFile( "consoleOut" );
     registerInputProcessor( consoleWidget, consoleIn );

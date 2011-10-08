@@ -19,6 +19,7 @@ class LineWriter {
         consoleWidget.append( "\r\n" + line );
         consoleWidget.pack();
         consoleWidget.setSelection( consoleWidget.getText().length() );
+        consoleWidget.getParent().layout( true, true );
       }
     } );
   }
