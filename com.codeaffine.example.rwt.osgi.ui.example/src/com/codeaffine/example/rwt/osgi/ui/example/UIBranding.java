@@ -26,6 +26,6 @@ class UIBranding extends AbstractBranding {
   
   @Override
   public String getTitle() {
-    return "UI_DEMO Grading Service";
+    return "Dynamic Duo";
   }
 }
