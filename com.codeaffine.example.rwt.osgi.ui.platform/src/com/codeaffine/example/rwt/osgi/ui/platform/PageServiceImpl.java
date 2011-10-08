@@ -27,6 +27,7 @@ class PageServiceImpl implements PageService {
   private final Object lock;
   
   private Composite contentParent;
+  private String pageId;
   private UIContributor homePageContributor;
 
   PageServiceImpl( LayoutProvider layoutProvider, LayoutContextImpl layoutContext ) {
@@ -71,9 +72,12 @@ class PageServiceImpl implements PageService {
   
   @Override
   public void selectPage( String pageId ) {
-    disposeOfCurrentPageContent();
-    createNewContent( pageId );
-    layoutShell();
+    if( !pageId.equals( this.pageId ) ) {
+      disposeOfCurrentPageContent();
+      createNewContent( pageId );
+      layoutShell();
+      this.pageId = pageId;
+    }
   }
   
   @Override
