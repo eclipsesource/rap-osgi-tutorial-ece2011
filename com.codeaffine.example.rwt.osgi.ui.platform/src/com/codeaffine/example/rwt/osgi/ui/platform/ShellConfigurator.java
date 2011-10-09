@@ -31,8 +31,7 @@ public class ShellConfigurator {
 
     ShellProvider shellProvider
       = new ShellProvider( pageStructureProviders, layoutProvider, layoutContext );
-    Shell result = shellProvider.createShell();
-    return result;
+    return shellProvider.createShell();
   }
 
   private void trackUIContributions( final PageServiceImpl pageService ) {

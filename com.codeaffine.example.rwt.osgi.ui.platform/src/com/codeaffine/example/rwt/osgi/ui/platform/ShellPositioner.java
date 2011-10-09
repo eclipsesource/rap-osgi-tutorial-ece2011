@@ -10,6 +10,8 @@
  ******************************************************************************/
 package com.codeaffine.example.rwt.osgi.ui.platform;
 
+import javax.security.auth.login.AppConfigurationEntry;
+
 import org.eclipse.rwt.lifecycle.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -40,13 +42,17 @@ public class ShellPositioner implements PhaseListener {
   
   void computeShellBounds( Display display ) {
     Shell applicationShell = findApplicationShell( display );
-    Rectangle bounds = display.getBounds();
-    Rectangle newBounds = computeShellBounds( applicationShell, bounds );
-    applicationShell.setBounds( newBounds );
+    Rectangle displayBounds = display.getBounds();
+    Rectangle oldBounds = applicationShell.getBounds();
+    Rectangle newBounds = computeShellBounds( applicationShell, displayBounds );
+    if( !newBounds.equals( oldBounds ) ) {
+      applicationShell.setBounds( newBounds );
+      applicationShell.layout( true, true );
+    }
   }
 
   Rectangle computeShellBounds( Shell applicationShell, Rectangle displayBounds ) {
-    Point size = applicationShell.computeSize( SWT.DEFAULT, SWT.DEFAULT );
+    Point size = applicationShell.computeSize( SWT.DEFAULT, displayBounds.height );
     return new Rectangle( calculateXPos( displayBounds ), 0, APPLICATION_SHELL_WIDTH, size.y );
   }
 
