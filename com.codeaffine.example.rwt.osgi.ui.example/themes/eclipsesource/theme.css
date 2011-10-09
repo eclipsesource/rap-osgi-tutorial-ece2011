@@ -23,6 +23,15 @@ Button.menu_button:hover {
   border: 1px solid #A4A4A4;
 }
 
+Composite.upload-panel {
+  background-color: #dddddf;
+  border-radius: 2px;
+}
+
+Label.upload-selection {
+  border-radius: 2px;
+}
+
 Composite.menubar_background {
   background-image: url( "/themes/eclipsesource/icons/menubar_background.png" );
 }
@@ -31,4 +40,17 @@ Shell {
   border:none;
   background-color: white;
   box-shadow: 5px 5px 3px rgba( 0, 0, 0, 0.5 );
+}
+
+Shell-Titlebar {
+  background-color: #0080c0;
+  background-gradient-color: #0080c0;
+  color: #666666;
+  background-image: gradient( linear, left top, left bottom, from( #cad2d9 ), to( #d1d9de ) );
+  padding: 2px 5px 2px;
+  margin: 0px;
+  height: 20px;
+  border: none;
+  border-radius: 3px 3px 0px 0px;
+  text-shadow: none;
 }

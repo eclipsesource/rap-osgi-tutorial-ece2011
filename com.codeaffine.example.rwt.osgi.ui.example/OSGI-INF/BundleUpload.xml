@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="BundleUpload">
+   <implementation class="com.codeaffine.example.rwt.osgi.ui.example.UploadContributor"/>
+   <reference bind="setServiceProvider" cardinality="1..1" interface="com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider" name="ServiceProvider" policy="static"/>
+   <service>
+      <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributor"/>
+   </service>
+   <property name="type" type="String" value="BundleUpload"/>
+</scr:component>

@@ -32,7 +32,9 @@ class OutputProcessor implements Runnable {
       while( !reader.ready() ) {
         Thread.sleep( 100 );
       }
-      lineWriter.writeLine( reader.readLine() );          
+      lineWriter.writeLine( reader.readLine() );   
+    } catch( InterruptedException ie ) {
+      // shutdown started
     } catch( Exception shouldNotHappen ) {
       throw new IllegalStateException( shouldNotHappen );
     }
@@ -54,7 +56,7 @@ class OutputProcessor implements Runnable {
     }
   }
 
-  public void shutdown() {
+  public synchronized void shutdown() {
     shutdown = true;
   }
 }

@@ -15,6 +15,8 @@ import org.osgi.framework.ServiceReference;
 
 
 public class ShellConfigurator {
+  private static final String UI_CONTRIBUTOR_TYPE_PAGE = "page";
+  
   private final ServiceProvider serviceProvider;
 
   public ShellConfigurator( ServiceProvider serviceProvider ) {
@@ -41,7 +43,7 @@ public class ShellConfigurator {
       @Override
       public UIContributor addingService( ServiceReference<UIContributor> reference ) {
         UIContributor result = super.addingService( reference );
-        if( ConfiguratorTracker.matches( reference ) ) {
+        if( ConfiguratorTracker.matchesType( UI_CONTRIBUTOR_TYPE_PAGE, reference ) ) {
           pageService.addPageContributor( result );
           if( !initialized ) {
             pageService.selectHomePage();
@@ -50,10 +52,11 @@ public class ShellConfigurator {
         }
         return result;
       }
+      
       @Override
       public void removedService( ServiceReference<UIContributor> reference, UIContributor service )
       {
-        if( ConfiguratorTracker.matches( reference ) ) {
+        if( ConfiguratorTracker.matchesType( UI_CONTRIBUTOR_TYPE_PAGE, reference ) ) {
           pageService.removePageContibutor( service );
           pageService.selectHomePage();
         }

@@ -4,4 +4,5 @@
    <service>
       <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributor"/>
    </service>
+   <property name="type" type="String" value="page"/>
 </scr:component>

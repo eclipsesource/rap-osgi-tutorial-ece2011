@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -13,6 +14,8 @@ class OSGiConsoleSession extends ConsoleSession {
 
   private final File consoleIn;
   private final File consoleOut;
+  private InputStream inputStream;
+  private OutputStream outputStream;
 
   OSGiConsoleSession( File consoleIn, File consoleOut ) {
     this.consoleIn = consoleIn;
@@ -21,14 +24,27 @@ class OSGiConsoleSession extends ConsoleSession {
 
   @Override
   protected void doClose() {
-    // TODO Auto-generated method stub
-    
+    if( outputStream != null ) {
+      try {
+        outputStream.close();
+      } catch( IOException e ) {
+        // do nothing
+      }
+    }
+    if( inputStream != null ) {
+      try {
+        inputStream.close();
+      } catch( IOException e ) {
+        // do nothing
+      }
+    }
   }
 
   @Override
   public InputStream getInput() {
     try {
-      return new FileInputStream( consoleIn );
+      inputStream = new FileInputStream( consoleIn );
+      return inputStream;
     } catch( FileNotFoundException shouldNotHappen ) {
       throw new IllegalStateException( shouldNotHappen );
     }
@@ -37,7 +53,8 @@ class OSGiConsoleSession extends ConsoleSession {
   @Override
   public OutputStream getOutput() {
     try {
-      return new FileOutputStream( consoleOut );
+      outputStream = new FileOutputStream( consoleOut );
+      return outputStream;
     } catch( FileNotFoundException shouldNotHappen ) {
       throw new IllegalStateException( shouldNotHappen );
     }

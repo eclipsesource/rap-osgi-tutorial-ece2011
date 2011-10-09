@@ -5,4 +5,5 @@
       <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributor"/>
    </service>
    <reference bind="setServiceProvider" cardinality="1..1" interface="com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider" name="ServiceProvider" policy="static"/>
+   <property name="type" type="String" value="page"/>
 </scr:component>

@@ -9,18 +9,21 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 
 public class UIContributorTracker {
 
   final Display display;
-  final ServiceTracker<UIContributor,UIContributor> tracker;
+  final ServiceTrackerForUIThreadUsage tracker;
 
-  class CustomizerForUIThreadUsage
-    implements ServiceTrackerCustomizer<UIContributor, UIContributor>
+  private class ServiceTrackerForUIThreadUsage
+    extends ServiceTracker<UIContributor, UIContributor>
   {
-    
+
+    ServiceTrackerForUIThreadUsage() {
+      super( getBundleContext(), UIContributor.class, null );
+    }
+
     @Override
     public UIContributor addingService( final ServiceReference<UIContributor> reference ) {
       final UIContributor[] result = new UIContributor[ 1 ];
@@ -28,12 +31,14 @@ public class UIContributorTracker {
 
         @Override
         public void run() {
-          result[ 0 ] = UIContributorTracker.this.addingService( reference );
+          if( ConfiguratorTracker.matches( reference ) ) {
+            result[ 0 ] = UIContributorTracker.this.addingService( reference );
+          }
         }
       } );
       return result[ 0 ];
     }
-    
+
     @Override
     public void modifiedService( final ServiceReference<UIContributor> reference, 
                                  final UIContributor service )
@@ -42,11 +47,13 @@ public class UIContributorTracker {
 
         @Override
         public void run() {
-          UIContributorTracker.this.modifiedService( reference, service );
+          if( ConfiguratorTracker.matches( reference ) ) {
+            UIContributorTracker.this.modifiedService( reference, service );
+          }
         }
       } );      
     }
-    
+
     @Override
     public void removedService( final ServiceReference<UIContributor> reference, 
                                 final UIContributor service )
@@ -55,18 +62,18 @@ public class UIContributorTracker {
 
         @Override
         public void run() {
-          UIContributorTracker.this.removedService( reference, service );
+          if( ConfiguratorTracker.matches( reference ) ) {
+            UIContributorTracker.this.removedService( reference, service );
+          }
         }
       } );      
     }
   }
-
+  
   public UIContributorTracker() {
     display = Display.getDefault();
     UICallBack.activate( String.valueOf( display.hashCode() ) );
-    Class<UIContributor> type = UIContributor.class;
-    CustomizerForUIThreadUsage customizer = new CustomizerForUIThreadUsage();
-    tracker = new ServiceTracker<UIContributor,UIContributor>( getCtx(), type, customizer );
+    tracker = new ServiceTrackerForUIThreadUsage();
     tracker.open();
     closeOnSessionTimeout();
   }
@@ -80,7 +87,7 @@ public class UIContributorTracker {
   }
 
   public UIContributor addingService( ServiceReference<UIContributor> reference ) {
-    return getCtx().getService( reference );
+    return getBundleContext().getService( reference );
   }
 
   private boolean closeOnSessionTimeout() {
@@ -95,7 +102,7 @@ public class UIContributorTracker {
     } );
   }
     
-  private static BundleContext getCtx() {
+  static BundleContext getBundleContext() {
     return FrameworkUtil.getBundle( UIContributorTracker.class ).getBundleContext();
   }
 }

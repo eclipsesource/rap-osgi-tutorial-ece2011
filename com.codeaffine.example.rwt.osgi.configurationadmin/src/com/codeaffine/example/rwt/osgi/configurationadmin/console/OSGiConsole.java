@@ -42,7 +42,7 @@ public class OSGiConsole {
   }
   
   public Control getControl() {
-    return consoleWidget;
+    return composite;
   }
   
   private void registerInputProcessor( Text consoleWidget, File consoleIn ) {
@@ -78,7 +78,7 @@ public class OSGiConsole {
     if( composite != null ) {
       UICallBack.deactivate( String.valueOf( composite.hashCode() ) );
       outputProcessor.shutdown();
-      executorService.shutdown();
+      executorService.shutdownNow();
       serviceRegistration.unregister();
       consoleWidget = null;
       if( !composite.isDisposed() ) {

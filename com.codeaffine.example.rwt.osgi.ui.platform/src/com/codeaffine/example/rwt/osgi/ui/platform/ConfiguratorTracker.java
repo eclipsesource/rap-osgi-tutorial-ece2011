@@ -47,12 +47,29 @@ public class ConfiguratorTracker
       throw new IllegalStateException( shouldNotHappen );
     }
   }
-
+  
+  public static boolean matchesType( String value,
+                                     ServiceReference<UIContributor> contributorReference )
+  {
+    try {
+      String expression = createFilterExpression( "type", value );
+      Filter filter = FrameworkUtil.createFilter( expression );
+      return filter.match( contributorReference );
+    } catch( InvalidSyntaxException shouldNotHappen ) {
+      throw new IllegalStateException( shouldNotHappen );
+    }
+  }
+  
   private static String createFilterExpression() {
     @SuppressWarnings( "rawtypes" )
     ServiceReference serviceReference = getConfiguratorReference();
     String value = ( String )serviceReference.getProperty( getConfiguratorKey() );
-    return "(" + getConfiguratorKey() + "=" + value + ")";
+    String key = getConfiguratorKey();
+    return createFilterExpression( key, value );
+  }
+
+  private static String createFilterExpression( String key, String value ) {
+    return "(" + key + "=" + value + ")";
   }
 
   @SuppressWarnings( "rawtypes" )
