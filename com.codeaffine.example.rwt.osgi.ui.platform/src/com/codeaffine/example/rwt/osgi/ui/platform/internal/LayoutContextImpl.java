@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.platform;
+package com.codeaffine.example.rwt.osgi.ui.platform.internal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,11 +19,12 @@ import org.eclipse.swt.widgets.Shell;
 import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider.LayoutContext;
 
 
-class LayoutContextImpl implements LayoutContext {
+public class LayoutContextImpl implements LayoutContext {
+  
   private final Map<String, Control> controls;
   private Shell shell;
 
-  LayoutContextImpl() {
+  public LayoutContextImpl() {
     this.controls = new HashMap<String,Control>();
   }
   

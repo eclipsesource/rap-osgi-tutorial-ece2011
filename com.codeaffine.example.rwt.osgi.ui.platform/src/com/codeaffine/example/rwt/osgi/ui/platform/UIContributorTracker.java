@@ -10,84 +10,85 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.UIContributorTrackerService;
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.UIContributorTrackerService.Tracker;
+
 
 public class UIContributorTracker {
 
   final Display display;
-  final ServiceTrackerForUIThreadUsage tracker;
+  final UIContributorTrackerService trackerService;
+  final TrackerImpl tracker;
 
-  private class ServiceTrackerForUIThreadUsage
-    extends ServiceTracker<UIContributor, UIContributor>
-  {
-
-    ServiceTrackerForUIThreadUsage() {
-      super( getBundleContext(), UIContributor.class, null );
-    }
+  class TrackerImpl implements Tracker {
 
     @Override
-    public UIContributor addingService( final ServiceReference<UIContributor> reference ) {
-      final UIContributor[] result = new UIContributor[ 1 ];
-      display.asyncExec( new Runnable() {
-
-        @Override
-        public void run() {
-          if( ConfiguratorTracker.matches( reference ) ) {
-            result[ 0 ] = UIContributorTracker.this.addingService( reference );
-          }
-        }
-      } );
-      return result[ 0 ];
-    }
-
-    @Override
-    public void modifiedService( final ServiceReference<UIContributor> reference, 
-                                 final UIContributor service )
-    {
-      display.asyncExec( new Runnable() {
-
-        @Override
-        public void run() {
-          if( ConfiguratorTracker.matches( reference ) ) {
-            UIContributorTracker.this.modifiedService( reference, service );
-          }
-        }
-      } );      
-    }
-
-    @Override
-    public void removedService( final ServiceReference<UIContributor> reference, 
+    public void removedService( final ServiceReference<UIContributor> reference,
                                 final UIContributor service )
     {
       display.asyncExec( new Runnable() {
 
         @Override
         public void run() {
-          if( ConfiguratorTracker.matches( reference ) ) {
+          if( canRun( reference ) ) {
             UIContributorTracker.this.removedService( reference, service );
           }
         }
-      } );      
+      } );
+    }
+
+    @Override
+    public void addingService( final ServiceReference<UIContributor> reference,
+                               final UIContributor service )
+    {
+      display.asyncExec( new Runnable() {
+        
+        @Override
+        public void run() {
+          if( canRun( reference ) ) {
+            UIContributorTracker.this.addingService( reference, service );
+          }
+        }
+      } );
+    }
+
+    boolean canRun( final ServiceReference<UIContributor> reference ) {
+      return display.getThread() == Thread.currentThread()
+          && ConfiguratorTracker.matches( reference );
+    }
+  }
+
+  private class UIContributorTrackerServiceTracker
+    extends ServiceTracker<UIContributorTrackerService, UIContributorTrackerService>
+  {
+    UIContributorTrackerServiceTracker() {
+      super( getBundleContext(), UIContributorTrackerService.class, null );
     }
   }
   
   public UIContributorTracker() {
     display = Display.getDefault();
     UICallBack.activate( String.valueOf( display.hashCode() ) );
-    tracker = new ServiceTrackerForUIThreadUsage();
-    tracker.open();
+    trackerService = getTrackerService();
+    tracker = new TrackerImpl();
+    trackerService.addTracker( tracker );
     closeOnSessionTimeout();
+  }
+
+  private UIContributorTrackerService getTrackerService() {
+    UIContributorTrackerServiceTracker tracker = new UIContributorTrackerServiceTracker();
+    tracker.open();
+    UIContributorTrackerService result = tracker.getService();
+    tracker.close();
+    return result;
   }
 
   public void removedService( ServiceReference<UIContributor> reference, UIContributor service ) {
     // subclasses may override
   }
 
-  public void modifiedService( ServiceReference<UIContributor> reference, UIContributor service ) {
+  public void addingService( ServiceReference<UIContributor> reference, UIContributor service ) {
     // subclasses may override
-  }
-
-  public UIContributor addingService( ServiceReference<UIContributor> reference ) {
-    return getBundleContext().getService( reference );
   }
 
   private boolean closeOnSessionTimeout() {
@@ -96,7 +97,7 @@ public class UIContributorTracker {
 
       @Override
       public void beforeDestroy( SessionStoreEvent event ) {
-        tracker.close();
+        trackerService.removeTracker( tracker );
         UICallBack.deactivate( String.valueOf( display.hashCode() ) );
       }
     } );

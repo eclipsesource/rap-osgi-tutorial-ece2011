@@ -24,11 +24,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.ShellPositioner;
-import com.codeaffine.example.rwt.osgi.ui.platform.ShellProvider;
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.ShellProvider;
 
 
 
-public class ApplicationShellPositioner_Test {
+public class ShellPositioner_Test {
   private static final int PREFERRED_SHELL_WIDTH = 200;
   private static final int PREFERRED_SHELL_HEIGHT = 1000;
 

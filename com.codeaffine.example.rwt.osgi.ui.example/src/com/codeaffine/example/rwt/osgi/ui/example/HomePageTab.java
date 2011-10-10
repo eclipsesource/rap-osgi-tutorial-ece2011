@@ -33,42 +33,40 @@ public class HomePageTab implements UIContributor {
   
   ServiceProvider serviceProvider;
   UIContributor bundleUploadContributor;
+  Composite parent;
   Composite composite;
-  
-  public HomePageTab() {
-    new UIContributorTracker() {
-      
-      @Override
-      public UIContributor addingService( ServiceReference<UIContributor> reference ) {
-        UIContributor result = super.addingService( reference );
-        if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
-          bundleUploadContributor = result;
-          updatePage();
-        }
-        return result;
-      }
-      
-      @Override
-      public void removedService( ServiceReference<UIContributor> reference,
-                                  UIContributor service ) {
-        if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
-          bundleUploadContributor = null;
-          System.out.println( "here we go!" );
-          updatePage();
-        }        
-      }
+  UIContributorTracker uiContributorTracker;
 
-      private void updatePage() {
-        if( composite != null ) {
-          Control[] children = composite.getChildren();
-          for( Control control : children ) {
-            control.dispose();
+  private void createUIContributionTracker() {
+    if( uiContributorTracker == null ) {
+      uiContributorTracker = new UIContributorTracker() {
+        
+        @Override
+        public void addingService( ServiceReference<UIContributor> reference, UIContributor result ) {
+          if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
+            bundleUploadContributor = result;
+            updatePage();
           }
-          createContent( composite );
+        }
+        
+        @Override
+        public void removedService( ServiceReference<UIContributor> reference,
+                                    UIContributor service ) {
+          if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
+            bundleUploadContributor = null;
+            updatePage();
+          }        
+        }
+  
+        private void updatePage() {
+          if( composite != null && !composite.isDisposed() ) {
+            composite.dispose();
+          }
+          contribute( parent );
           composite.layout();
         }
-      }
-    };
+      };
+    }
   }
 
   void setServiceProvider( ServiceProvider serviceProvider ) {
@@ -82,6 +80,8 @@ public class HomePageTab implements UIContributor {
 
   @Override
   public Control contribute( Composite parent ) {
+    this.parent = parent;
+    createUIContributionTracker();
     composite = new Composite( parent, SWT.NONE );
     composite.setLayout( new FormLayout() );
     createContent( composite );

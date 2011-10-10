@@ -10,6 +10,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.Activator;
+
 
 public class ConfiguratorTracker
   extends ServiceTracker<ApplicationConfigurator, ApplicationConfigurator>
@@ -90,6 +92,6 @@ public class ConfiguratorTracker
   }
   
   private static BundleContext getBundleContext() {
-    return FrameworkUtil.getBundle( ConfiguratorTracker.class ).getBundleContext();
+    return Activator.getBundleContext();
   }
 }

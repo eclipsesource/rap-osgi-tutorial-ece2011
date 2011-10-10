@@ -13,6 +13,10 @@ package com.codeaffine.example.rwt.osgi.ui.platform;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.ServiceReference;
 
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.LayoutContextImpl;
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.PageServiceImpl;
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.ShellProvider;
+
 
 public class ShellConfigurator {
   private static final String UI_CONTRIBUTOR_TYPE_PAGE = "page";
@@ -40,16 +44,16 @@ public class ShellConfigurator {
       private boolean initialized;
       
       @Override
-      public UIContributor addingService( ServiceReference<UIContributor> reference ) {
-        UIContributor result = super.addingService( reference );
+      public void addingService( ServiceReference<UIContributor> reference,
+                                 UIContributor contributor )
+      {
         if( ConfiguratorTracker.matchesType( UI_CONTRIBUTOR_TYPE_PAGE, reference ) ) {
-          pageService.addPageContributor( result );
+          pageService.addPageContributor( contributor );
           if( !initialized ) {
             pageService.selectHomePage();
             initialized = true;
           }
         }
-        return result;
       }
       
       @Override

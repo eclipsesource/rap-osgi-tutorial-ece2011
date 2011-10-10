@@ -8,10 +8,12 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.platform;
+package com.codeaffine.example.rwt.osgi.ui.platform.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider;
 
 
 public class ServiceProviderImpl implements ServiceProvider {

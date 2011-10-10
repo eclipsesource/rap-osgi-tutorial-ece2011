@@ -10,8 +10,6 @@
  ******************************************************************************/
 package com.codeaffine.example.rwt.osgi.ui.example;
 
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;

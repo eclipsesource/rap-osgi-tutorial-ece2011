@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.platform;
+package com.codeaffine.example.rwt.osgi.ui.platform.internal;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +18,14 @@ import java.util.Set;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider;
+import com.codeaffine.example.rwt.osgi.ui.platform.PageService;
+import com.codeaffine.example.rwt.osgi.ui.platform.PageTracker;
+import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
-class PageServiceImpl implements PageService {
+
+public class PageServiceImpl implements PageService {
+  
   private final LayoutProvider layoutProvider;
   private final LayoutContextImpl layoutContext;
   private final Map<String, UIContributor> pageContributors;
@@ -30,7 +36,7 @@ class PageServiceImpl implements PageService {
   private String pageId;
   private UIContributor homePageContributor;
 
-  PageServiceImpl( LayoutProvider layoutProvider, LayoutContextImpl layoutContext ) {
+  public PageServiceImpl( LayoutProvider layoutProvider, LayoutContextImpl layoutContext ) {
     this.layoutProvider = layoutProvider;
     this.layoutContext = layoutContext;
     this.pageContributors = new HashMap<String,UIContributor>();

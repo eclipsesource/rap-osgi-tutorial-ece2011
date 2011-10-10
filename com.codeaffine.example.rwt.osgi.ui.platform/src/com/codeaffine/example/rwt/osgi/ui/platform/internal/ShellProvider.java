@@ -8,27 +8,34 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.platform;
+package com.codeaffine.example.rwt.osgi.ui.platform.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-class ShellProvider {
-  static final String APPLICATION_SHELL = ShellProvider.class.getName() + "#APPLICATION_SHELL";
+import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider;
+import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
+
+public class ShellProvider {
+  public static final String APPLICATION_SHELL
+    = ShellProvider.class.getName() + "#APPLICATION_SHELL";
   
   private final UIContributor[] uiProviders;
   private final LayoutProvider layoutProvider;
   private final LayoutContextImpl layoutContext;
 
-  ShellProvider( UIContributor[] uiProviders, LayoutProvider layoutProvider, LayoutContextImpl ctx ) {
+  public ShellProvider( UIContributor[] uiProviders, 
+                        LayoutProvider layoutProvider, 
+                        LayoutContextImpl ctx )
+  {
     this.uiProviders = uiProviders;
     this.layoutProvider = layoutProvider;
     this.layoutContext = ctx;
   }
   
-  Shell createShell() {
+  public Shell createShell() {
     Shell result = createApplicationShell();
     createContent( result );
     layoutShell();
@@ -53,7 +60,7 @@ class ShellProvider {
     return result;
   }
    
-  static boolean isApplicationShell( Shell shell ) {
+  public static boolean isApplicationShell( Shell shell ) {
     return shell.getData( APPLICATION_SHELL ) != null;
   }
 }

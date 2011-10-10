@@ -10,14 +10,16 @@
  ******************************************************************************/
 package com.codeaffine.example.rwt.osgi.ui.platform;
 
-import javax.security.auth.login.AppConfigurationEntry;
-
-import org.eclipse.rwt.lifecycle.*;
+import org.eclipse.rwt.lifecycle.PhaseEvent;
+import org.eclipse.rwt.lifecycle.PhaseId;
+import org.eclipse.rwt.lifecycle.PhaseListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import com.codeaffine.example.rwt.osgi.ui.platform.internal.ShellProvider;
 
 
 public class ShellPositioner implements PhaseListener {
