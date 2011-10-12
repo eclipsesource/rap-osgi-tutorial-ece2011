@@ -275,8 +275,10 @@ public class ApplicationLauncherComandProvider implements CommandProvider {
   private Dictionary<String, Object> createHttpServiceSettings( String port ) {
     Dictionary<String,Object> result = new Hashtable<String, Object>();
     result.put( JettyConstants.HTTP_PORT, Integer.valueOf( port ) );
-    result.put( JettyConstants.CUSTOMIZER_CLASS,
-                "org.eclipse.rap.jettycustomizer.internal.SessionCookieCustomizer" );
+    if( System.getProperty( JettyConstants.CUSTOMIZER_CLASS ) != null ) {
+      result.put( JettyConstants.CUSTOMIZER_CLASS,
+                  System.getProperty( JettyConstants.CUSTOMIZER_CLASS ) );
+    }
     return result;
   }
 
