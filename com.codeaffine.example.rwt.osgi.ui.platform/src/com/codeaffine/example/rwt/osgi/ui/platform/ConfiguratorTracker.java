@@ -41,13 +41,29 @@ public class ConfiguratorTracker
   }
   
   public static boolean matches( ServiceReference<UIContributor> contributorReference ) {
-    try {
-      String expression = createFilterExpression();
-      Filter filter = FrameworkUtil.createFilter( expression );
-      return filter.match( contributorReference );
-    } catch( InvalidSyntaxException shouldNotHappen ) {
-      throw new IllegalStateException( shouldNotHappen );
+    boolean result = true;
+    if( hasApplicationConfiguration() ) {
+      try {
+        result = doMatches( contributorReference );
+      } catch( InvalidSyntaxException shouldNotHappen ) {
+        throw new IllegalStateException( shouldNotHappen );
+      }
     }
+    return result;
+  }
+
+  private static boolean doMatches( ServiceReference<UIContributor> contributorReference )
+    throws InvalidSyntaxException
+  {
+    String expression = createFilterExpression();
+    Filter filter = FrameworkUtil.createFilter( expression );
+    return filter.match( contributorReference );
+  }
+
+  private static boolean hasApplicationConfiguration() {
+    @SuppressWarnings( "rawtypes" )
+    ServiceReference serviceReference = getConfiguratorReference();
+    return null != serviceReference.getProperty( getConfiguratorKey() );
   }
   
   public static boolean matchesType( String value,
