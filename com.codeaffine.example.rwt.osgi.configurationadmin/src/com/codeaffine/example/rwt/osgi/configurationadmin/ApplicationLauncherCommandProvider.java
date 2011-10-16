@@ -25,7 +25,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.http.HttpService;
 
 
-public class ApplicationLauncherComandProvider implements CommandProvider {
+public class ApplicationLauncherCommandProvider implements CommandProvider {
   
   private static final String HTTP_SERVER_MANAGER_ID = "org.eclipse.equinox.http.jetty.config";
 
