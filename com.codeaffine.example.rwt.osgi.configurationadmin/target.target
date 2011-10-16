@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.6"?>
 
-<target name="target" sequenceNumber="9">
+<target name="target" sequenceNumber="14">
 <locations>
 <location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.7.1.R37x_v20110907-7M7W8h8eNV4Vrz-hz01A7SL_MhZP"/>
@@ -15,6 +15,10 @@
 <unit id="org.apache.commons.fileupload" version="1.2.0.v20080604-1500"/>
 <unit id="org.apache.commons.io" version="2.0.1.v201105210651"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20110523182458/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.rap.incubator.feature.feature.group" version="1.5.0.20111016-1058"/>
+<repository location="http://download.eclipse.org/rt/rap/1.5/incubator/"/>
 </location>
 </locations>
 </target>
