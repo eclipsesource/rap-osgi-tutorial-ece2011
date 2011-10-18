@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.eclipse.rap.rwt.osgi.ApplicationLauncher;
@@ -26,8 +27,6 @@ import org.osgi.service.http.HttpService;
 
 public class ApplicationLauncherCommandProvider implements CommandProvider {
   
-  private static final String JETTY_CUSTOMIZER_CLASS = "customizer.class";
-  private static final String HTTP_PORT = "http.port";
   private static final String HTTP_SERVER_MANAGER_ID = "org.eclipse.equinox.http.jetty.config";
 
   private BundleContext bundleContext;
@@ -256,7 +255,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   }
 
   private String createPortFilter( String port ) {
-    return "(" + HTTP_PORT + "=" + port + ")";
+    return "(" + JettyConstants.HTTP_PORT + "=" + port + ")";
   }
   
   static String createTargetKey( Class<?> targetType ) {
@@ -275,9 +274,10 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
 
   private Dictionary<String, Object> createHttpServiceSettings( String port ) {
     Dictionary<String,Object> result = new Hashtable<String, Object>();
-    result.put( HTTP_PORT, Integer.valueOf( port ) );
-    if( System.getProperty( JETTY_CUSTOMIZER_CLASS ) != null ) {
-      result.put( JETTY_CUSTOMIZER_CLASS, System.getProperty( JETTY_CUSTOMIZER_CLASS ) );
+    result.put( JettyConstants.HTTP_PORT, Integer.valueOf( port ) );
+    if( System.getProperty( JettyConstants.CUSTOMIZER_CLASS ) != null ) {
+      result.put( JettyConstants.CUSTOMIZER_CLASS,
+                  System.getProperty( JettyConstants.CUSTOMIZER_CLASS ) );
     }
     return result;
   }
