@@ -27,6 +27,17 @@ public class ShellPositioner implements PhaseListener {
 
   static final int APPLICATION_SHELL_WIDTH = 900;
 
+  private final boolean useMaximumHeight;
+  
+  
+  public ShellPositioner( boolean useMaximumHeight ) {
+    this.useMaximumHeight = useMaximumHeight;
+  }
+  
+  public ShellPositioner() {
+    this( true );
+  }
+
   @Override
   public void beforePhase( PhaseEvent event ) {
     computeShellBounds( Display.getCurrent() );
@@ -54,7 +65,8 @@ public class ShellPositioner implements PhaseListener {
   }
 
   Rectangle computeShellBounds( Shell applicationShell, Rectangle displayBounds ) {
-    Point size = applicationShell.computeSize( SWT.DEFAULT, displayBounds.height );
+    int heightHint = useMaximumHeight ? displayBounds.height : SWT.DEFAULT;
+    Point size = applicationShell.computeSize( SWT.DEFAULT, heightHint );
     return new Rectangle( calculateXPos( displayBounds ), 0, APPLICATION_SHELL_WIDTH, size.y );
   }
 
