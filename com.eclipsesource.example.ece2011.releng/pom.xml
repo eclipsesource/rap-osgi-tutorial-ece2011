@@ -62,7 +62,7 @@
     <repository>
       <id>jetty-customizer</id>
       <layout>p2</layout>
-      <url>http://download.eclipse.org/rt/rap/1.5/jettycustomizer/</url>
+      <url>http://build.eclipse.org/rt/rap/base-platforms/jettycustomizer/</url>
     </repository>
   </repositories>
 
