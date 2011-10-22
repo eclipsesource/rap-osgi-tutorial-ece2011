@@ -25,6 +25,7 @@ import com.codeaffine.example.rwt.osgi.configurationadmin.console.OSGiConsole;
 import com.codeaffine.example.rwt.osgi.ui.platform.ConfiguratorTracker;
 import com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider;
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
+import com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory;
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributorTracker;
 
 
@@ -42,7 +43,9 @@ public class HomePageTab implements UIContributor {
       uiContributorTracker = new UIContributorTracker() {
         
         @Override
-        public void addingService( ServiceReference<UIContributor> reference, UIContributor result ) {
+        public void addingService( ServiceReference<UIContributorFactory> reference, 
+                                   UIContributor result )
+        {
           if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
             bundleUploadContributor = result;
             updatePage();
@@ -50,8 +53,9 @@ public class HomePageTab implements UIContributor {
         }
         
         @Override
-        public void removedService( ServiceReference<UIContributor> reference,
-                                    UIContributor service ) {
+        public void removedService( ServiceReference<UIContributorFactory> reference,
+                                    UIContributor service )
+        {
           if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
             bundleUploadContributor = null;
             updatePage();

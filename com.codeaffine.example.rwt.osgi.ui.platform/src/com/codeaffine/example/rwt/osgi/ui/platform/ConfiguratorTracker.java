@@ -40,7 +40,7 @@ public class ConfiguratorTracker
     return result;
   }
   
-  public static boolean matches( ServiceReference<UIContributor> contributorReference ) {
+  public static boolean matches( ServiceReference<UIContributorFactory> contributorReference ) {
     boolean result = true;
     if( hasApplicationConfiguration() ) {
       try {
@@ -52,7 +52,7 @@ public class ConfiguratorTracker
     return result;
   }
 
-  private static boolean doMatches( ServiceReference<UIContributor> contributorReference )
+  private static boolean doMatches( ServiceReference<UIContributorFactory> contributorReference )
     throws InvalidSyntaxException
   {
     String expression = createFilterExpression();
@@ -67,7 +67,7 @@ public class ConfiguratorTracker
   }
   
   public static boolean matchesType( String value,
-                                     ServiceReference<UIContributor> contributorReference )
+                                     ServiceReference<UIContributorFactory> contributorReference )
   {
     try {
       String expression = createFilterExpression( "type", value );

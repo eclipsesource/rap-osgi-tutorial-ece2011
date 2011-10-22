@@ -44,7 +44,7 @@ public class ShellConfigurator {
       private boolean initialized;
       
       @Override
-      public void addingService( ServiceReference<UIContributor> reference,
+      public void addingService( ServiceReference<UIContributorFactory> reference,
                                  UIContributor contributor )
       {
         if( ConfiguratorTracker.matchesType( UI_CONTRIBUTOR_TYPE_PAGE, reference ) ) {
@@ -57,7 +57,8 @@ public class ShellConfigurator {
       }
       
       @Override
-      public void removedService( ServiceReference<UIContributor> reference, UIContributor service )
+      public void removedService( ServiceReference<UIContributorFactory> reference,
+                                  UIContributor service )
       {
         if( ConfiguratorTracker.matchesType( UI_CONTRIBUTOR_TYPE_PAGE, reference ) ) {
           pageService.removePageContibutor( service );

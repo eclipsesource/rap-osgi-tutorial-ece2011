@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" configuration-policy="require" name="HelloWorld">
-   <implementation class="com.codeaffine.example.rwt.osgi.ui.example.HelloWorld"/>
-   <property name="type" type="String" value="page"/>
+   <implementation class="com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory"/>
    <service>
-      <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributor"/>
+      <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory"/>
    </service>
+   <property name="type" type="String" value="page"/>
+   <property name="class" type="String" value="com.codeaffine.example.rwt.osgi.ui.example.HelloWorld"/>
 </scr:component>
