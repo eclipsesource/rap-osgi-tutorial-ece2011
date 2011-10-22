@@ -23,36 +23,40 @@ public class UIContributorTracker {
   class TrackerImpl implements Tracker {
 
     @Override
-    public void removedService( final ServiceReference<UIContributor> reference,
+    public void removedService( final ServiceReference<UIContributorFactory> reference,
                                 final UIContributor service )
     {
-      display.asyncExec( new Runnable() {
-
-        @Override
-        public void run() {
-          if( canRun( reference ) ) {
-            UIContributorTracker.this.removedService( reference, service );
+      if( !display.isDisposed() ) {
+        display.asyncExec( new Runnable() {
+  
+          @Override
+          public void run() {
+            if( canRun( reference ) ) {
+              UIContributorTracker.this.removedService( reference, service );
+            }
           }
-        }
-      } );
+        } );
+      }
     }
 
     @Override
-    public void addingService( final ServiceReference<UIContributor> reference,
+    public void addingService( final ServiceReference<UIContributorFactory> reference,
                                final UIContributor service )
     {
-      display.asyncExec( new Runnable() {
-        
-        @Override
-        public void run() {
-          if( canRun( reference ) ) {
-            UIContributorTracker.this.addingService( reference, service );
+      if( !display.isDisposed() ) {
+        display.asyncExec( new Runnable() {
+          
+          @Override
+          public void run() {
+            if( canRun( reference ) ) {
+              UIContributorTracker.this.addingService( reference, service );
+            }
           }
-        }
-      } );
+        } );
+      }
     }
 
-    boolean canRun( final ServiceReference<UIContributor> reference ) {
+    boolean canRun( final ServiceReference<UIContributorFactory> reference ) {
       return display.getThread() == Thread.currentThread()
           && ConfiguratorTracker.matches( reference );
     }
@@ -83,11 +87,15 @@ public class UIContributorTracker {
     return result;
   }
 
-  public void removedService( ServiceReference<UIContributor> reference, UIContributor service ) {
+  public void removedService( ServiceReference<UIContributorFactory> reference,
+                              UIContributor service )
+  {
     // subclasses may override
   }
 
-  public void addingService( ServiceReference<UIContributor> reference, UIContributor service ) {
+  public void addingService( ServiceReference<UIContributorFactory> reference,
+                             UIContributor service )
+  {
     // subclasses may override
   }
 
@@ -97,6 +105,7 @@ public class UIContributorTracker {
 
       @Override
       public void beforeDestroy( SessionStoreEvent event ) {
+System.out.println( "onSessionCleanup" );
         trackerService.removeTracker( tracker );
         UICallBack.deactivate( String.valueOf( display.hashCode() ) );
       }

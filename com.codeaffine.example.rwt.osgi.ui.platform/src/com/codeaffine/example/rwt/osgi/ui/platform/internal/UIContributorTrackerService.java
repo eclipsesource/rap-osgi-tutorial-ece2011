@@ -1,61 +1,97 @@
 package com.codeaffine.example.rwt.osgi.ui.platform.internal;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
+import com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory;
 
 
 public class UIContributorTrackerService {
   
-  final ServiceTracker<UIContributor, UIContributor> serviceTracker;
-  final Map<ServiceReference<UIContributor>,UIContributor> contributors;
-  final Set<Tracker> trackers;
+  final ServiceTracker<UIContributorFactory, UIContributorFactory> serviceTracker;
+  final Map<ServiceReference<UIContributorFactory>,UIContributorFactory> contributors;
+  final Map<Tracker,TrackerAdapter> trackers;
   final Object lock;
+  private TrackerAdapter trackerAdapter;
   
   public interface Tracker {
-    void removedService( ServiceReference<UIContributor> reference, UIContributor service );
-    void addingService( ServiceReference<UIContributor> reference, UIContributor service );
+    void removedService( ServiceReference<UIContributorFactory> reference, UIContributor service );
+    void addingService( ServiceReference<UIContributorFactory> reference, UIContributor service );
   }
 
+  private static class TrackerAdapter implements Tracker {
+
+    private final ConcurrentHashMap<ServiceReference<UIContributorFactory>,UIContributor> contribs;
+    private final Tracker tracker;
+
+    TrackerAdapter( Tracker tracker ) {
+      this.tracker = tracker;
+      contribs = new ConcurrentHashMap<ServiceReference<UIContributorFactory>, UIContributor>();
+    }
+    
+    @Override
+    public void removedService( ServiceReference<UIContributorFactory> reference,
+                                UIContributor service )
+    {
+System.out.println( "remove: " + service );
+      contribs.remove( reference );
+      tracker.removedService( reference, service );
+    }
+
+    @Override
+    public void addingService( final ServiceReference<UIContributorFactory> reference, 
+                               final UIContributor service )
+    {
+System.out.println( "add: " + service );
+      tracker.addingService( reference, service );
+      contribs.put( reference, service );
+    }
+    
+    UIContributor getContributor( ServiceReference<UIContributorFactory> reference ) {
+      return contribs.get( reference );
+    }
+  }
+  
   public UIContributorTrackerService( BundleContext context ) {
-    Class<UIContributor> type = UIContributor.class;
+    Class<UIContributorFactory> type = UIContributorFactory.class;
     this.lock = new Object();
-    this.trackers = new HashSet<Tracker>();
-    this.contributors = new HashMap<ServiceReference<UIContributor>,UIContributor>();
-    this.serviceTracker = new ServiceTracker<UIContributor,UIContributor>( context, type, null ) {
+    this.trackers = new HashMap<Tracker,TrackerAdapter>();
+    this.contributors = new HashMap<ServiceReference<UIContributorFactory>,UIContributorFactory>();
+    this.serviceTracker
+      = new ServiceTracker<UIContributorFactory,UIContributorFactory>( context, type, null ) {
 
       @Override
-      public UIContributor addingService( ServiceReference<UIContributor> reference ) {
-        UIContributor result = super.addingService( reference );
+      public UIContributorFactory addingService( ServiceReference<UIContributorFactory> reference ) {
+        UIContributorFactory result = super.addingService( reference );
         Object[] trackerList;
         synchronized( lock ) {
           contributors.put( reference, result );
-          trackerList = trackers.toArray();
+          trackerList = trackers.values().toArray();
         }
         for( int i = 0; i < trackerList.length; i++ ) {
-          ( ( Tracker )trackerList[ i ] ).addingService( reference, result );
+          ( ( Tracker )trackerList[ i ] ).addingService( reference, result.create() );
         }
         return result;
       }
 
       @Override
-      public void removedService( ServiceReference<UIContributor> reference,
-                                  UIContributor service )
+      public void removedService( ServiceReference<UIContributorFactory> reference,
+                                  UIContributorFactory service )
       {
         Object[] trackerList;
         synchronized( lock ) {
           contributors.remove( reference );
-          trackerList = trackers.toArray();
+          trackerList = trackers.values().toArray();
         }
         for( int i = 0; i < trackerList.length; i++ ) {
-          ( ( Tracker )trackerList[ i ] ).removedService( reference, service );
+          TrackerAdapter tracker = ( TrackerAdapter )trackerList[ i ];
+          tracker.removedService( reference, tracker.getContributor( reference ) );
         }
         super.removedService( reference, service );
       }
@@ -67,14 +103,15 @@ public class UIContributorTrackerService {
   public void addTracker( Tracker tracker ) {
     Object[] references;
     Object[] services;
+    trackerAdapter = new TrackerAdapter( tracker );
     synchronized( lock ) {
-      trackers.add( tracker );
+      trackers.put( tracker, trackerAdapter );
       references = contributors.keySet().toArray();
       services = contributors.values().toArray();
     }
     for( int i = 0; i < services.length; i++ ) {
-      tracker.addingService( ( ServiceReference<UIContributor> )references[ i ], 
-                             ( UIContributor )services[ i ] );
+      trackerAdapter.addingService( ( ServiceReference<UIContributorFactory> )references[ i ], 
+                                    ( ( UIContributorFactory )services[ i ] ).create() );
     }
   }
   
@@ -82,14 +119,17 @@ public class UIContributorTrackerService {
   public void removeTracker( Tracker tracker ) {
     Object[] references;
     Object[] services;
+    TrackerAdapter trackerAdapter;
     synchronized( lock ) {
-      trackers.remove( tracker );
+      trackerAdapter = trackers.remove( tracker );
       references = contributors.keySet().toArray();
       services = contributors.values().toArray();
     }
     for( int i = 0; i < services.length; i++ ) {
-      tracker.removedService( ( ServiceReference<UIContributor> )references[ i ], 
-                              ( UIContributor )services[ i ] );
+      ServiceReference<UIContributorFactory> reference
+        = ( ServiceReference<UIContributorFactory> )references[ i ];
+      UIContributor contributor = trackerAdapter.getContributor( reference );
+      trackerAdapter.removedService( reference, contributor );
     }
   }
 }
