@@ -20,5 +20,9 @@
 <unit id="com.google.gson.source" version="1.6.0.v201101131530"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20110523182458/repository/"/>
 </location>
+<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.rap.jettycustomizer" version="1.5.0.201110191730"/>
+<repository location="http://build.eclipse.org/rt/rap/base-platforms/jettycustomizer/"/>
+</location>
 </locations>
 </target>
