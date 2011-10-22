@@ -21,7 +21,7 @@ public class HelloWorld implements IEntryPoint {
 
   public int createUI() {
     Display display = new Display();
-    Shell shell = new Shell( Display.getCurrent(), SWT.TITLE | SWT.MAX | SWT.RESIZE );
+    Shell shell = new Shell( display, SWT.TITLE | SWT.MAX | SWT.RESIZE );
     shell.setBounds( new Rectangle( 30, 30, 300, 250 ) );
     shell.setLayout( new FillLayout() );
     
@@ -29,12 +29,6 @@ public class HelloWorld implements IEntryPoint {
     label.setText( "HelloWorld" );
     
     shell.open();
-    while( !shell.isDisposed() ) {
-      if( !display.readAndDispatch() ) {
-        display.sleep();
-      }
-    }
-
     return 0;
   }
 }

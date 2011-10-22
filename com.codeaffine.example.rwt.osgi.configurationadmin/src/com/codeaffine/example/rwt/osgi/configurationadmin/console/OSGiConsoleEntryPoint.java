@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.Shell;
 public class OSGiConsoleEntryPoint implements IEntryPoint {
 
   public int createUI() {
-    final Display display = new Display();
-    Shell shell = new Shell( Display.getCurrent(), SWT.TITLE | SWT.MAX | SWT.RESIZE );
+    Display display = new Display();
+    Shell shell = new Shell( display, SWT.TITLE | SWT.MAX | SWT.RESIZE );
     shell.setBounds( new Rectangle( 30, 30, 700, 500 ) );
     shell.setLayout( new FillLayout() );
     
@@ -21,12 +21,6 @@ public class OSGiConsoleEntryPoint implements IEntryPoint {
     console.getControl().setFocus();
     
     shell.open();
-    while( !shell.isDisposed() ) {
-      if( !display.readAndDispatch() ) {
-        display.sleep();
-      }
-    }
-
     return 0;
   }
 }

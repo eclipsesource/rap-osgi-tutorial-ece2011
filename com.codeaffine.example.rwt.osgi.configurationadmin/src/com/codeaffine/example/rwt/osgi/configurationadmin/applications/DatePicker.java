@@ -136,32 +136,14 @@ public class DatePicker implements IEntryPoint {
 
   public int createUI() {
     RWT.getSettingStore();
-    Display display = new Display();
+    new Display();
     
     DateSelectionService dateSelectionService = new DateSelectionService();
     UI1 ui1 = new UI1( dateSelectionService );
     UI2 ui2 = new UI2( dateSelectionService );
     ui1.open();
     ui2.open();
-    runReadAndDispatchLoop( display );
     return 0;
-  }
-  
-  private void runReadAndDispatchLoop( Display display ) {
-    while( !shellsHasBeenDisposed( display ) ) {
-      if( !display.readAndDispatch() ) {
-        display.sleep();
-      }
-    }
-  }
-
-  private boolean shellsHasBeenDisposed( Display display ) {
-    Shell[] shells = display.getShells();
-    boolean result = false;
-    for( int i = 0; i < shells.length; i++ ) {
-      result &= shells[ i ].isDisposed();
-    }
-    return result;
   }
   
   static Shell createShell( Rectangle bounds ) {
