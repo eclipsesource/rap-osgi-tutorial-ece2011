@@ -105,7 +105,6 @@ public class UIContributorTracker {
 
       @Override
       public void beforeDestroy( SessionStoreEvent event ) {
-System.out.println( "onSessionCleanup" );
         trackerService.removeTracker( tracker );
         UICallBack.deactivate( String.valueOf( display.hashCode() ) );
       }
