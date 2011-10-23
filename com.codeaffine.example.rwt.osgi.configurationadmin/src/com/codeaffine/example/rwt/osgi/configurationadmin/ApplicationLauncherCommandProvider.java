@@ -27,16 +27,27 @@ import org.osgi.service.http.HttpService;
 
 public class ApplicationLauncherCommandProvider implements CommandProvider {
   
+  private static final String CUSTOMIZER_CLASS 
+    = JettyConstants.class.getPackage().getName() + "." + JettyConstants.CUSTOMIZER_CLASS;
   private static final String HTTP_SERVER_MANAGER_ID = "org.eclipse.equinox.http.jetty.config";
 
   private BundleContext bundleContext;
 
+  public void _sh( CommandInterpreter commandInterpreter ) {
+    _startHttpService( commandInterpreter );
+  }
+  
   public void _startHttpService( CommandInterpreter commandInterpreter ) {
     String port = getPort( commandInterpreter );
+    boolean jettyCustomizerFlag = getJettyCustomizerFlag( commandInterpreter );
     if( null != port ) {
-      startHttpService( commandInterpreter, port );
+      startHttpService( commandInterpreter, port, jettyCustomizerFlag );
     }
   }
+
+  public void _hh( CommandInterpreter commandInterpreter ) {
+    _stopHttpService( commandInterpreter );
+  }  
 
   public void _stopHttpService( CommandInterpreter commandInterpreter ) {
     String port = getPort( commandInterpreter );
@@ -45,6 +56,10 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     }
   }
 
+  public void _da( CommandInterpreter commandInterpreter ) {
+    _deployApplication( commandInterpreter );
+  }
+  
   public void _deployApplication( CommandInterpreter commandInterpreter ) {
     String configurator = getApplicationConfigurator( commandInterpreter );
     String port = getPort( commandInterpreter );
@@ -54,6 +69,10 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     }
   }
 
+  public void _ua( CommandInterpreter commandInterpreter ) {
+    _undeployApplication( commandInterpreter );
+  }
+  
   public void _undeployApplication( CommandInterpreter commandInterpreter ) {
     String configurator = getApplicationConfigurator( commandInterpreter );
     String port = getPort( commandInterpreter );
@@ -61,6 +80,10 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     if( port != null && configurator != null ) {
       undeployApplication( commandInterpreter, configurator, port, contextName );
     }
+  }
+  
+  public void _du( CommandInterpreter commandInterpreter ) {
+    _deployUIContribution( commandInterpreter );
   }
   
   public void _deployUIContribution( CommandInterpreter commandInterpreter ) {
@@ -73,6 +96,10 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     }
   }
 
+  public void _uu( CommandInterpreter commandInterpreter ) {
+    _undeployUIContribution( commandInterpreter );
+  }
+  
   public void _undeployUIContribution( CommandInterpreter commandInterpreter ) {
     String contributor = getUIContributor( commandInterpreter );
     String configurator = getApplicationConfigurator( commandInterpreter );
@@ -85,12 +112,12 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
 
   public String getHelp() {
     return   "---Configuration of ApplicationLauncher---\n"
-           + "\tstartHttpService <port>\n"
-           + "\tstopHttpService <port>\n"
-           + "\tdeployApplication <configurator name>|<port>|<context name(optional)>\n"
-           + "\tundeployApplication <configurator name>|<port>|<context name(optional)>\n"
-           + "\tdeployUIContribution <contributor name>|<configurator name>|<port>|<context name(optional)>\n"
-           + "\tundeployUIContribution <contributor name>|<configurator name>|<port>|<context name(optional)>\n";
+           + "\tstartHttpService (sh) <port>\n"
+           + "\tstopHttpService (hh) <port>\n"
+           + "\tdeployApplication (da) <configurator name>|<port>|<context name(optional)>\n"
+           + "\tundeployApplication (ua) <configurator name>|<port>|<context name(optional)>\n"
+           + "\tdeployUIContribution (du) <contributor name>|<configurator name>|<port>|<context name(optional)>\n"
+           + "\tundeployUIContribution (uu) <contributor name>|<configurator name>|<port>|<context name(optional)>\n";
   }
   
   public void activate( BundleContext bundleContext ) {
@@ -100,6 +127,12 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   public void deactivate( BundleContext bundleContext ) {
     this.bundleContext = null;
   }
+  
+  private boolean getJettyCustomizerFlag( CommandInterpreter commandInterpreter ) {
+    String jettyCustomizerFlag = getArgument( commandInterpreter, null );
+    return "jcf".equals( jettyCustomizerFlag );
+  }
+
   
   private String getPort( CommandInterpreter commandInterpreter ) {
     return getArgument( commandInterpreter, "Parameter port must not be null" );
@@ -115,7 +148,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   
   private String getArgument( CommandInterpreter commandInterpreter, String message ) {
     String result = commandInterpreter.nextArgument();
-    if( result == null ) {
+    if( result == null && message != null ) {
       commandInterpreter.println( message );
     }
     return result;
@@ -272,20 +305,28 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     return bundleContext.getService( reference );
   }
 
-  private Dictionary<String, Object> createHttpServiceSettings( String port ) {
+  private Dictionary<String, Object> createHttpServiceSettings( String port,
+                                                                boolean jettyCustomizerFlag )
+  {
     Dictionary<String,Object> result = new Hashtable<String, Object>();
     result.put( JettyConstants.HTTP_PORT, Integer.valueOf( port ) );
-    if( System.getProperty( JettyConstants.CUSTOMIZER_CLASS ) != null ) {
-      result.put( JettyConstants.CUSTOMIZER_CLASS,
-                  System.getProperty( JettyConstants.CUSTOMIZER_CLASS ) );
+    if( useJettyCustomizer() && !jettyCustomizerFlag ) {
+      result.put( CUSTOMIZER_CLASS, System.getProperty( CUSTOMIZER_CLASS ) );
     }
     return result;
   }
 
-  private void startHttpService( CommandInterpreter commandInterpreter, String port ) {
+  private boolean useJettyCustomizer() {
+    return System.getProperty( CUSTOMIZER_CLASS ) != null;
+  }
+
+  private void startHttpService( CommandInterpreter commandInterpreter,
+                                 String port,
+                                 boolean jettyCustomizerFlag )
+  {
     try {
       Configuration configuration = createHttpServiceConfiguration();
-      configuration.update( createHttpServiceSettings( port ) );
+      configuration.update( createHttpServiceSettings( port, jettyCustomizerFlag ) );
     } catch( IOException ioe ) {
       commandInterpreter.println( "Unable to start HttpService at port: " + port );
       commandInterpreter.println( ioe.getMessage() );

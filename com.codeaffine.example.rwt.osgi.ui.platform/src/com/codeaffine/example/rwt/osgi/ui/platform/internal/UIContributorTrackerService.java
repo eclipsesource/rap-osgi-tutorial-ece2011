@@ -39,7 +39,6 @@ public class UIContributorTrackerService {
     public void removedService( ServiceReference<UIContributorFactory> reference,
                                 UIContributor service )
     {
-System.out.println( "remove: " + service );
       contribs.remove( reference );
       tracker.removedService( reference, service );
     }
@@ -48,7 +47,6 @@ System.out.println( "remove: " + service );
     public void addingService( final ServiceReference<UIContributorFactory> reference, 
                                final UIContributor service )
     {
-System.out.println( "add: " + service );
       tracker.addingService( reference, service );
       contribs.put( reference, service );
     }
