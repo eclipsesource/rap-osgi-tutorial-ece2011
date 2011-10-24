@@ -15,14 +15,11 @@ import java.util.Hashtable;
 import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.eclipse.rap.rwt.osgi.ApplicationLauncher;
-import org.eclipse.rwt.application.ApplicationConfigurator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.http.HttpService;
 
 
 public class ApplicationLauncherCommandProvider implements CommandProvider {
@@ -59,13 +56,13 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   public void _da( CommandInterpreter commandInterpreter ) {
     _deployApplication( commandInterpreter );
   }
-  
+
   public void _deployApplication( CommandInterpreter commandInterpreter ) {
     String configurator = getApplicationConfigurator( commandInterpreter );
     String port = getPort( commandInterpreter );
     String contextName = commandInterpreter.nextArgument();
     if( port != null && configurator != null ) {
-      deployApplication( commandInterpreter, configurator, port, contextName );
+      new DeploymentHelper().deployApplication( configurator, port, contextName );
     }
   }
 
@@ -78,7 +75,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     String port = getPort( commandInterpreter );
     String contextName = commandInterpreter.nextArgument();
     if( port != null && configurator != null ) {
-      undeployApplication( commandInterpreter, configurator, port, contextName );
+      undeployApplication( configurator, port, contextName );
     }
   }
   
@@ -153,20 +150,15 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     }
     return result;
   }
-  
+
   private void deployUIContribution( CommandInterpreter commandInterpreter,
                                      String contributor,
                                      String configurator,
                                      String port,
                                      String contextName )
   {
-    try {
-      Configuration configuration = createUIContributionConfiguration( contributor );
-      configuration.update( createSettings( contributor, configurator, port, contextName ) );
-    } catch( IOException ioe ) {
-      commandInterpreter.println( "Unable to update configuration for " + contributor );
-      commandInterpreter.println( ioe.getMessage() );
-    }
+    DeploymentHelper deploymentHelper = new DeploymentHelper();
+    deploymentHelper.deployUIContribution( contributor, configurator, port, contextName );
   }
 
   private void undeployUIContribution( CommandInterpreter commandInterpreter,
@@ -175,118 +167,15 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
                                        String port,
                                        String contextName )
   {
-    String filter = createUIContributorFilter( contributor, configurator, port, contextName );
-    deleteConfiguration( commandInterpreter, filter );
+    DeploymentHelper deploymentHelper = new DeploymentHelper();
+    deploymentHelper.undeployUIContribution( contributor, configurator, port, contextName );
   }
 
-  private String createUIContributorFilter( String contributor,
-                                            String configurator,
-                                            String port,
-                                            String contextName )
-  {
-    String key = createUIContributorKey( contributor, configurator, port, contextName );
-    String value = createApplicationKey( configurator, port, contextName );
-    return "(" + key + "=" + value + ")";
-  }
 
-  @SuppressWarnings( {
-    "rawtypes", "unchecked"
-  } )
-  private Dictionary createSettings( String contributor,
-                                     String configurator,
-                                     String port,
-                                     String contextName )
-  {
-    String key = createUIContributorKey( contributor, configurator, port, contextName );
-    String value = createApplicationKey( configurator, port, contextName );
-    Hashtable result = new Hashtable();
-    result.put( key, value );
-    result.put( getConfiguratorKey(), value );
-    return result;
-  }
-
-  private String createUIContributorKey( String contributor,
-                                         String configurator,
-                                         String port,
-                                         String contextName )
-  {
-    return contributor + "_" + createApplicationKey( configurator, port, contextName );
+  private void undeployApplication( String configurator, String port, String contextName ) {
+    new DeploymentHelper().undeployApplication( configurator, port, contextName );
   }
   
-  private Configuration createUIContributionConfiguration( String contributor ) throws IOException {
-    ConfigurationAdmin configurationAdmin = getConfigurationAdmin();
-    return configurationAdmin.createFactoryConfiguration( contributor );
-  }
-
-  private void deployApplication( CommandInterpreter ci,
-                                  String configurator,
-                                  String port,
-                                  String contextName )
-  {
-    String key = createApplicationKey( configurator, port, contextName );
-    try {
-      Configuration configuration = createApplicationConfiguration( configurator );
-      configuration.update( createApplicationSettings( key, port, contextName ) );
-    } catch( IOException ioe ) {
-      ci.println( "Unable to update configuration for " + key );
-      ci.println( ioe.getMessage() );
-    }
-  }
-  
-  private void undeployApplication( CommandInterpreter ci,
-                                    String configurator,
-                                    String port,
-                                    String contextName ) {
-    deleteConfiguration( ci, createApplicationFilter( configurator, port, contextName ) );
-  }
-
-  private void deleteConfiguration( CommandInterpreter ci, String filter ) {
-    try {
-      ConfigurationAdmin configurationAdmin = getConfigurationAdmin();
-      Configuration[] configurations = configurationAdmin.listConfigurations( filter );
-      if( configurations.length >= 1 ) {
-        configurations[ 0 ].delete();
-      }
-    } catch( Exception exception ) {
-      ci.println( "Unable to delete configuration for " + filter );
-      ci.println( exception.getMessage() );
-    }
-  }
-
-  private String createApplicationFilter( String configurator, String port, String contextName ) {
-    String key = createApplicationKey( configurator, port, contextName );
-    return "(" + key + "=" + port + ")";
-  }
-  
-  private String createApplicationKey( String configurator, String port, String contextName ) {
-    return port + "_" + configurator + "_" + contextName;
-  }
-
-  private Configuration createApplicationConfiguration( String configurationName )
-    throws IOException
-  {
-    ConfigurationAdmin configurationAdmin = getConfigurationAdmin();
-    return configurationAdmin.createFactoryConfiguration( configurationName );
-  }
-
-  private Dictionary<String, Object> createApplicationSettings( String key,
-                                                                String port,
-                                                                String contextName )
-  {
-    Dictionary<String,Object> result = new Hashtable<String, Object>();
-    result.put( createTargetKey( HttpService.class ), createPortFilter( port ) );
-    result.put( getConfiguratorKey(), key );
-    result.put( key, port );
-    if( contextName != null ) {
-      result.put( ApplicationLauncher.PROPERTY_CONTEXT_NAME, contextName );
-    }
-    return result;
-  }
-
-  private String getConfiguratorKey() {
-    return ApplicationConfigurator.class.getSimpleName();
-  }
-
   private String createPortFilter( String port ) {
     return "(" + JettyConstants.HTTP_PORT + "=" + port + ")";
   }

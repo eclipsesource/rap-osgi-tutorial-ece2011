@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+    name="admin">
+  <implementation class="com.eclipsesource.example.ece2011.ui.admin.AdminConfigurator"/>
+  <service>
+    <provide interface="org.eclipse.rwt.application.ApplicationConfigurator"/>
+  </service>
+</scr:component>
