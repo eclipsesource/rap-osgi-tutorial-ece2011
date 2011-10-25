@@ -10,6 +10,8 @@
  ******************************************************************************/
 package com.codeaffine.example.rwt.osgi.ui.example;
 
+import org.eclipse.rwt.widgets.DialogCallback;
+import org.eclipse.rwt.widgets.DialogUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
@@ -19,6 +21,13 @@ class HomePageAction {
   void execute() {
     MessageBox messageBox = new MessageBox( Display.getCurrent().getActiveShell() );
     messageBox.setMessage( "Huhu" );
-    messageBox.open();
+    DialogUtil.open( messageBox, new DialogCallback() {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public void dialogClosed( int returnCode ) {
+        // TODO [fappel]: remove this once null is allowed as dialog callback parameter
+      }
+    } );
   }
 }

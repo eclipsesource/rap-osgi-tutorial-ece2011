@@ -7,6 +7,8 @@ import org.eclipse.rap.rwt.supplemental.fileupload.FileUploadHandler;
 import org.eclipse.rap.rwt.supplemental.fileupload.FileUploadReceiver;
 import org.eclipse.rap.rwt.supplemental.fileupload.IFileUploadDetails;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
+import org.eclipse.rwt.widgets.DialogCallback;
+import org.eclipse.rwt.widgets.DialogUtil;
 import org.eclipse.rwt.widgets.FileUpload;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -154,7 +156,14 @@ public class UploadContributor implements UIContributor {
     MessageBox box = new MessageBox( fileChooserButton.getShell(), SWT.ICON_ERROR | SWT.OK );
     box.setMessage( "The selected file is not a jar file." );
     selectionLabel.setText( "" );
-    box.open();
+    DialogUtil.open( box, new DialogCallback() {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      public void dialogClosed( int returnCode ) {
+        // TODO [fappel]: remove this once null is allowed as dialog callback parameter
+      }
+    } );
   }
 
   public void reenableUploadButton() {

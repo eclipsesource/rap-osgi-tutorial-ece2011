@@ -8,7 +8,8 @@
 <repository location="http://download.eclipse.org/releases/indigo"/>
 </location>
 <location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.rap.runtime.feature.group" version="1.5.0.20111014-0121"/>
+<unit id="org.eclipse.rap.runtime.feature.group" version="1.5.0.20111025-0121"/>
+<unit id="org.eclipse.core.commands" version="3.6.0.I20110111-0800"/>
 <repository location="http://download.eclipse.org/rt/rap/nightly/runtime/"/>
 </location>
 <location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
