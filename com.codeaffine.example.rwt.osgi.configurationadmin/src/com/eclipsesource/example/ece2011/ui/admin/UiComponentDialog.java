@@ -10,6 +10,9 @@
  ******************************************************************************/
 package com.eclipsesource.example.ece2011.ui.admin;
 
+import java.util.Dictionary;
+import java.util.Enumeration;
+
 import org.apache.felix.scr.Component;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
@@ -23,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -35,8 +39,9 @@ public class UiComponentDialog {
   private final Shell parent;
   private final Shell shell;
   private final Component component;
-  private Button enablementButton;
-  private boolean isInEnableMode;
+  private Button deployButton;
+  private Button cancelButton;
+  private Combo httpServiceCombo;
 
   public UiComponentDialog( Shell parent, Component component ) {
     this.parent = parent;
@@ -54,21 +59,17 @@ public class UiComponentDialog {
   }
 
   private void createContents() {
-    GridLayout mainLayout = new GridLayout();
+    GridLayout mainLayout = new GridLayout( 2, false );
     mainLayout.marginWidth = 20;
     mainLayout.marginTop = 15;
     mainLayout.marginBottom = 10;
     shell.setLayout( mainLayout );
-    Label headLabel = new Label( shell, SWT.NONE );
-    headLabel.setText( UiComponents.isApplication( component ) ? "Application" : "UIContribution" );
-    headLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    Label label = new Label( shell, SWT.NONE );
-    label.setText( "Name: " + component.getName() );
-    Label bundleLabel = new Label( shell, SWT.NONE );
-    bundleLabel.setText( "Contributing bundle: " + component.getBundle().getSymbolicName() );
-    isInEnableMode = component.getState() != Component.STATE_ACTIVE;
+    createLabels( shell );
+    createCombo( shell );
     Control buttons = createButtons( shell );
-    buttons.setLayoutData( new GridData( SWT.RIGHT, SWT.BOTTOM, false, false ) );
+    GridData buttonData = new GridData( SWT.RIGHT, SWT.BOTTOM, false, false );
+    buttonData.horizontalSpan = 2;
+    buttons.setLayoutData( buttonData );
     shell.addControlListener( new ControlAdapter() {
       @Override
       public void controlResized( ControlEvent e ) {
@@ -77,34 +78,77 @@ public class UiComponentDialog {
     } );
   }
 
+  private void createLabels( Composite parent ) {
+    Label headLabel = new Label( parent, SWT.NONE );
+    headLabel.setText( UiComponents.isApplication( component ) ? "Application" : "UIContribution" );
+    headLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
+    GridData gridData = new GridData();
+    gridData.horizontalSpan = 2;
+    headLabel.setLayoutData( gridData );
+    new Label( parent, SWT.NONE ).setText( "Name:" );
+    Label nameLabel = new Label( parent, SWT.WRAP );
+    nameLabel.setText( component.getName() );
+    new Label( parent, SWT.NONE ).setText( "Bundle:" );
+    Label bundleLabel = new Label( parent, SWT.WRAP );
+    bundleLabel.setText( component.getBundle().getSymbolicName() );
+//    new Label( parent, SWT.NONE ).setText( "Properties:" );
+//    Label propLabel = new Label( parent, SWT.WRAP );
+//    propLabel.setText( UiComponentDialog.getPropertyString( component ) );
+  }
+
+  private void createCombo( Composite parent ) {
+    String[] ports = new String[] { "9090" };
+    Label label = new Label( parent, SWT.WRAP );
+    label.setText( "Port: " );
+    httpServiceCombo = new Combo( parent, SWT.CHECK );
+    httpServiceCombo.setItems( ports );
+    httpServiceCombo.select( 0 );
+    httpServiceCombo.setLayoutData( new GridData( 200, SWT.DEFAULT ) );
+  }
+
   private Control createButtons( Composite parent ) {
     Composite buttonBar = new Composite( parent, SWT.NONE );
     RowLayout layout = new RowLayout( SWT.HORIZONTAL );
     layout.marginTop = 20;
     layout.marginRight = 0;
     layout.marginBottom = 0;
+    layout.spacing = 6;
     buttonBar.setLayout( layout );
-    enablementButton = new Button( buttonBar, SWT.PUSH );
-    enablementButton.setText( isInEnableMode ? "enable" : "disable" );
-    enablementButton.addSelectionListener( new SelectionAdapter() {
+    deployButton = new Button( buttonBar, SWT.PUSH );
+    deployButton.setText( "Deploy" );
+    deployButton.addSelectionListener( new SelectionAdapter() {
       public void widgetSelected( SelectionEvent e ) {
-        if( isInEnableMode ) {
-          // TODO fixed port
-          UiComponents.deploy( component, 9090 );
-        } else {
-          // TODO fixed port
-          UiComponents.undeploy( component, 9090 );
-        }
+// TODO         UiComponents.deploy( component, 9090 );
         shell.close();
       }
     } );
-    shell.setDefaultButton( enablementButton );
+    cancelButton = new Button( buttonBar, SWT.PUSH );
+    cancelButton.setText( "Cancel" );
+    cancelButton.addSelectionListener( new SelectionAdapter() {
+      public void widgetSelected( SelectionEvent e ) {
+        shell.close();
+      }
+    } );
+    shell.setDefaultButton( deployButton );
     return buttonBar;
   }
 
   private Point getScreenCenter() {
     Rectangle screen = parent.getDisplay().getPrimaryMonitor().getClientArea();
     return new Point( screen.x + screen.width / 2, screen.y + screen.height / 2 );
+  }
+
+  @SuppressWarnings( "rawtypes" )
+  private static String getPropertyString( Component component ) {
+    StringBuilder buffer = new StringBuilder();
+    Dictionary properties = component.getProperties();
+    Enumeration keys = properties.keys();
+    while( keys.hasMoreElements() ) {
+      Object key = ( Object )keys.nextElement();
+      buffer.append( key + ": " + properties.get( key ) + ",\n" );
+    }
+    buffer.setLength( Math.max( buffer.length() - 2, 0 ) );
+    return buffer.toString();
   }
 
 }
