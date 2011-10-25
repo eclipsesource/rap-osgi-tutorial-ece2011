@@ -19,7 +19,6 @@ public class UIContributorFactory {
     try {
       UIContributor result = type.newInstance();
       injectServiceProvider( result );
-System.out.println( "service provider injected: " + type.getName() );
       return result;
     } catch( RuntimeException rte ) {
       throw rte;
