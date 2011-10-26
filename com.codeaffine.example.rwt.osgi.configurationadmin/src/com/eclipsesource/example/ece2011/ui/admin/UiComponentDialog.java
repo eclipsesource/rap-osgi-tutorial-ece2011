@@ -10,9 +10,6 @@
  ******************************************************************************/
 package com.eclipsesource.example.ece2011.ui.admin;
 
-import java.util.Dictionary;
-import java.util.Enumeration;
-
 import org.apache.felix.scr.Component;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
@@ -41,7 +38,7 @@ public class UiComponentDialog {
   private final Component component;
   private Button deployButton;
   private Button cancelButton;
-  private Combo httpServiceCombo;
+  private Combo portCombo;
 
   public UiComponentDialog( Shell parent, Component component ) {
     this.parent = parent;
@@ -91,19 +88,16 @@ public class UiComponentDialog {
     new Label( parent, SWT.NONE ).setText( "Bundle:" );
     Label bundleLabel = new Label( parent, SWT.WRAP );
     bundleLabel.setText( component.getBundle().getSymbolicName() );
-//    new Label( parent, SWT.NONE ).setText( "Properties:" );
-//    Label propLabel = new Label( parent, SWT.WRAP );
-//    propLabel.setText( UiComponentDialog.getPropertyString( component ) );
   }
 
   private void createCombo( Composite parent ) {
-    String[] ports = new String[] { "9090" };
+    String[] ports = UiComponents.getAvailablePorts();
     Label label = new Label( parent, SWT.WRAP );
     label.setText( "Port: " );
-    httpServiceCombo = new Combo( parent, SWT.CHECK );
-    httpServiceCombo.setItems( ports );
-    httpServiceCombo.select( 0 );
-    httpServiceCombo.setLayoutData( new GridData( 200, SWT.DEFAULT ) );
+    portCombo = new Combo( parent, SWT.CHECK | SWT.READ_ONLY );
+    portCombo.setItems( ports );
+    portCombo.select( 0 );
+    portCombo.setLayoutData( new GridData( 200, SWT.DEFAULT ) );
   }
 
   private Control createButtons( Composite parent ) {
@@ -118,7 +112,8 @@ public class UiComponentDialog {
     deployButton.setText( "Deploy" );
     deployButton.addSelectionListener( new SelectionAdapter() {
       public void widgetSelected( SelectionEvent e ) {
-// TODO         UiComponents.deploy( component, 9090 );
+        int port = Integer.parseInt( portCombo.getText() );
+        UiComponents.deploy( component, port );
         shell.close();
       }
     } );
@@ -136,19 +131,6 @@ public class UiComponentDialog {
   private Point getScreenCenter() {
     Rectangle screen = parent.getDisplay().getPrimaryMonitor().getClientArea();
     return new Point( screen.x + screen.width / 2, screen.y + screen.height / 2 );
-  }
-
-  @SuppressWarnings( "rawtypes" )
-  private static String getPropertyString( Component component ) {
-    StringBuilder buffer = new StringBuilder();
-    Dictionary properties = component.getProperties();
-    Enumeration keys = properties.keys();
-    while( keys.hasMoreElements() ) {
-      Object key = ( Object )keys.nextElement();
-      buffer.append( key + ": " + properties.get( key ) + ",\n" );
-    }
-    buffer.setLength( Math.max( buffer.length() - 2, 0 ) );
-    return buffer.toString();
   }
 
 }

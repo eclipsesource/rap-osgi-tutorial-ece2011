@@ -10,10 +10,15 @@
  ******************************************************************************/
 package com.eclipsesource.example.ece2011.ui.admin;
 
+import java.util.Collection;
+
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
+import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.http.HttpService;
 
 import com.codeaffine.example.rwt.osgi.configurationadmin.DeploymentHelper;
 
@@ -62,6 +67,24 @@ public class UiComponents {
           result = true;
         }
       }
+    }
+    return result;
+  }
+
+  public static String[] getAvailablePorts() {
+    String[] result;
+    BundleContext bundleContext = DeploymentHelper.getBundleContext();
+    try {
+      Collection<ServiceReference<HttpService>> httpServices
+        = bundleContext.getServiceReferences( HttpService.class, null );
+      result = new String[ httpServices.size() ];
+      int count = 0;
+      for( ServiceReference< HttpService > service : httpServices ) {
+        result[ count ] = ( String )service.getProperty( JettyConstants.HTTP_PORT );
+        count++;
+      }
+    } catch( InvalidSyntaxException shouldNotHappen ) {
+      throw new RuntimeException( shouldNotHappen );
     }
     return result;
   }
