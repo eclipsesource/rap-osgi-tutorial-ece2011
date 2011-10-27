@@ -10,11 +10,18 @@
  ******************************************************************************/
 package com.eclipsesource.example.ece2011.ui.admin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
 import org.eclipse.equinox.http.jetty.JettyConstants;
+import org.eclipse.rwt.application.ApplicationConfigurator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -43,7 +50,33 @@ public class UiComponents {
     deploymentHelper.undeployApplication( component.getName(), Integer.toString( port ), null );
   }
 
-  public static Component[] getAllComponents() {
+  public static List<Component> getActiveComponents( String port ) {
+    List<Long> ids = new ArrayList<Long>();
+    BundleContext bundleContext = DeploymentHelper.getBundleContext();
+    Collection<ServiceReference<ApplicationConfigurator>> serviceReferences;
+    try {
+      serviceReferences = bundleContext.getServiceReferences( ApplicationConfigurator.class, null );
+    } catch( InvalidSyntaxException shouldNotHappen ) {
+      throw new RuntimeException( shouldNotHappen );
+    }
+    for( ServiceReference<ApplicationConfigurator> serviceReference : serviceReferences ) {
+      Object portProperty = serviceReference.getProperty( "httpService.target" );
+      String expected = "(http.port=" + port + ")";
+      if( expected.equals( portProperty ) ) {
+        ids.add( ( Long )serviceReference.getProperty( "component.id" ) );
+      }
+    }
+    ArrayList<Component> result = new ArrayList<Component>();
+    List<Component> allComponents = getAllComponents();
+    for( Component component : allComponents ) {
+      if( ids.contains( Long.valueOf( component.getId() ) ) ) {
+        result.add( component );
+      }
+    }
+    return new ArrayList<Component>( result );
+  }
+
+  public static List<Component> getAllComponents() {
     Component[] components = null;
     BundleContext context = DeploymentHelper.getBundleContext();
     ServiceReference<?> reference = context.getServiceReference( "org.apache.felix.scr.ScrService" );
@@ -55,7 +88,7 @@ public class UiComponents {
         context.ungetService( reference );
       }
     }
-    return components;
+    return new ArrayList<Component>( Arrays.asList( components ) );
   }
 
   public static boolean implementsService( Component component, String string ) {
@@ -71,22 +104,38 @@ public class UiComponents {
     return result;
   }
 
-  public static String[] getAvailablePorts() {
-    String[] result;
+  public static List<String> getAvailablePorts() {
+    List<String> result = new ArrayList<String>();
     BundleContext bundleContext = DeploymentHelper.getBundleContext();
     try {
       Collection<ServiceReference<HttpService>> httpServices
         = bundleContext.getServiceReferences( HttpService.class, null );
-      result = new String[ httpServices.size() ];
-      int count = 0;
       for( ServiceReference< HttpService > service : httpServices ) {
-        result[ count ] = ( String )service.getProperty( JettyConstants.HTTP_PORT );
-        count++;
+        result.add( ( String )service.getProperty( JettyConstants.HTTP_PORT ) );
       }
     } catch( InvalidSyntaxException shouldNotHappen ) {
       throw new RuntimeException( shouldNotHappen );
     }
-    return result;
+    return Collections.unmodifiableList( result );
+  }
+
+  public static final class UIComponentComparator implements Comparator<Component> {
+    
+    public int compare( Component component1, Component component2 ) {
+      int result;
+      boolean isApplication1 = UiComponents.isApplication( component1 );
+      boolean isApplication2 = UiComponents.isApplication( component2 );
+      if( isApplication1 && !isApplication2 ) {
+        result = -1;
+      } else if( !isApplication1 && isApplication2 ) {
+        result = 1;
+      } else {
+        String name1 = component1.getName().toLowerCase( Locale.ENGLISH );
+        String name2 = component2.getName().toLowerCase( Locale.ENGLISH );
+        result = name1.compareTo( name2 );
+      }
+      return result;
+    }
   }
 
 }

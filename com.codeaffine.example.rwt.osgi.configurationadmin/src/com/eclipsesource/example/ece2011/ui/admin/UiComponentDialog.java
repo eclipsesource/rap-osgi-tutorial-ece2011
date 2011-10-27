@@ -10,6 +10,8 @@
  ******************************************************************************/
 package com.eclipsesource.example.ece2011.ui.admin;
 
+import java.util.List;
+
 import org.apache.felix.scr.Component;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
@@ -91,11 +93,11 @@ public class UiComponentDialog {
   }
 
   private void createCombo( Composite parent ) {
-    String[] ports = UiComponents.getAvailablePorts();
+    List<String> ports = UiComponents.getAvailablePorts();
     Label label = new Label( parent, SWT.WRAP );
     label.setText( "Port: " );
     portCombo = new Combo( parent, SWT.CHECK | SWT.READ_ONLY );
-    portCombo.setItems( ports );
+    portCombo.setItems( ports.toArray( new String[ ports.size() ] ) );
     portCombo.select( 0 );
     portCombo.setLayoutData( new GridData( 200, SWT.DEFAULT ) );
   }

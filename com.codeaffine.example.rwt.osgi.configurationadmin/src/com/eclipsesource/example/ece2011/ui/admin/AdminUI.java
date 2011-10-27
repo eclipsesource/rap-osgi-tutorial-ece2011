@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.felix.scr.Component;
 import org.eclipse.rwt.lifecycle.IEntryPoint;
@@ -33,17 +31,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+import com.eclipsesource.example.ece2011.ui.admin.UiComponents.UIComponentComparator;
 
 
 @SuppressWarnings( "serial" )
 public class AdminUI implements IEntryPoint {
 
   private Shell shell;
+  private TabFolder portsTabFolder;
   private Table contributionsTable;
-  private Table activeContributionsTable;
   private Image applicationImage;
   private Image contributionImage;
 
@@ -66,12 +68,16 @@ public class AdminUI implements IEntryPoint {
 
   private void createContent( Composite parent ) {
     parent.setLayout( createMainLayout() );
-    SashForm sashForm = new SashForm( parent, SWT.NONE );
+    SashForm sashForm = new SashForm( parent, SWT.VERTICAL );
     sashForm.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-    Composite leftFrame = new Composite( sashForm, SWT.NONE );
-    Composite rightFrame = new Composite( sashForm, SWT.NONE );
-    createLeftTable( leftFrame );
-    createRightTable( rightFrame );
+    Composite upperFrame = new Composite( sashForm, SWT.NONE );
+    Composite lowerFrame = new Composite( sashForm, SWT.NONE );
+    createUpperPart( upperFrame );
+    createLowerPart( lowerFrame );
+    createUpdateButton( parent );
+  }
+
+  private void createUpdateButton( Composite parent ) {
     Button button = new Button( parent, SWT.PUSH );
     button.setText( "update" );
     button.addSelectionListener( new SelectionAdapter() {
@@ -81,24 +87,32 @@ public class AdminUI implements IEntryPoint {
     } );
   }
 
-  private void createLeftTable( Composite parent ) {
+  private void createUpperPart( Composite parent ) {
+    parent.setLayout( createGridLayout() );
+    Label headerLabel = new Label( parent, SWT.NONE );
+    headerLabel.setText( "Deployed" );
+    headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
+    portsTabFolder = new TabFolder( parent, SWT.TOP );
+    portsTabFolder.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, true ) );
+    createPortsTabItems();
+  }
+
+  private void createLowerPart( Composite parent ) {
     parent.setLayout( createGridLayout() );
     Label headerLabel = new Label( parent, SWT.NONE );
     headerLabel.setText( "Available Contributions" );
     headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
     contributionsTable = createTable( parent );
     contributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-    contributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
   }
 
-  private void createRightTable( Composite parent ) {
-    parent.setLayout( createGridLayout() );
-    Label headerLabel = new Label( parent, SWT.NONE );
-    headerLabel.setText( "Deployed" );
-    headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    activeContributionsTable = createTable( parent );
-    activeContributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-    activeContributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
+  private void createPortTabItem( String port ) {
+    TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE );
+    tabItem.setText( "Port " + port );
+    Table table = createTable( portsTabFolder );
+    table.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    tabItem.setControl( table );
+    createComponents( table, port );
   }
 
   private Table createTable( Composite parent ) {
@@ -134,34 +148,46 @@ public class AdminUI implements IEntryPoint {
   }
 
   protected void update() {
-    Component[] components = UiComponents.getAllComponents();
-    renderComponents( components );
+    renderAvailableComponents();
+    shell.layout( true );
   }
 
-  private void renderComponents( Component[] components ) {
-    List<Component> activeContributions = new ArrayList<Component>();
+  private void renderAvailableComponents() {
+    List<Component> components = UiComponents.getAllComponents();
     List<Component> contributions = new ArrayList<Component>();
-    if( components != null ) {
-      for( Component component : components ) {
+    for( Component component : components ) {
+      if( "require".equals( component.getConfigurationPolicy() ) ) {
         contributions.add( component );
-        if( component.getState() == Component.STATE_ACTIVE ) {
-          activeContributions.add( component );
-        }
       }
     }
     Collections.sort( contributions, new UIComponentComparator() ); 
-    Collections.sort( activeContributions, new UIComponentComparator() ); 
     clearTableItems( contributionsTable );
     for( Component component : contributions ) {
-      createActiveContributionItem( contributionsTable, component );
-    }
-    clearTableItems( activeContributionsTable );
-    for( Component component : activeContributions ) {
-      createContributionItem( activeContributionsTable, component );
+      createContributionItem( contributionsTable, component );
     }
   }
 
-  private void clearTableItems( Table table ) {
+  private void createComponents( Table table, String port ) {
+    clearTableItems( table );
+    List<Component> contributions = UiComponents.getActiveComponents( port );
+    Collections.sort( contributions, new UIComponentComparator() ); 
+    for( Component component : contributions ) {
+      createContributionItem( table, component );
+    }
+  }
+
+  private void createPortsTabItems() {
+    List<String> ports = UiComponents.getAvailablePorts();
+    TabItem[] items = portsTabFolder.getItems();
+    for( TabItem item : items ) {
+      item.dispose();
+    }
+    for( String port : ports ) {
+      createPortTabItem( port );
+    }
+  }
+
+  private static void clearTableItems( Table table ) {
     TableItem[] items = table.getItems();
     for( TableItem item : items ) {
       item.dispose();
@@ -169,14 +195,6 @@ public class AdminUI implements IEntryPoint {
   }
 
   private void createContributionItem( Table table, Component component ) {
-    TableItem item = new TableItem( table, SWT.NONE );
-    item.setData( component );
-    item.setImage( 0, getTypeImage( component ) );
-    item.setText( 1, component.getName() );
-    item.setText( 2, component.getBundle().getSymbolicName() );
-  }
-
-  private void createActiveContributionItem( Table table, Component component ) {
     TableItem item = new TableItem( table, SWT.NONE );
     item.setData( component );
     item.setImage( 0, getTypeImage( component ) );
@@ -225,25 +243,6 @@ public class AdminUI implements IEntryPoint {
     layout.marginWidth = 40;
     layout.marginBottom = 10;
     return layout;
-  }
-
-  private static final class UIComponentComparator implements Comparator< Component > {
-  
-    public int compare( Component component1, Component component2 ) {
-      int result;
-      boolean isApplication1 = UiComponents.isApplication( component1 );
-      boolean isApplication2 = UiComponents.isApplication( component2 );
-      if( isApplication1 && !isApplication2 ) {
-        result = -1;
-      } else if( !isApplication1 && isApplication2 ) {
-        result = 1;
-      } else {
-        String name1 = component1.getName().toLowerCase( Locale.ENGLISH );
-        String name2 = component2.getName().toLowerCase( Locale.ENGLISH );
-        result = name1.compareTo( name2 );
-      }
-      return result;
-    }
   }
 
 }
