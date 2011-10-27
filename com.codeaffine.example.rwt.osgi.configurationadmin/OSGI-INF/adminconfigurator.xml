@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+    configuration-policy="require"
     name="admin">
   <implementation class="com.eclipsesource.example.ece2011.ui.admin.AdminConfigurator"/>
   <service>
