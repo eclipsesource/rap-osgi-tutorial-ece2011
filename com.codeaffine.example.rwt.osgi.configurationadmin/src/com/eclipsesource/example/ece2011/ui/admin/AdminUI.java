@@ -50,25 +50,25 @@ public class AdminUI implements IEntryPoint {
     Display display = new Display();
     shell = new Shell( display, SWT.NO_TRIM );
     shell.setMaximized( true );
-    createImages( display );
     createContent( shell );
-    update();
     shell.layout();
     shell.open();
     return 0;
   }
 
-  private void createImages( Display display ) {
-    images = new Images( display );
-  }
-
-  private void createContent( Composite parent ) {
+  public void createContent( Composite parent ) {
+    createImages( parent.getDisplay() );
     parent.setLayout( createMainLayout() );
     Control upperPart = createUpperPart( parent );
     upperPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     Control lowerPart = createLowerPart( parent );
     lowerPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     createUpdateButton( parent );
+    update();
+  }
+
+  private void createImages( Display display ) {
+    images = new Images( display );
   }
 
   private Control createUpperPart( Composite parent ) {
