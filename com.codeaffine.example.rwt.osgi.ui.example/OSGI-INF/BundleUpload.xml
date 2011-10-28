@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="BundleUpload">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" configuration-policy="require" name="BundleUpload">
    <implementation class="com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory"/>
    <service>
       <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory"/>

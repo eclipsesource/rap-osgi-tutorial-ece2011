@@ -10,6 +10,9 @@
  ******************************************************************************/
 package com.codeaffine.example.rwt.osgi.ui.example;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -50,16 +53,17 @@ class MenuBarProvider implements UIContributor {
     
     final PageService pageService = serviceProvider.get( PageService.class );
     pageService.addPageTracker( new PageTracker() {
-      Button menuButton;
+      Map<UIContributor,Button> buttons = new HashMap<UIContributor,Button>();
 
       @Override
       public void pageAdded( UIContributor page ) {
-        menuButton = createMenuButton( result, pageService, page.getId() );
+        buttons.put( page, createMenuButton( result, pageService, page.getId() ) );
       }
 
       @Override
       public void pageRemoved( UIContributor page ) {
-        menuButton.dispose();
+        Button removed = buttons.remove( page );
+        removed.dispose();
       }
     } );
     
@@ -81,6 +85,8 @@ class MenuBarProvider implements UIContributor {
         pageService.selectPage( pageId );
       }
     } );
+    parent.layout( true, true );
+    pageService.selectPage( pageId );
     return result;
   }
 }

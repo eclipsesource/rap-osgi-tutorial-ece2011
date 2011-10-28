@@ -200,7 +200,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     Dictionary<String,Object> result = new Hashtable<String, Object>();
     result.put( JettyConstants.HTTP_PORT, Integer.valueOf( port ) );
     if( useJettyCustomizer() && !jettyCustomizerFlag ) {
-      result.put( CUSTOMIZER_CLASS, System.getProperty( CUSTOMIZER_CLASS ) );
+      result.put( JettyConstants.CUSTOMIZER_CLASS, System.getProperty( CUSTOMIZER_CLASS ) );
     }
     return result;
   }

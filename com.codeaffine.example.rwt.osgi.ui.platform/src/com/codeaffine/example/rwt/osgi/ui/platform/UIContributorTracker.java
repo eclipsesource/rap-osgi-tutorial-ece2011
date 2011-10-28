@@ -72,7 +72,8 @@ public class UIContributorTracker {
   
   public UIContributorTracker() {
     display = Display.getDefault();
-    UICallBack.activate( String.valueOf( display.hashCode() ) );
+    int hashCode = display.hashCode();
+    UICallBack.activate( String.valueOf( hashCode ) );
     trackerService = getTrackerService();
     tracker = new TrackerImpl();
     trackerService.addTracker( tracker );
