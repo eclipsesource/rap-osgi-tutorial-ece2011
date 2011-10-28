@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.felix.scr.Component;
 import org.eclipse.rwt.lifecycle.IEntryPoint;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
@@ -117,7 +116,7 @@ public class AdminUI implements IEntryPoint {
       public void widgetDefaultSelected( SelectionEvent e ) {
         TableItem item = ( TableItem )e.item;
         if( item != null ) {
-          Component component = ( Component )item.getData();
+          UiComponent component = ( UiComponent )item.getData();
           if( component != null ) {
             handleSelection( component );
           }
@@ -127,7 +126,7 @@ public class AdminUI implements IEntryPoint {
     return table;
   }
 
-  protected void handleSelection( final Component component ) {
+  protected void handleSelection( final UiComponent component ) {
     UiComponentDialog dialog = new UiComponentDialog( shell, component );
     dialog.open();
   }
@@ -138,16 +137,14 @@ public class AdminUI implements IEntryPoint {
   }
 
   private void createItemsForAvailableComponents() {
-    List<Component> components = UiComponents.getAllComponents();
-    List<Component> contributions = new ArrayList<Component>();
-    for( Component component : components ) {
-      if( "require".equals( component.getConfigurationPolicy() ) ) {
-        contributions.add( component );
-      }
+    List<UiComponent> components = UiComponents.getAvailableComponents();
+    List<UiComponent> contributions = new ArrayList<UiComponent>();
+    for( UiComponent component : components ) {
+      contributions.add( component );
     }
     Collections.sort( contributions, new UIComponentComparator() ); 
     clearTableItems( contributionsTable );
-    for( Component component : contributions ) {
+    for( UiComponent component : contributions ) {
       createContributionItem( contributionsTable, component );
     }
     fillEmptyItems( contributionsTable, 7 );
@@ -155,9 +152,9 @@ public class AdminUI implements IEntryPoint {
 
   private void createItemsForActiveComponents( Table table, String port ) {
     clearTableItems( table );
-    List<Component> contributions = UiComponents.getActiveComponents( port );
+    List<UiComponent> contributions = UiComponents.getActiveComponents( port );
     Collections.sort( contributions, new UIComponentComparator() ); 
-    for( Component component : contributions ) {
+    for( UiComponent component : contributions ) {
       createContributionItem( table, component );
     }
     fillEmptyItems( table, 4 );
@@ -196,17 +193,17 @@ public class AdminUI implements IEntryPoint {
     }
   }
 
-  private void createContributionItem( Table table, Component component ) {
+  private void createContributionItem( Table table, UiComponent component ) {
     TableItem item = new TableItem( table, SWT.NONE );
     item.setData( component );
     item.setImage( 0, getTypeImage( component ) );
     item.setText( 1, component.getName() );
-    item.setText( 2, component.getBundle().getSymbolicName() );
+    item.setText( 2, component.getBundleName() );
   }
 
-  private Image getTypeImage( Component component ) {
+  private Image getTypeImage( UiComponent component ) {
     Image result;
-    if( UiComponents.isApplication( component ) ) {
+    if( component.isApplication() ) {
       result = images.applicationImage;
     } else {
       result = images.contributionImage;

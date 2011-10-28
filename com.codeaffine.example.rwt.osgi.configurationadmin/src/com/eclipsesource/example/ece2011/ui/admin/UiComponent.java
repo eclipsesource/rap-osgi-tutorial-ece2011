@@ -6,9 +6,29 @@ import org.apache.felix.scr.Component;
 public class UiComponent {
 
   private final Component component;
+  private final String application;
+  private final String deployedOnPort;
 
-  public UiComponent( Component component ) {
+  public UiComponent( Component component, String application, String deployedOnPort ) {
     this.component = component;
+    this.application = application;
+    this.deployedOnPort = deployedOnPort;
+  }
+  
+  public String getName() {
+    return component.getName();
+  }
+  
+  public String getApplication() {
+    return application;
+  }
+
+  public String getDeployedOnPort() {
+    return deployedOnPort;
+  }
+
+  public String getBundleName() {
+    return component.getBundle().getSymbolicName();
   }
 
   public boolean isApplication() {
@@ -18,7 +38,7 @@ public class UiComponent {
   public boolean isUiContribution() {
     return implementsService( "com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory" );
   }
-
+  
   public boolean implementsService( String string ) {
     boolean result = false;
     String[] services = component.getServices();
@@ -30,14 +50,6 @@ public class UiComponent {
       }
     }
     return result;
-  }
-
-  public String getName() {
-    return component.getName();
-  }
-
-  public String getBundleName() {
-    return component.getBundle().getSymbolicName();
   }
 
 }

@@ -27,33 +27,29 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
 
 import com.codeaffine.example.rwt.osgi.configurationadmin.DeploymentHelper;
+import com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory;
 
 
 public class UiComponents {
 
-  public static void deploy( UiComponent component, int port ) {
-    DeploymentHelper deploymentHelper = new DeploymentHelper();
-    deploymentHelper.deployApplication( component.getName(), Integer.toString( port ), null );
-  }
-
-  public static void undeploy( Component component, int port ) {
-    DeploymentHelper deploymentHelper = new DeploymentHelper();
-    deploymentHelper.undeployApplication( component.getName(), Integer.toString( port ), null );
-  }
-
   public static List<UiComponent> getActiveComponents( String port ) {
     List<Long> ids = new ArrayList<Long>();
     BundleContext bundleContext = DeploymentHelper.getBundleContext();
-    Collection<ServiceReference<ApplicationConfigurator>> serviceReferences;
+    Collection<ServiceReference<?>> serviceReferences = new ArrayList<ServiceReference<?>>();
     try {
-      serviceReferences = bundleContext.getServiceReferences( ApplicationConfigurator.class, null );
+      serviceReferences.addAll( bundleContext.getServiceReferences( ApplicationConfigurator.class, null ) );
+      serviceReferences.addAll( bundleContext.getServiceReferences( UIContributorFactory.class, null ) );
     } catch( InvalidSyntaxException shouldNotHappen ) {
       throw new RuntimeException( shouldNotHappen );
     }
-    for( ServiceReference<ApplicationConfigurator> serviceReference : serviceReferences ) {
+    for( ServiceReference<?> serviceReference : serviceReferences ) {
       Object portProperty = serviceReference.getProperty( "httpService.target" );
       String expected = "(http.port=" + port + ")";
       if( expected.equals( portProperty ) ) {
+        ids.add( ( Long )serviceReference.getProperty( "component.id" ) );
+      }
+      Object appConfProperty = serviceReference.getProperty( "ApplicationConfigurator" );
+      if( appConfProperty != null && ((String)appConfProperty).contains( port + "_" ) ) {
         ids.add( ( Long )serviceReference.getProperty( "component.id" ) );
       }
     }
@@ -61,18 +57,20 @@ public class UiComponents {
     Component[] allComponents = getAllComponents();
     for( Component component : allComponents ) {
       if( ids.contains( Long.valueOf( component.getId() ) ) ) {
-        result.add( new UiComponent( component ) );
+        String property = ( String )component.getProperties().get( "ApplicationConfigurator" );
+        String application = property.replaceFirst( ".*_(.*)_.*", "$1" );
+        result.add( new UiComponent( component, application, port ) );
       }
     }
     return result;
   }
 
-  public static List< UiComponent > getAvailableComponents() {
+  public static List<UiComponent> getAvailableComponents() {
     Component[] components = getAllComponents();
     ArrayList<UiComponent> result = new ArrayList<UiComponent>();
     for( Component component : components ) {
       if( "require".equals( component.getConfigurationPolicy() ) ) {
-        result.add( new UiComponent( component ) );
+        result.add( new UiComponent( component, null, null ) );
       }
     }
     return result;

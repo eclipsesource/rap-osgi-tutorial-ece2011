@@ -5,7 +5,8 @@ Bundle-SymbolicName: com.codeaffine.example.rwt.osgi.configurationadmin
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: CODEAFFINE.com
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.felix.scr;version="1.6.0",
+Import-Package: com.codeaffine.example.rwt.osgi.ui.platform;version="1.0.0",
+ org.apache.felix.scr;version="1.6.0",
  org.eclipse.equinox.http.jetty;version="[1.1.0,2.0.0)";resolution:=optional,
  org.eclipse.osgi.framework.console;version="[1.1.0,2.0.0)",
  org.eclipse.rap.rwt.osgi;version="[1.0.0,2.0.0)",

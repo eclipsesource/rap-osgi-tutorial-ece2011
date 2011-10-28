@@ -13,7 +13,6 @@ package com.eclipsesource.example.ece2011.ui.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.felix.scr.Component;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -33,24 +32,26 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import com.codeaffine.example.rwt.osgi.configurationadmin.DeploymentHelper;
+
 
 @SuppressWarnings( "serial" )
 public class UiComponentDialog {
 
   private final Shell parent;
   private final Shell shell;
-  private final Component component;
-  private Button deployButton;
-  private Button cancelButton;
+  private final UiComponent component;
   private Combo portCombo;
-  private Combo parentCombo;
+  private Combo applicationCombo;
   private Images images;
   private boolean isApplication;
+  private boolean isUndeploy;
 
-  public UiComponentDialog( Shell parent, Component component ) {
+  public UiComponentDialog( Shell parent, UiComponent component ) {
     this.parent = parent;
     this.component = component;
-    isApplication = UiComponents.isApplication( component );
+    isApplication = component.isApplication();
+    isUndeploy = component.getDeployedOnPort() != null;
     shell = new Shell( parent, SWT.BORDER | SWT.APPLICATION_MODAL );
     createImages( shell.getDisplay() );
     createContents( shell );
@@ -73,9 +74,11 @@ public class UiComponentDialog {
     parent.setLayout( createMainLayout() );
     createHeader( shell );
     createLabels( shell );
-    createPortCombo( shell );
-    if( !isApplication ) {
-      createParentApplicationCombo( shell );
+    if( !isUndeploy ) {
+      createPortCombo( shell );
+      if( !isApplication ) {
+        createParentApplicationCombo( shell );
+      }
     }
     Control buttonBar = createButtonBar( shell );
     buttonBar.setLayoutData( createButtonBarData() );
@@ -105,7 +108,9 @@ public class UiComponentDialog {
     Label iconLabel = new Label( header, SWT.CENTER );
     Label textLabel = new Label( header, SWT.CENTER );
     textLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    textLabel.setText( isApplication ? "Application" : "Contribution" );
+    String text = isUndeploy ? "Undeploy " : "Deploy ";
+    text += isApplication ? "Application" : "Contribution";
+    textLabel.setText( text );
     iconLabel.setImage( isApplication ? images.applicationImage : images.contributionImage );
   }
 
@@ -115,7 +120,12 @@ public class UiComponentDialog {
     nameLabel.setText( component.getName() );
     new Label( parent, SWT.NONE ).setText( "Bundle:" );
     Label bundleLabel = new Label( parent, SWT.WRAP );
-    bundleLabel.setText( component.getBundle().getSymbolicName() );
+    bundleLabel.setText( component.getBundleName() );
+    if( isUndeploy ) {
+      new Label( parent, SWT.NONE ).setText( "Port:" );
+      Label portLabel = new Label( parent, SWT.WRAP );
+      portLabel.setText( component.getDeployedOnPort() );
+    }
   }
 
   private void createPortCombo( Composite parent ) {
@@ -133,63 +143,109 @@ public class UiComponentDialog {
 
   private void createParentApplicationCombo( Composite parent ) {
     Label label = new Label( parent, SWT.WRAP );
-    label.setText( "Parent: " );
-    parentCombo = new Combo( parent, SWT.CHECK | SWT.READ_ONLY );
-    parentCombo.select( 0 );
-    parentCombo.setLayoutData( new GridData( 200, SWT.DEFAULT ) );
+    label.setText( "Application: " );
+    applicationCombo = new Combo( parent, SWT.CHECK | SWT.READ_ONLY );
+    applicationCombo.select( 0 );
+    applicationCombo.setLayoutData( new GridData( 200, SWT.DEFAULT ) );
   }
 
   private Control createButtonBar( Composite parent ) {
     Composite buttonBar = new Composite( parent, SWT.NONE );
+    buttonBar.setLayout( createButtonBarLayout() );
+    if( isUndeploy ) {
+      createUndeployButton( buttonBar );
+    } else {
+      createDeployButton( buttonBar );
+    }
+    createCancelButton( buttonBar );
+    return buttonBar;
+  }
+
+  private void createCancelButton( Composite buttonBar ) {
+    Button button = new Button( buttonBar, SWT.PUSH );
+    button.setText( "Cancel" );
+    button.addSelectionListener( new SelectionAdapter() {
+      public void widgetSelected( SelectionEvent e ) {
+        shell.close();
+      }
+    } );
+  }
+
+  private void createDeployButton( Composite buttonBar ) {
+    Button button = new Button( buttonBar, SWT.PUSH );
+    button.setText( "Deploy" );
+    shell.setDefaultButton( button );
+    button.addSelectionListener( new SelectionAdapter() {
+      public void widgetSelected( SelectionEvent e ) {
+        String port = portCombo.getText();
+        DeploymentHelper deploymentHelper = new DeploymentHelper();
+        if( isApplication ) {
+          deploymentHelper.deployApplication( component.getName(), port, null );
+        } else {
+          String application = applicationCombo.getText();
+          deploymentHelper.deployUIContribution( component.getName(), application, port, null );
+        }
+        shell.close();
+      }
+    } );
+  }
+
+  private void createUndeployButton( Composite buttonBar ) {
+    Button deployButton = new Button( buttonBar, SWT.PUSH );
+    deployButton.setText( "Undeploy" );
+    shell.setDefaultButton( deployButton );
+    deployButton.addSelectionListener( new SelectionAdapter() {
+      public void widgetSelected( SelectionEvent e ) {
+        DeploymentHelper deploymentHelper = new DeploymentHelper();
+        if( isApplication ) {
+          deploymentHelper.undeployApplication( component.getName(),
+                                                component.getDeployedOnPort(),
+                                                null );
+        } else {
+          deploymentHelper.undeployUIContribution( component.getName(),
+                                                   component.getApplication(),
+                                                   component.getDeployedOnPort(),
+                                                   null );
+        }
+        shell.close();
+      }
+    } );
+  }
+
+  private RowLayout createButtonBarLayout() {
     RowLayout layout = new RowLayout( SWT.HORIZONTAL );
     layout.marginTop = 20;
     layout.marginRight = 0;
     layout.marginBottom = 0;
     layout.spacing = 6;
-    buttonBar.setLayout( layout );
-    deployButton = new Button( buttonBar, SWT.PUSH );
-    deployButton.setText( "Deploy" );
-    deployButton.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        int port = Integer.parseInt( portCombo.getText() );
-        UiComponents.deploy( component, port );
-        shell.close();
-      }
-    } );
-    cancelButton = new Button( buttonBar, SWT.PUSH );
-    cancelButton.setText( "Cancel" );
-    cancelButton.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        shell.close();
-      }
-    } );
-    shell.setDefaultButton( deployButton );
-    return buttonBar;
+    return layout;
   }
 
   private void updatePortCombo() {
-    List<String> ports = UiComponents.getAvailablePorts();
-    String oldText = portCombo.getText();
-    portCombo.setItems( ports.toArray( new String[ ports.size() ] ) );
-    portCombo.setText( oldText );
-    if( portCombo.getSelectionIndex() < 0 && portCombo.getItemCount() > 0 ) {
-      portCombo.select( 0 );
+    if( portCombo != null ) {
+      List<String> ports = UiComponents.getAvailablePorts();
+      String oldText = portCombo.getText();
+      portCombo.setItems( ports.toArray( new String[ ports.size() ] ) );
+      portCombo.setText( oldText );
+      if( portCombo.getSelectionIndex() < 0 && portCombo.getItemCount() > 0 ) {
+        portCombo.select( 0 );
+      }
     }
   }
 
   private void updateParentCombo() {
-    if( parentCombo != null ) {
+    if( applicationCombo != null ) {
       String port = portCombo.getText();
-      List< Component > activeComponents = UiComponents.getActiveComponents( port );
-      List< String > items = new ArrayList< String >();
-      for( Component component : activeComponents ) {
+      List<UiComponent> activeComponents = UiComponents.getActiveComponents( port );
+      List<String> items = new ArrayList<String>();
+      for( UiComponent component : activeComponents ) {
         items.add( component.getName() );
       }
-      String oldText = parentCombo.getText();
-      parentCombo.setItems( items.toArray( new String[ items.size() ] ) );
-      parentCombo.setText( oldText );
-      if( parentCombo.getSelectionIndex() < 0 && parentCombo.getItemCount() > 0 ) {
-        parentCombo.select( 0 );
+      String oldText = applicationCombo.getText();
+      applicationCombo.setItems( items.toArray( new String[ items.size() ] ) );
+      applicationCombo.setText( oldText );
+      if( applicationCombo.getSelectionIndex() < 0 && applicationCombo.getItemCount() > 0 ) {
+        applicationCombo.select( 0 );
       }
     }
   }
