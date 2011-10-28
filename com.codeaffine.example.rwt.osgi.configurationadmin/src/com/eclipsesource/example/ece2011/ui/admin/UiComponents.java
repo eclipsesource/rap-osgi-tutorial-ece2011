@@ -11,7 +11,6 @@
 package com.eclipsesource.example.ece2011.ui.admin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,15 +31,7 @@ import com.codeaffine.example.rwt.osgi.configurationadmin.DeploymentHelper;
 
 public class UiComponents {
 
-  public static boolean isApplication( Component component ) {
-    return implementsService( component, "org.eclipse.rwt.application.ApplicationConfigurator" );
-  }
-
-  public static boolean isUiContribution( Component component ) {
-    return implementsService( component, "com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory" );
-  }
-
-  public static void deploy( Component component, int port ) {
+  public static void deploy( UiComponent component, int port ) {
     DeploymentHelper deploymentHelper = new DeploymentHelper();
     deploymentHelper.deployApplication( component.getName(), Integer.toString( port ), null );
   }
@@ -50,7 +41,7 @@ public class UiComponents {
     deploymentHelper.undeployApplication( component.getName(), Integer.toString( port ), null );
   }
 
-  public static List<Component> getActiveComponents( String port ) {
+  public static List<UiComponent> getActiveComponents( String port ) {
     List<Long> ids = new ArrayList<Long>();
     BundleContext bundleContext = DeploymentHelper.getBundleContext();
     Collection<ServiceReference<ApplicationConfigurator>> serviceReferences;
@@ -66,17 +57,28 @@ public class UiComponents {
         ids.add( ( Long )serviceReference.getProperty( "component.id" ) );
       }
     }
-    ArrayList<Component> result = new ArrayList<Component>();
-    List<Component> allComponents = getAllComponents();
+    ArrayList<UiComponent> result = new ArrayList<UiComponent>();
+    Component[] allComponents = getAllComponents();
     for( Component component : allComponents ) {
       if( ids.contains( Long.valueOf( component.getId() ) ) ) {
-        result.add( component );
+        result.add( new UiComponent( component ) );
       }
     }
-    return new ArrayList<Component>( result );
+    return result;
   }
 
-  public static List<Component> getAllComponents() {
+  public static List< UiComponent > getAvailableComponents() {
+    Component[] components = getAllComponents();
+    ArrayList<UiComponent> result = new ArrayList<UiComponent>();
+    for( Component component : components ) {
+      if( "require".equals( component.getConfigurationPolicy() ) ) {
+        result.add( new UiComponent( component ) );
+      }
+    }
+    return result;
+  }
+
+  private static Component[] getAllComponents() {
     Component[] components = null;
     BundleContext context = DeploymentHelper.getBundleContext();
     ServiceReference<?> reference = context.getServiceReference( "org.apache.felix.scr.ScrService" );
@@ -88,20 +90,7 @@ public class UiComponents {
         context.ungetService( reference );
       }
     }
-    return new ArrayList<Component>( Arrays.asList( components ) );
-  }
-
-  public static boolean implementsService( Component component, String string ) {
-    boolean result = false;
-    String[] services = component.getServices();
-    if( services != null ) {
-      for( String service : services ) {
-        if( string.equals( service ) ) {
-          result = true;
-        }
-      }
-    }
-    return result;
+    return components;
   }
 
   public static List<String> getAvailablePorts() {
@@ -119,12 +108,12 @@ public class UiComponents {
     return Collections.unmodifiableList( result );
   }
 
-  public static final class UIComponentComparator implements Comparator<Component> {
-    
-    public int compare( Component component1, Component component2 ) {
+  public static final class UIComponentComparator implements Comparator<UiComponent> {
+
+    public int compare( UiComponent component1, UiComponent component2 ) {
       int result;
-      boolean isApplication1 = UiComponents.isApplication( component1 );
-      boolean isApplication2 = UiComponents.isApplication( component2 );
+      boolean isApplication1 = component1.isApplication();
+      boolean isApplication2 = component2.isApplication();
       if( isApplication1 && !isApplication2 ) {
         result = -1;
       } else if( !isApplication1 && isApplication2 ) {
