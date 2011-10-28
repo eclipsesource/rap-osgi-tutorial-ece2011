@@ -15,14 +15,16 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.rwt.lifecycle.IEntryPoint;
+import org.eclipse.rwt.lifecycle.UICallBack;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -40,18 +42,30 @@ import com.eclipsesource.example.ece2011.ui.admin.UiComponents.UIComponentCompar
 @SuppressWarnings( "serial" )
 public class AdminUI implements IEntryPoint {
 
+  private static final String UICALLBACK_ID = AdminUI.class.getName();
   private Shell shell;
   private TabFolder portsTabFolder;
   private Table contributionsTable;
   private Images images;
+  private ChangeTracker changeTracker;
 
   public int createUI() {
-    Display display = new Display();
+    final Display display = new Display();
     shell = new Shell( display, SWT.NO_TRIM );
     shell.setMaximized( true );
     createContent( shell );
     shell.layout();
     shell.open();
+    changeTracker = createChangeTracker( display );
+    UICallBack.activate( UICALLBACK_ID );
+    changeTracker.start();
+    shell.addDisposeListener( new DisposeListener() {
+      
+      public void widgetDisposed( DisposeEvent event ) {
+        changeTracker.stop();
+        UICallBack.deactivate( UICALLBACK_ID );
+      }
+    } );
     return 0;
   }
 
@@ -62,7 +76,6 @@ public class AdminUI implements IEntryPoint {
     upperPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     Control lowerPart = createLowerPart( parent );
     lowerPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-    createUpdateButton( parent );
     update();
   }
 
@@ -78,7 +91,7 @@ public class AdminUI implements IEntryPoint {
     headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
     portsTabFolder = new TabFolder( frame, SWT.TOP );
     portsTabFolder.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-    createPortsTabItems();
+    createTabItemsForPorts();
     return frame;
   }
 
@@ -91,16 +104,6 @@ public class AdminUI implements IEntryPoint {
     contributionsTable = createTable( frame, SWT.BORDER );
     contributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     return frame;
-  }
-
-  private void createUpdateButton( Composite parent ) {
-    Button button = new Button( parent, SWT.PUSH );
-    button.setText( "update" );
-    button.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {
-        update();
-      }
-    } );
   }
 
   private Table createTable( Composite parent, int style ) {
@@ -132,6 +135,7 @@ public class AdminUI implements IEntryPoint {
   }
 
   protected void update() {
+    createTabItemsForPorts();
     createItemsForAvailableComponents();
     shell.layout( true );
   }
@@ -160,24 +164,34 @@ public class AdminUI implements IEntryPoint {
     fillEmptyItems( table, 4 );
   }
 
-  private void createPortsTabItems() {
+  private void createTabItemsForPorts() {
     List<String> ports = UiComponents.getAvailablePorts();
+    String oldPort = null;
+    int selected = portsTabFolder.getSelectionIndex();
+    if( selected >= 0 ) {
+      oldPort = ( String )portsTabFolder.getItem( selected ).getData();
+    }
     TabItem[] items = portsTabFolder.getItems();
     for( TabItem item : items ) {
       item.dispose();
     }
     for( String port : ports ) {
-      createPortTabItem( port );
+      TabItem item = createPortTabItem( port );
+      if( port.equals( oldPort ) ) {
+        portsTabFolder.setSelection( item );
+      }
     }
   }
 
-  private void createPortTabItem( String port ) {
+  private TabItem createPortTabItem( String port ) {
     TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE );
     tabItem.setText( "Port " + port );
+    tabItem.setData( port );
     Table table = createTable( portsTabFolder, SWT.NONE );
     table.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     tabItem.setControl( table );
     createItemsForActiveComponents( table, port );
+    return tabItem;
   }
 
   private static void clearTableItems( Table table ) {
@@ -209,6 +223,19 @@ public class AdminUI implements IEntryPoint {
       result = images.contributionImage;
     }
     return result;
+  }
+
+  private ChangeTracker createChangeTracker( final Display display ) {
+    return new ChangeTracker() {
+      @Override
+      protected void update() {
+        display.asyncExec( new Runnable() {
+          public void run() {
+            AdminUI.this.update();
+          }
+        } );
+      }
+    };
   }
 
   private static GridLayout createGridLayout() {
