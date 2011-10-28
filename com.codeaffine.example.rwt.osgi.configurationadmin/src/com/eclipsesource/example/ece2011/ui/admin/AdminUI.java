@@ -10,8 +10,6 @@
  ******************************************************************************/
 package com.eclipsesource.example.ece2011.ui.admin;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,8 +44,7 @@ public class AdminUI implements IEntryPoint {
   private Shell shell;
   private TabFolder portsTabFolder;
   private Table contributionsTable;
-  private Image applicationImage;
-  private Image contributionImage;
+  private Images images;
 
   public int createUI() {
     Display display = new Display();
@@ -62,8 +59,7 @@ public class AdminUI implements IEntryPoint {
   }
 
   private void createImages( Display display ) {
-    applicationImage = createImage( display, "resources/application-16.png" );
-    contributionImage = createImage( display, "resources/contribution-16.png" );
+    images = new Images( display );
   }
 
   private void createContent( Composite parent ) {
@@ -206,27 +202,9 @@ public class AdminUI implements IEntryPoint {
   private Image getTypeImage( Component component ) {
     Image result;
     if( UiComponents.isApplication( component ) ) {
-      result = applicationImage;
+      result = images.applicationImage;
     } else {
-      result = contributionImage;
-    }
-    return result;
-  }
-
-  private static Image createImage( Display display, String name ) {
-    Image result;
-    ClassLoader classLoader = AdminUI.class.getClassLoader();
-    InputStream inputSteam = classLoader.getResourceAsStream( name  );
-    if( inputSteam == null ) {
-      throw new IllegalArgumentException( "Image not found" );
-    }
-    try {
-      result = new Image( display, inputSteam );
-    } finally {
-      try {
-        inputSteam.close();
-      } catch( IOException e ) {
-      }
+      result = images.contributionImage;
     }
     return result;
   }

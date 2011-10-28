@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -41,13 +42,16 @@ public class UiComponentDialog {
   private Button deployButton;
   private Button cancelButton;
   private Combo portCombo;
+  private Images images;
 
   public UiComponentDialog( Shell parent, Component component ) {
     this.parent = parent;
     this.component = component;
     shell = new Shell( parent, SWT.BORDER | SWT.APPLICATION_MODAL );
-    createContents();
+    createImages( shell.getDisplay() );
+    createContents( shell );
     shell.pack();
+    fixShellResize();
   }
 
   public void open() {
@@ -57,18 +61,26 @@ public class UiComponentDialog {
     shell.open();
   }
 
-  private void createContents() {
+  private void createImages( Display display ) {
+    images = new Images( display );
+  }
+
+  private void createContents( Composite parent ) {
     GridLayout mainLayout = new GridLayout( 2, false );
     mainLayout.marginWidth = 20;
     mainLayout.marginTop = 15;
     mainLayout.marginBottom = 10;
-    shell.setLayout( mainLayout );
+    parent.setLayout( mainLayout );
+    createHeader( shell );
     createLabels( shell );
     createCombo( shell );
     Control buttons = createButtons( shell );
     GridData buttonData = new GridData( SWT.RIGHT, SWT.BOTTOM, false, false );
     buttonData.horizontalSpan = 2;
     buttons.setLayoutData( buttonData );
+  }
+
+  private void fixShellResize() {
     shell.addControlListener( new ControlAdapter() {
       @Override
       public void controlResized( ControlEvent e ) {
@@ -77,13 +89,25 @@ public class UiComponentDialog {
     } );
   }
 
+  private void createHeader( Composite parent ) {
+    Composite header = new Composite( parent, SWT.NONE );
+    RowLayout headerLayout = new RowLayout();
+    headerLayout.marginLeft = 0;
+    headerLayout.spacing = 8;
+    headerLayout.center = true;
+    header.setLayout( headerLayout );
+    GridData layoutData = new GridData();
+    layoutData.horizontalSpan = 2;
+    header.setLayoutData( layoutData );
+    Label iconLabel = new Label( header, SWT.CENTER );
+    Label textLabel = new Label( header, SWT.CENTER );
+    textLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
+    boolean isApplication = UiComponents.isApplication( component );
+    textLabel.setText( isApplication ? "Application" : "UIContribution" );
+    iconLabel.setImage( isApplication ? images.applicationImage : images.contributionImage );
+  }
+
   private void createLabels( Composite parent ) {
-    Label headLabel = new Label( parent, SWT.NONE );
-    headLabel.setText( UiComponents.isApplication( component ) ? "Application" : "UIContribution" );
-    headLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    GridData gridData = new GridData();
-    gridData.horizontalSpan = 2;
-    headLabel.setLayoutData( gridData );
     new Label( parent, SWT.NONE ).setText( "Name:" );
     Label nameLabel = new Label( parent, SWT.WRAP );
     nameLabel.setText( component.getName() );

@@ -12,6 +12,10 @@ Table-GridLine {
   color: transparent;
 }
 
+TableColumn {
+  padding: 2px 7px 3px;
+}
+
 Label.header {
   font: 18px bold Verdana, "Lucida Sans", Arial, Helvetica, sans-serif;
 }
