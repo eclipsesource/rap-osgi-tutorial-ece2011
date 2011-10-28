@@ -20,7 +20,6 @@ import org.apache.felix.scr.Component;
 import org.eclipse.rwt.lifecycle.IEntryPoint;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -28,6 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -62,19 +62,40 @@ public class AdminUI implements IEntryPoint {
   }
 
   private void createImages( Display display ) {
-    applicationImage = createImage( display, "resources/status-active-16.png" );
-    contributionImage = createImage( display, "resources/status-inactive-16.png" );
+    applicationImage = createImage( display, "resources/application-16.png" );
+    contributionImage = createImage( display, "resources/contribution-16.png" );
   }
 
   private void createContent( Composite parent ) {
     parent.setLayout( createMainLayout() );
-    SashForm sashForm = new SashForm( parent, SWT.VERTICAL );
-    sashForm.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-    Composite upperFrame = new Composite( sashForm, SWT.NONE );
-    Composite lowerFrame = new Composite( sashForm, SWT.NONE );
-    createUpperPart( upperFrame );
-    createLowerPart( lowerFrame );
+    Control upperPart = createUpperPart( parent );
+    upperPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    Control lowerPart = createLowerPart( parent );
+    lowerPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     createUpdateButton( parent );
+  }
+
+  private Control createUpperPart( Composite parent ) {
+    Composite frame = new Composite( parent, SWT.NONE );
+    frame.setLayout( createGridLayout() );
+    Label headerLabel = new Label( frame, SWT.NONE );
+    headerLabel.setText( "Deployed" );
+    headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
+    portsTabFolder = new TabFolder( frame, SWT.TOP );
+    portsTabFolder.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    createPortsTabItems();
+    return frame;
+  }
+
+  private Control createLowerPart( Composite parent ) {
+    Composite frame = new Composite( parent, SWT.NONE );
+    frame.setLayout( createGridLayout() );
+    Label headerLabel = new Label( frame, SWT.NONE );
+    headerLabel.setText( "Available Contributions" );
+    headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
+    contributionsTable = createTable( frame );
+    contributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    return frame;
   }
 
   private void createUpdateButton( Composite parent ) {
@@ -87,41 +108,12 @@ public class AdminUI implements IEntryPoint {
     } );
   }
 
-  private void createUpperPart( Composite parent ) {
-    parent.setLayout( createGridLayout() );
-    Label headerLabel = new Label( parent, SWT.NONE );
-    headerLabel.setText( "Deployed" );
-    headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    portsTabFolder = new TabFolder( parent, SWT.TOP );
-    portsTabFolder.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, true ) );
-    createPortsTabItems();
-  }
-
-  private void createLowerPart( Composite parent ) {
-    parent.setLayout( createGridLayout() );
-    Label headerLabel = new Label( parent, SWT.NONE );
-    headerLabel.setText( "Available Contributions" );
-    headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    contributionsTable = createTable( parent );
-    contributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-  }
-
-  private void createPortTabItem( String port ) {
-    TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE );
-    tabItem.setText( "Port " + port );
-    Table table = createTable( portsTabFolder );
-    table.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-    tabItem.setControl( table );
-    createComponents( table, port );
-  }
-
   private Table createTable( Composite parent ) {
     Table table = new Table( parent, SWT.SINGLE );
     table.setLinesVisible( true );
     table.setHeaderVisible( true );
     TableColumn column1 = new TableColumn( table, SWT.NONE );
     column1.setWidth( 32 );
-    column1.setText( "Type" );
     TableColumn column2 = new TableColumn( table, SWT.NONE );
     column2.setWidth( 200 );
     column2.setText( "Name" );
@@ -187,6 +179,15 @@ public class AdminUI implements IEntryPoint {
     }
   }
 
+  private void createPortTabItem( String port ) {
+    TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE );
+    tabItem.setText( "Port " + port );
+    Table table = createTable( portsTabFolder );
+    table.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    tabItem.setControl( table );
+    createComponents( table, port );
+  }
+
   private static void clearTableItems( Table table ) {
     TableItem[] items = table.getItems();
     for( TableItem item : items ) {
@@ -242,6 +243,7 @@ public class AdminUI implements IEntryPoint {
     layout.marginTop = 15;
     layout.marginWidth = 40;
     layout.marginBottom = 10;
+    layout.verticalSpacing = 20;
     return layout;
   }
 
