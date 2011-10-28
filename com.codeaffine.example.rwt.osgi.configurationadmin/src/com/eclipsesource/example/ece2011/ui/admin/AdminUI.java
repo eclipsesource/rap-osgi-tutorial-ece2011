@@ -75,7 +75,7 @@ public class AdminUI implements IEntryPoint {
     Composite frame = new Composite( parent, SWT.NONE );
     frame.setLayout( createGridLayout() );
     Label headerLabel = new Label( frame, SWT.NONE );
-    headerLabel.setText( "Deployed" );
+    headerLabel.setText( "Deployed UI Contributions" );
     headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
     portsTabFolder = new TabFolder( frame, SWT.TOP );
     portsTabFolder.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
@@ -87,9 +87,9 @@ public class AdminUI implements IEntryPoint {
     Composite frame = new Composite( parent, SWT.NONE );
     frame.setLayout( createGridLayout() );
     Label headerLabel = new Label( frame, SWT.NONE );
-    headerLabel.setText( "Available Contributions" );
+    headerLabel.setText( "Available UI Contributions" );
     headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    contributionsTable = createTable( frame );
+    contributionsTable = createTable( frame, SWT.BORDER );
     contributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     return frame;
   }
@@ -104,18 +104,15 @@ public class AdminUI implements IEntryPoint {
     } );
   }
 
-  private Table createTable( Composite parent ) {
-    Table table = new Table( parent, SWT.SINGLE );
+  private Table createTable( Composite parent, int style ) {
+    Table table = new Table( parent, style | SWT.SINGLE | SWT.HIDE_SELECTION );
     table.setLinesVisible( true );
-    table.setHeaderVisible( true );
     TableColumn column1 = new TableColumn( table, SWT.NONE );
     column1.setWidth( 32 );
     TableColumn column2 = new TableColumn( table, SWT.NONE );
     column2.setWidth( 200 );
-    column2.setText( "Name" );
     TableColumn column3 = new TableColumn( table, SWT.NONE );
     column3.setWidth( 500 );
-    column3.setText( "Bundle" );
     table.addSelectionListener( new SelectionAdapter() {
       public void widgetDefaultSelected( SelectionEvent e ) {
         TableItem item = ( TableItem )e.item;
@@ -136,11 +133,11 @@ public class AdminUI implements IEntryPoint {
   }
 
   protected void update() {
-    renderAvailableComponents();
+    createItemsForAvailableComponents();
     shell.layout( true );
   }
 
-  private void renderAvailableComponents() {
+  private void createItemsForAvailableComponents() {
     List<Component> components = UiComponents.getAllComponents();
     List<Component> contributions = new ArrayList<Component>();
     for( Component component : components ) {
@@ -153,15 +150,17 @@ public class AdminUI implements IEntryPoint {
     for( Component component : contributions ) {
       createContributionItem( contributionsTable, component );
     }
+    fillEmptyItems( contributionsTable, 7 );
   }
 
-  private void createComponents( Table table, String port ) {
+  private void createItemsForActiveComponents( Table table, String port ) {
     clearTableItems( table );
     List<Component> contributions = UiComponents.getActiveComponents( port );
     Collections.sort( contributions, new UIComponentComparator() ); 
     for( Component component : contributions ) {
       createContributionItem( table, component );
     }
+    fillEmptyItems( table, 4 );
   }
 
   private void createPortsTabItems() {
@@ -178,16 +177,22 @@ public class AdminUI implements IEntryPoint {
   private void createPortTabItem( String port ) {
     TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE );
     tabItem.setText( "Port " + port );
-    Table table = createTable( portsTabFolder );
+    Table table = createTable( portsTabFolder, SWT.NONE );
     table.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     tabItem.setControl( table );
-    createComponents( table, port );
+    createItemsForActiveComponents( table, port );
   }
 
   private static void clearTableItems( Table table ) {
     TableItem[] items = table.getItems();
     for( TableItem item : items ) {
       item.dispose();
+    }
+  }
+
+  private static void fillEmptyItems( Table table, int minItemCount ) {
+    for( int i = table.getItemCount(); i < minItemCount; i++ ) {
+      new TableItem( table, SWT.NONE );
     }
   }
 
