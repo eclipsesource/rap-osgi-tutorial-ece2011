@@ -56,14 +56,11 @@ public class AdminUI implements IEntryPoint {
     createContent( shell );
     shell.layout();
     shell.open();
-    changeTracker = createChangeTracker( display );
     UICallBack.activate( UICALLBACK_ID );
-    changeTracker.start();
     shell.addDisposeListener( new DisposeListener() {
-      
+
       public void widgetDisposed( DisposeEvent event ) {
-        changeTracker.stop();
-        UICallBack.deactivate( UICALLBACK_ID );
+        dispose();
       }
     } );
     return 0;
@@ -76,7 +73,13 @@ public class AdminUI implements IEntryPoint {
     upperPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     Control lowerPart = createLowerPart( parent );
     lowerPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-    update();
+    changeTracker = new UiChangeTracker();
+    changeTracker.start();
+  }
+
+  public void dispose() {
+    changeTracker.stop();
+    UICallBack.deactivate( UICALLBACK_ID );
   }
 
   private void createImages( Display display ) {
@@ -116,6 +119,7 @@ public class AdminUI implements IEntryPoint {
     TableColumn column3 = new TableColumn( table, SWT.NONE );
     column3.setWidth( 500 );
     table.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetDefaultSelected( SelectionEvent e ) {
         TableItem item = ( TableItem )e.item;
         if( item != null ) {
@@ -136,28 +140,38 @@ public class AdminUI implements IEntryPoint {
 
   protected void update() {
     createTabItemsForPorts();
-    createItemsForAvailableComponents();
+    createTableItemsForActiveComponents();
+    createTableItemsForAvailableComponents( contributionsTable );
     shell.layout( true );
   }
 
-  private void createItemsForAvailableComponents() {
+  private void createTableItemsForActiveComponents() {
+    TabItem[] tabItems = portsTabFolder.getItems();
+    for( TabItem tabItem : tabItems ) {
+      String port = (String)tabItem.getData();
+      Table table = (Table)tabItem.getControl();
+      createItemsForActiveComponents( table, port );
+    }
+  }
+
+  private void createTableItemsForAvailableComponents( Table table ) {
     List<UiComponent> components = UiComponents.getAvailableComponents();
     List<UiComponent> contributions = new ArrayList<UiComponent>();
     for( UiComponent component : components ) {
       contributions.add( component );
     }
-    Collections.sort( contributions, new UIComponentComparator() ); 
-    clearTableItems( contributionsTable );
+    Collections.sort( contributions, new UIComponentComparator() );
+    clearTableItems( table );
     for( UiComponent component : contributions ) {
-      createContributionItem( contributionsTable, component );
+      createContributionItem( table, component );
     }
-    fillEmptyItems( contributionsTable, 7 );
+    fillEmptyItems( table, 7 );
   }
 
   private void createItemsForActiveComponents( Table table, String port ) {
     clearTableItems( table );
     List<UiComponent> contributions = UiComponents.getActiveComponents( port );
-    Collections.sort( contributions, new UIComponentComparator() ); 
+    Collections.sort( contributions, new UIComponentComparator() );
     for( UiComponent component : contributions ) {
       createContributionItem( table, component );
     }
@@ -166,25 +180,41 @@ public class AdminUI implements IEntryPoint {
 
   private void createTabItemsForPorts() {
     List<String> ports = UiComponents.getAvailablePorts();
-    String oldPort = null;
-    int selected = portsTabFolder.getSelectionIndex();
-    if( selected >= 0 ) {
-      oldPort = ( String )portsTabFolder.getItem( selected ).getData();
-    }
+    TabItem selectedItem = getSelectedItem( portsTabFolder );
     TabItem[] items = portsTabFolder.getItems();
     for( TabItem item : items ) {
-      item.dispose();
-    }
-    for( String port : ports ) {
-      TabItem item = createPortTabItem( port );
-      if( port.equals( oldPort ) ) {
-        portsTabFolder.setSelection( item );
+      if( !ports.contains( item.getData() ) ) {
+        item.getControl().dispose();
+        item.dispose();
       }
     }
+    for( String port : ports ) {
+      int insertIndex = getTabInsertPosition( port );
+      if( insertIndex != -1 ) {
+        createPortTabItem( port, insertIndex );
+      }
+    }
+    selectTabItem( portsTabFolder, selectedItem );
   }
 
-  private TabItem createPortTabItem( String port ) {
-    TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE );
+  private int getTabInsertPosition( String port ) {
+    int insertIndex = 0;
+    int count = portsTabFolder.getItemCount();
+    for( int i = 0; i < count; i++ ) {
+      TabItem item = portsTabFolder.getItem( i );
+      String itemPort = (String)item.getData();
+      if( port.equals( itemPort ) ) {
+        insertIndex = -1;
+        break;
+      } else if( port.compareTo( itemPort ) > 0 ) {
+        insertIndex = i + 1;
+      }
+    }
+    return insertIndex;
+  }
+
+  private TabItem createPortTabItem( String port, int index ) {
+    TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE, index );
     tabItem.setText( "Port " + port );
     tabItem.setData( port );
     Table table = createTable( portsTabFolder, SWT.NONE );
@@ -192,6 +222,21 @@ public class AdminUI implements IEntryPoint {
     tabItem.setControl( table );
     createItemsForActiveComponents( table, port );
     return tabItem;
+  }
+
+  private static TabItem getSelectedItem( TabFolder folder ) {
+    TabItem selectedItem = null;
+    int selectionIndex = folder.getSelectionIndex();
+    if( selectionIndex != -1 ) {
+      selectedItem = folder.getItem( selectionIndex );
+    }
+    return selectedItem;
+  }
+
+  private static void selectTabItem( TabFolder folder, TabItem item ) {
+    if( item != null && ! item.isDisposed() ) {
+      folder.setSelection( item );
+    }
   }
 
   private static void clearTableItems( Table table ) {
@@ -225,19 +270,6 @@ public class AdminUI implements IEntryPoint {
     return result;
   }
 
-  private ChangeTracker createChangeTracker( final Display display ) {
-    return new ChangeTracker() {
-      @Override
-      protected void update() {
-        display.asyncExec( new Runnable() {
-          public void run() {
-            AdminUI.this.update();
-          }
-        } );
-      }
-    };
-  }
-
   private static GridLayout createGridLayout() {
     GridLayout layout = new GridLayout();
     layout.marginWidth = 0;
@@ -254,4 +286,16 @@ public class AdminUI implements IEntryPoint {
     return layout;
   }
 
+  private final class UiChangeTracker extends ChangeTracker {
+    @Override
+    protected void changeDetected() {
+      if( !shell.isDisposed() ) {
+        shell.getDisplay().asyncExec( new Runnable() {
+          public void run() {
+            update();
+          }
+        } );
+      }
+    }
+  }
 }

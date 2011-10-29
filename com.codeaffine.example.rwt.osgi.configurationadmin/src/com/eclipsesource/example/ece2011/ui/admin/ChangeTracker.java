@@ -19,8 +19,10 @@ public class ChangeTracker {
   public ChangeTracker() {
     BundleContext bundleContext = DeploymentHelper.getBundleContext();
     httpServiceTracker = new UpdateServiceTracker( bundleContext, HttpService.class.getName() );
-    appConfigServiceTracker = new UpdateServiceTracker( bundleContext, ApplicationConfigurator.class.getName() );
-    uiContribServiceTracker = new UpdateServiceTracker( bundleContext, UIContributorFactory.class.getName() );
+    appConfigServiceTracker = new UpdateServiceTracker( bundleContext,
+                                                        ApplicationConfigurator.class.getName() );
+    uiContribServiceTracker = new UpdateServiceTracker( bundleContext,
+                                                        UIContributorFactory.class.getName() );
   }
 
   public void start() {
@@ -38,27 +40,28 @@ public class ChangeTracker {
     uiContribServiceTracker = null;
   }
 
-  protected void update() {
+  protected void changeDetected() {
   }
 
   private final class UpdateServiceTracker extends ServiceTracker<Object, Object> {
 
-    private UpdateServiceTracker( BundleContext context, String className ) {
+    UpdateServiceTracker( BundleContext context, String className ) {
       super( context, className, null );
     }
 
     @Override
     public Object addingService( ServiceReference<Object> reference ) {
       Object result = super.addingService( reference );
-      update();
+      changeDetected();
       return result;
     }
-    
+
     @Override
     public void removedService( ServiceReference<Object> reference, Object service ) {
       super.removedService( reference, service );
-      update();
+      changeDetected();
     }
+
   }
 
 }
