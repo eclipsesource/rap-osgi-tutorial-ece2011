@@ -68,7 +68,7 @@ public class AdminUI implements IEntryPoint {
     Control upperPart = createUpperPart( parent );
     upperPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     Control lowerPart = createLowerPart( parent );
-    lowerPart.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    lowerPart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
     changeTracker = new UiChangeTracker();
     changeTracker.start();
   }
@@ -89,7 +89,7 @@ public class AdminUI implements IEntryPoint {
     headerLabel.setText( "Deployed UI Contributions" );
     headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
     portsTabFolder = new TabFolder( frame, SWT.TOP );
-    portsTabFolder.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    portsTabFolder.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
     createTabItemsForPorts();
     return frame;
   }
@@ -101,7 +101,7 @@ public class AdminUI implements IEntryPoint {
     headerLabel.setText( "Available UI Contributions" );
     headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
     contributionsTree = createTree( frame, SWT.BORDER );
-    contributionsTree.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    contributionsTree.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
     return frame;
   }
 
@@ -129,7 +129,7 @@ public class AdminUI implements IEntryPoint {
     return tree;
   }
 
-  protected void handleSelection( final UiComponent component ) {
+  protected void handleSelection( UiComponent component ) {
     UiComponentDialog dialog = new UiComponentDialog( shell, component );
     String port = getSelectedPort();
     if( port != null ) {
@@ -343,7 +343,7 @@ public class AdminUI implements IEntryPoint {
     GridLayout layout = new GridLayout();
     layout.marginTop = 15;
     layout.marginWidth = 40;
-    layout.marginBottom = 10;
+    layout.marginBottom = 20;
     layout.verticalSpacing = 20;
     return layout;
   }
