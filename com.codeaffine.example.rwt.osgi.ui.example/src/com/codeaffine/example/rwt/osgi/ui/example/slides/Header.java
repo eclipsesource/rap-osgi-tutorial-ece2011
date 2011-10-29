@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.slides;
 
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.*;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
-public class HeaderProvider implements UIContributor {
-  public static final String HEADER_CONTROL = HeaderProvider.class.getName() + "#HEADER";
-  static final int HEADER_HEIGHT = 80;
+public class Header implements UIContributor {
+  public static final String HEADER_CONTROL = Header.class.getName() + "#HEADER";
+  static final int HEADER_HEIGHT = 0;
   
   @Override
   public String getId() {

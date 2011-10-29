@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.slides;
 
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
@@ -25,11 +25,11 @@ import org.osgi.framework.Version;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
-public class FooterProvider implements UIContributor {
-  public static final String FOOTER_CONTROL = FooterProvider.class.getName() + "#FOOTER";
-  static final int FOOTER_HEIGHT = 50;
+public class Footer implements UIContributor {
+  public static final String FOOTER_CONTROL = Footer.class.getName() + "#FOOTER";
   // NOTE: this value reflects the height of the footer_separator background image set via css
   private static final int SEPARATOR_HEIGHT = 8;
+  static final int FOOTER_HEIGHT = SEPARATOR_HEIGHT;
 
 
   @Override

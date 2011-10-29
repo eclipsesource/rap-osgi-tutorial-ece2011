@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.slides;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
@@ -16,14 +16,16 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import com.codeaffine.example.rwt.osgi.ui.example.BackgroundProvider;
+import com.codeaffine.example.rwt.osgi.ui.example.ContentProvider;
 import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider;
 
 
-public class LayoutProviderImpl implements LayoutProvider {
+public class Layout implements LayoutProvider {
 
   private static final int OFFSET = 20;
   private static final int CONTENT_OFFSET 
-    = HeaderProvider.HEADER_HEIGHT + MenuBarProvider.MENU_BAR_HEIGHT + 20;
+    = Header.HEADER_HEIGHT + MenuBar.MENU_BAR_HEIGHT + 20;
 
   private Control content;
   private Control header;
@@ -38,10 +40,10 @@ public class LayoutProviderImpl implements LayoutProvider {
   }
   
   private void readControls( LayoutContext context ) {
-    header = context.getControl( HeaderProvider.HEADER_CONTROL );
-    menuBar = context.getControl( MenuBarProvider.MENU_BAR_CONTROL );
+    header = context.getControl( Header.HEADER_CONTROL );
+    menuBar = context.getControl( MenuBar.MENU_BAR_CONTROL );
     content = context.getControl( ContentProvider.CONTENT_CONTROL );
-    footer = context.getControl( FooterProvider.FOOTER_CONTROL );
+    footer = context.getControl( Footer.FOOTER_CONTROL );
     background = context.getControl( BackgroundProvider.BACKGROUND_CONTROL );
   }
 
@@ -59,16 +61,16 @@ public class LayoutProviderImpl implements LayoutProvider {
     layoutData.top = new FormAttachment( 0, 0 );
     layoutData.left = new FormAttachment( 0, 0 );
     layoutData.right = new FormAttachment( 100, 0 );
-    layoutData.height = HeaderProvider.HEADER_HEIGHT;
+    layoutData.height = Header.HEADER_HEIGHT;
   }
 
   private void layoutMenuBar() {
     FormData layoutData = new FormData();
     menuBar.setLayoutData( layoutData );
-    layoutData.top = new FormAttachment( 0, HeaderProvider.HEADER_HEIGHT );
+    layoutData.top = new FormAttachment( 0, Header.HEADER_HEIGHT );
     layoutData.left = new FormAttachment( 0, 0 );
     layoutData.right = new FormAttachment( 100, 0 );
-    layoutData.height = MenuBarProvider.MENU_BAR_HEIGHT;
+    layoutData.height = MenuBar.MENU_BAR_HEIGHT;
   }
 
   private void layoutContent() {
@@ -96,9 +98,9 @@ public class LayoutProviderImpl implements LayoutProvider {
     int height;
     Rectangle bounds = Display.getCurrent().getBounds();
     height =   bounds.height 
-             - FooterProvider.FOOTER_HEIGHT 
-             - HeaderProvider.HEADER_HEIGHT 
-             - MenuBarProvider.MENU_BAR_HEIGHT 
+             - Footer.FOOTER_HEIGHT 
+             - Header.HEADER_HEIGHT 
+             - MenuBar.MENU_BAR_HEIGHT 
              - OFFSET;
     return height;
   }
@@ -109,7 +111,7 @@ public class LayoutProviderImpl implements LayoutProvider {
     layoutData.top = new FormAttachment( content );
     layoutData.left = new FormAttachment( 0, 0 );
     layoutData.right = new FormAttachment( 100, 0 );
-    layoutData.height = FooterProvider.FOOTER_HEIGHT;
+    layoutData.height = Footer.FOOTER_HEIGHT;
   }
 
   private void layoutBackground() {

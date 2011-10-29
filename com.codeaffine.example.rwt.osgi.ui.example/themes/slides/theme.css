@@ -1,0 +1,104 @@
+Label.logo {
+  background-image: url( "/themes/slides/icons/logo.png" );
+}
+
+Label.appname {
+  background-image: url( "/themes/slides/icons/appname.png" );
+}
+
+Label.footer_separator {
+  background-image: url( "/themes/slides/icons/footer_separator.png" );
+}
+
+/* slide navigation */
+Composite.navigation {
+  background-image: url( "/themes/slides/icons/menubar_background.png" );
+}
+
+Button.slide_navigation_forward {
+  color: #ffffff;
+  background-color: transparent;
+  background-image: none;
+  padding: -1px 3px 3px 3px;
+  font: bold 18px Arial, Helvetica, sans-serif;
+  border: none;
+}
+
+Button.slide_navigation_forward:hover {
+  border: 1px solid #A4A4A4;
+}
+
+Button.slide_navigation_back {
+  color: #ffffff;
+  background-color: transparent;
+  background-image: none;
+  padding: -3px 3px 3px 3px;
+  font: bold 18px Arial, Helvetica, sans-serif;
+  border: none;
+}
+
+Button.slide_navigation_back:hover {
+  border: 1px solid #A4A4A4;
+}
+
+Label.slide_counter {
+  color: #ffffff;
+  background-color: transparent;
+}
+
+/* menu bar */
+Button.menu_button {
+  color: #ffffff;
+  background-color: transparent;
+  background-image: none;
+  padding: -12px 15px 3px 15px;
+  font: bold 18px Arial, Helvetica, sans-serif;
+  border: none;
+}
+
+Button.menu_button:selected, Button-FocusIndicator {
+  color: #505050;
+  background-color: #ffffff;
+  background-image: none;
+  padding: -12px 15px 3px 15px;
+  font: bold 18px Arial, Helvetica, sans-serif;
+  border: none;
+}
+
+Button.menu_button:hover {
+  border: 1px solid #A4A4A4;
+}
+
+Composite.menubar_background {
+  background-image: url( "/themes/slides/icons/menubar_background.png" );
+}
+
+/* upload panel */
+Composite.upload-panel {
+  background-color: #dddddf;
+  border-radius: 2px;
+}
+
+Label.upload-selection {
+  border-radius: 2px;
+}
+
+/* shell */
+Shell {
+  border:none;
+  background-color: white;
+  box-shadow: 5px 5px 3px rgba( 0, 0, 0, 0.5 );
+}
+
+Shell-Titlebar {
+  background-color: #0080c0;
+  background-gradient-color: #0080c0;
+  color: #666666;
+  background-image: gradient( linear, left top, left bottom, from( #cad2d9 ), to( #d1d9de ) );
+  padding: 2px 5px 2px;
+  margin: 0px;
+  height: 20px;
+  border: none;
+  border-radius: 3px 3px 0px 0px;
+  text-shadow: none;
+}

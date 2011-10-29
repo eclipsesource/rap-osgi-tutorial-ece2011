@@ -11,4 +11,4 @@ Import-Package: com.codeaffine.example.rwt.osgi.configurationadmin.console;versi
  org.osgi.util.tracker;version="1.5.0"
 Require-Bundle: org.eclipse.rap.rwt;bundle-version="1.5.0",
  org.eclipse.rap.rwt.supplemental.fileupload;bundle-version="1.5.0"
-Service-Component: OSGI-INF/ExampleUI1.xml, OSGI-INF/ExampleUI2.xml, OSGI-INF/ExampleTab.xml, OSGI-INF/HomePageTab.xml, OSGI-INF/OtherPageTab.xml, OSGI-INF/BundleUpload.xml, OSGI-INF/HelloWorld.xml
+Service-Component: OSGI-INF/*

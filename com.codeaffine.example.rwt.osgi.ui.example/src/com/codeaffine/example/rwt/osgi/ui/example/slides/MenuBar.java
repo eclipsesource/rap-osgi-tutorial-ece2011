@@ -8,15 +8,17 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.slides;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -27,16 +29,17 @@ import com.codeaffine.example.rwt.osgi.ui.platform.PageTracker;
 import com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider;
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
-public class MenuBarProvider implements UIContributor {
-  public static final String MENU_BAR_CONTROL = MenuBarProvider.class.getName() + "#MENUBAR";
+public class MenuBar implements UIContributor {
+  public static final String MENU_BAR_CONTROL = MenuBar.class.getName() + "#MENUBAR";
   // NOTE: this value reflects the height of the menubar_background image set via css
   static final int MENU_BAR_HEIGHT = 41;
   private static final String MENUBAR_BACKGROUND = "menubar_background";
   private static final String MENU_BUTTON = "menu_button";
 
   private final ServiceProvider serviceProvider;
+  Map<UIContributor,Button> buttons = new HashMap<UIContributor,Button>();
 
-  public MenuBarProvider( ServiceProvider serviceProvider ) {
+  public MenuBar( ServiceProvider serviceProvider ) {
     this.serviceProvider = serviceProvider;
   }
 
@@ -49,11 +52,13 @@ public class MenuBarProvider implements UIContributor {
   public Control contribute( Composite parent ) {
     final Composite result = new Composite( parent, SWT.INHERIT_DEFAULT );
     result.setData( WidgetUtil.CUSTOM_VARIANT, MENUBAR_BACKGROUND );
-    result.setLayout( new RowLayout() );
+    RowLayout layout = new RowLayout();
+    layout.marginTop = 8;
+    layout.marginLeft = 30;
+    result.setLayout( layout );
     
     final PageService pageService = serviceProvider.get( PageService.class );
     pageService.addPageTracker( new PageTracker() {
-      Map<UIContributor,Button> buttons = new HashMap<UIContributor,Button>();
 
       @Override
       public void pageAdded( UIContributor page ) {
@@ -74,7 +79,11 @@ public class MenuBarProvider implements UIContributor {
                            final PageService pageService,
                            final String pageId )
   {
-    Button result = new Button( parent, SWT.PUSH );
+    unselectButtons();
+    final Button result = new Button( parent, SWT.TOGGLE );
+    RowData data = new RowData();
+    data.height = 40;
+    result.setLayoutData(  data );
     result.setData( WidgetUtil.CUSTOM_VARIANT, MENU_BUTTON );
     result.setText( pageId );
     result.addSelectionListener( new SelectionAdapter() {
@@ -82,11 +91,21 @@ public class MenuBarProvider implements UIContributor {
 
       @Override
       public void widgetSelected( SelectionEvent evt ) {
+        unselectButtons();
         pageService.selectPage( pageId );
+        result.setSelection( true );
       }
     } );
     parent.layout( true, true );
     pageService.selectPage( pageId );
+    result.setSelection( true );
     return result;
+  }
+
+  void unselectButtons() {
+    Iterator<Button> iterator = buttons.values().iterator();
+    while( iterator.hasNext() ) {
+      iterator.next().setSelection( false );
+    }
   }
 }

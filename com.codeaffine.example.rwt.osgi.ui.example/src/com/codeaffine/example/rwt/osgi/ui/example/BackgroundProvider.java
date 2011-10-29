@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Label;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
-class BackgroundProvider implements UIContributor {
+public class BackgroundProvider implements UIContributor {
   public static final String BACKGROUND_CONTROL
     = BackgroundProvider.class.getName() + "#Background";
 
