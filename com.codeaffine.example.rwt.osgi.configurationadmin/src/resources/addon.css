@@ -3,16 +3,16 @@
   font: 14px Verdana, "Lucida Sans", Arial, Helvetica, sans-serif;
 }
 
-Table-Cell {
+Tree-Cell {
   spacing: 8px;
   padding: 8px;
 }
 
-Table-GridLine {
+Tree-GridLine {
   color: transparent;
 }
 
-TableColumn {
+TreeColumn {
   padding: 2px 7px 3px;
 }
 

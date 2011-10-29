@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 
 import com.eclipsesource.example.ece2011.ui.admin.UiComponents.UIComponentComparator;
 
@@ -45,7 +45,7 @@ public class AdminUI implements IEntryPoint {
   private static final String UICALLBACK_ID = AdminUI.class.getName();
   private Shell shell;
   private TabFolder portsTabFolder;
-  private Table contributionsTable;
+  private Tree contributionsTree;
   private Images images;
   private ChangeTracker changeTracker;
 
@@ -104,24 +104,24 @@ public class AdminUI implements IEntryPoint {
     Label headerLabel = new Label( frame, SWT.NONE );
     headerLabel.setText( "Available UI Contributions" );
     headerLabel.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    contributionsTable = createTable( frame, SWT.BORDER );
-    contributionsTable.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    contributionsTree = createTree( frame, SWT.BORDER );
+    contributionsTree.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
     return frame;
   }
 
-  private Table createTable( Composite parent, int style ) {
-    Table table = new Table( parent, style | SWT.SINGLE | SWT.HIDE_SELECTION );
-    table.setLinesVisible( true );
-    TableColumn column1 = new TableColumn( table, SWT.NONE );
-    column1.setWidth( 32 );
-    TableColumn column2 = new TableColumn( table, SWT.NONE );
+  private Tree createTree( Composite parent, int style ) {
+    Tree tree = new Tree( parent, style | SWT.SINGLE | SWT.FULL_SELECTION );
+    tree.setLinesVisible( true );
+    TreeColumn column1 = new TreeColumn( tree, SWT.NONE );
+    column1.setWidth( 64 );
+    TreeColumn column2 = new TreeColumn( tree, SWT.NONE );
     column2.setWidth( 200 );
-    TableColumn column3 = new TableColumn( table, SWT.NONE );
+    TreeColumn column3 = new TreeColumn( tree, SWT.NONE );
     column3.setWidth( 500 );
-    table.addSelectionListener( new SelectionAdapter() {
+    tree.addSelectionListener( new SelectionAdapter() {
       @Override
       public void widgetDefaultSelected( SelectionEvent e ) {
-        TableItem item = ( TableItem )e.item;
+        TreeItem item = ( TreeItem )e.item;
         if( item != null ) {
           UiComponent component = ( UiComponent )item.getData();
           if( component != null ) {
@@ -130,57 +130,74 @@ public class AdminUI implements IEntryPoint {
         }
       }
     } );
-    return table;
+    return tree;
   }
 
   protected void handleSelection( final UiComponent component ) {
     UiComponentDialog dialog = new UiComponentDialog( shell, component );
+    String port = getSelectedPort();
+    if( port != null ) {
+      dialog.selectPort( port );
+    }
     dialog.open();
   }
 
   protected void update() {
     createTabItemsForPorts();
-    createTableItemsForActiveComponents();
-    createTableItemsForAvailableComponents( contributionsTable );
+    createTreeItemsForActiveComponents();
+    createTreeItemsForAvailableComponents( contributionsTree );
     shell.layout( true );
   }
 
-  private void createTableItemsForActiveComponents() {
+  private void createTreeItemsForActiveComponents() {
     TabItem[] tabItems = portsTabFolder.getItems();
     for( TabItem tabItem : tabItems ) {
       String port = (String)tabItem.getData();
-      Table table = (Table)tabItem.getControl();
-      createItemsForActiveComponents( table, port );
+      Tree tree = (Tree)tabItem.getControl();
+      createTreeItemsForActiveComponents( tree, port );
     }
   }
 
-  private void createTableItemsForAvailableComponents( Table table ) {
+  private void createTreeItemsForActiveComponents( Tree tree, String port ) {
+    clearTreeItems( tree );
+    List<UiComponent> contributions = UiComponents.getActiveComponents( port );
+    Collections.sort( contributions, new UIComponentComparator() );
+    for( UiComponent component : contributions ) {
+      if( component.isApplication() ) {
+        createContributionItem( tree, component );
+      }
+    }
+    TreeItem[] parentItems = tree.getItems();
+    for( TreeItem parentItem : parentItems ) {
+      UiComponent parentComponent = (UiComponent)parentItem.getData();
+      String parentName = parentComponent.getName();
+      for( UiComponent component : contributions ) {
+        if( component.isUiContribution() && parentName.equals( component.getApplication() ) ) {
+          createContributionItem( parentItem, component );
+        }
+      }
+      parentItem.setExpanded( true );
+    }
+    fillEmptyItems( tree, 4 );
+  }
+
+  private void createTreeItemsForAvailableComponents( Tree tree ) {
     List<UiComponent> components = UiComponents.getAvailableComponents();
     List<UiComponent> contributions = new ArrayList<UiComponent>();
     for( UiComponent component : components ) {
       contributions.add( component );
     }
     Collections.sort( contributions, new UIComponentComparator() );
-    clearTableItems( table );
+    clearTreeItems( tree );
     for( UiComponent component : contributions ) {
-      createContributionItem( table, component );
+      createContributionItem( tree, component );
     }
-    fillEmptyItems( table, 7 );
-  }
-
-  private void createItemsForActiveComponents( Table table, String port ) {
-    clearTableItems( table );
-    List<UiComponent> contributions = UiComponents.getActiveComponents( port );
-    Collections.sort( contributions, new UIComponentComparator() );
-    for( UiComponent component : contributions ) {
-      createContributionItem( table, component );
-    }
-    fillEmptyItems( table, 4 );
+    fillEmptyItems( tree, 7 );
   }
 
   private void createTabItemsForPorts() {
     List<String> ports = UiComponents.getAvailablePorts();
-    TabItem selectedItem = getSelectedItem( portsTabFolder );
+    String selectedPort = getSelectedPort();
     TabItem[] items = portsTabFolder.getItems();
     for( TabItem item : items ) {
       if( !ports.contains( item.getData() ) ) {
@@ -194,7 +211,23 @@ public class AdminUI implements IEntryPoint {
         createPortTabItem( port, insertIndex );
       }
     }
-    selectTabItem( portsTabFolder, selectedItem );
+    selectTabForPort( selectedPort );
+  }
+
+  private String getSelectedPort() {
+    String result = null;
+    TabItem selectedItem = getSelectedItem( portsTabFolder );
+    if( selectedItem != null ) {
+      result = (String)selectedItem.getData();
+    }
+    return result;
+  }
+
+  private void selectTabForPort( String port ) {
+    TabItem item = findTabItemWithData( portsTabFolder, port );
+    if( item != null ) {
+      selectTabItem( item );
+    }
   }
 
   private int getTabInsertPosition( String port ) {
@@ -217,43 +250,23 @@ public class AdminUI implements IEntryPoint {
     TabItem tabItem = new TabItem( portsTabFolder, SWT.NONE, index );
     tabItem.setText( "Port " + port );
     tabItem.setData( port );
-    Table table = createTable( portsTabFolder, SWT.NONE );
-    table.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
-    tabItem.setControl( table );
-    createItemsForActiveComponents( table, port );
+    Tree tree = createTree( portsTabFolder, SWT.NONE );
+    tree.setLayoutData( new GridData( SWT.FILL, SWT.TOP, true, false ) );
+    tabItem.setControl( tree );
+    createTreeItemsForActiveComponents( tree, port );
     return tabItem;
   }
 
-  private static TabItem getSelectedItem( TabFolder folder ) {
-    TabItem selectedItem = null;
-    int selectionIndex = folder.getSelectionIndex();
-    if( selectionIndex != -1 ) {
-      selectedItem = folder.getItem( selectionIndex );
-    }
-    return selectedItem;
+  private void createContributionItem( Tree parent, UiComponent component ) {
+    TreeItem item = new TreeItem( parent, SWT.NONE );
+    item.setData( component );
+    item.setImage( 0, getTypeImage( component ) );
+    item.setText( 1, component.getName() );
+    item.setText( 2, component.getBundleName() );
   }
 
-  private static void selectTabItem( TabFolder folder, TabItem item ) {
-    if( item != null && ! item.isDisposed() ) {
-      folder.setSelection( item );
-    }
-  }
-
-  private static void clearTableItems( Table table ) {
-    TableItem[] items = table.getItems();
-    for( TableItem item : items ) {
-      item.dispose();
-    }
-  }
-
-  private static void fillEmptyItems( Table table, int minItemCount ) {
-    for( int i = table.getItemCount(); i < minItemCount; i++ ) {
-      new TableItem( table, SWT.NONE );
-    }
-  }
-
-  private void createContributionItem( Table table, UiComponent component ) {
-    TableItem item = new TableItem( table, SWT.NONE );
+  private void createContributionItem( TreeItem parent, UiComponent component ) {
+    TreeItem item = new TreeItem( parent, SWT.NONE );
     item.setData( component );
     item.setImage( 0, getTypeImage( component ) );
     item.setText( 1, component.getName() );
@@ -266,6 +279,58 @@ public class AdminUI implements IEntryPoint {
       result = images.applicationImage;
     } else {
       result = images.contributionImage;
+    }
+    return result;
+  }
+
+  private static TabItem getSelectedItem( TabFolder folder ) {
+    TabItem selectedItem = null;
+    int selectionIndex = folder.getSelectionIndex();
+    if( selectionIndex != -1 ) {
+      selectedItem = folder.getItem( selectionIndex );
+    }
+    return selectedItem;
+  }
+
+  private static TabItem findTabItemWithData( TabFolder folder, Object data ) {
+    TabItem[] items = folder.getItems();
+    if( data != null ) {
+      for( TabItem item : items ) {
+        if( data.equals( item.getData() ) ) {
+          return item;
+        }
+      }
+    }
+    return null;
+  }
+
+  private static void selectTabItem( TabItem item ) {
+    if( !item.isDisposed() ) {
+      TabFolder folder = item.getParent();
+      folder.setSelection( item );
+    }
+  }
+
+  private static void clearTreeItems( Tree tree ) {
+    TreeItem[] items = tree.getItems();
+    for( TreeItem item : items ) {
+      item.dispose();
+    }
+  }
+
+  private static void fillEmptyItems( Tree tree, int minItemCount ) {
+    int itemCount = getFullItemCount( tree );
+    for( int i = itemCount; i < minItemCount; i++ ) {
+      new TreeItem( tree, SWT.NONE );
+    }
+  }
+
+  private static int getFullItemCount( Tree tree ) {
+    int result = 0;
+    TreeItem[] items = tree.getItems();
+    for( TreeItem item : items ) {
+      result++;
+      result += item.getItemCount();
     }
     return result;
   }
