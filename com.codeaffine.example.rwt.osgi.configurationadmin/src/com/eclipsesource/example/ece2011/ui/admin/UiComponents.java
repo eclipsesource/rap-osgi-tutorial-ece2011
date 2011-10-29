@@ -103,6 +103,7 @@ public class UiComponents {
     } catch( InvalidSyntaxException shouldNotHappen ) {
       throw new RuntimeException( shouldNotHappen );
     }
+    Collections.sort( result );
     return Collections.unmodifiableList( result );
   }
 

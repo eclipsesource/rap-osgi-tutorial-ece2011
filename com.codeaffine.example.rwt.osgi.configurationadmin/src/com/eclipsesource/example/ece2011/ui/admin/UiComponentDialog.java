@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Shell;
 import com.codeaffine.example.rwt.osgi.configurationadmin.DeploymentHelper;
 
 
-@SuppressWarnings( "serial" )
 public class UiComponentDialog {
 
   private final Shell parent;
@@ -44,8 +43,8 @@ public class UiComponentDialog {
   private Combo portCombo;
   private Combo applicationCombo;
   private Images images;
-  private boolean isApplication;
-  private boolean isUndeploy;
+  private final boolean isApplication;
+  private final boolean isUndeploy;
 
   public UiComponentDialog( Shell parent, UiComponent component ) {
     this.parent = parent;
@@ -57,6 +56,13 @@ public class UiComponentDialog {
     createContents( shell );
     shell.pack();
     fixShellResize();
+  }
+
+  public void selectPort( String port ) {
+    if( portCombo != null ) {
+      portCombo.setText( port );
+      updateApplicationCombo();
+    }
   }
 
   public void open() {
@@ -83,7 +89,7 @@ public class UiComponentDialog {
     Control buttonBar = createButtonBar( shell );
     buttonBar.setLayoutData( createButtonBarData() );
     updatePortCombo();
-    updateParentCombo();
+    updateApplicationCombo();
   }
 
   private void fixShellResize() {
@@ -135,8 +141,9 @@ public class UiComponentDialog {
     portCombo.select( 0 );
     portCombo.setLayoutData( new GridData( 200, SWT.DEFAULT ) );
     portCombo.addSelectionListener( new SelectionAdapter() {
-      public void widgetSelected( SelectionEvent e ) {        
-        updateParentCombo();
+      @Override
+      public void widgetSelected( SelectionEvent e ) {
+        updateApplicationCombo();
       }
     } );
   }
@@ -165,6 +172,7 @@ public class UiComponentDialog {
     Button button = new Button( buttonBar, SWT.PUSH );
     button.setText( "Cancel" );
     button.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( SelectionEvent e ) {
         shell.close();
       }
@@ -176,6 +184,7 @@ public class UiComponentDialog {
     button.setText( "Deploy" );
     shell.setDefaultButton( button );
     button.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( SelectionEvent e ) {
         String port = portCombo.getText();
         DeploymentHelper deploymentHelper = new DeploymentHelper();
@@ -195,6 +204,7 @@ public class UiComponentDialog {
     deployButton.setText( "Undeploy" );
     shell.setDefaultButton( deployButton );
     deployButton.addSelectionListener( new SelectionAdapter() {
+      @Override
       public void widgetSelected( SelectionEvent e ) {
         DeploymentHelper deploymentHelper = new DeploymentHelper();
         if( isApplication ) {
@@ -212,7 +222,7 @@ public class UiComponentDialog {
     } );
   }
 
-  private RowLayout createButtonBarLayout() {
+  private static RowLayout createButtonBarLayout() {
     RowLayout layout = new RowLayout( SWT.HORIZONTAL );
     layout.marginTop = 20;
     layout.marginRight = 0;
@@ -233,7 +243,7 @@ public class UiComponentDialog {
     }
   }
 
-  private void updateParentCombo() {
+  private void updateApplicationCombo() {
     if( applicationCombo != null ) {
       String port = portCombo.getText();
       List<UiComponent> activeComponents = UiComponents.getActiveComponents( port );
