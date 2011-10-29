@@ -249,7 +249,9 @@ public class UiComponentDialog {
       List<UiComponent> activeComponents = UiComponents.getActiveComponents( port );
       List<String> items = new ArrayList<String>();
       for( UiComponent component : activeComponents ) {
-        items.add( component.getName() );
+        if( component.isApplication() ) {
+          items.add( component.getName() );
+        }
       }
       String oldText = applicationCombo.getText();
       applicationCombo.setItems( items.toArray( new String[ items.size() ] ) );

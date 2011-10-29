@@ -11,6 +11,7 @@
 package com.eclipsesource.example.ece2011.ui.admin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -88,6 +89,13 @@ public class UiComponents {
         context.ungetService( reference );
       }
     }
+    Arrays.sort( components, new Comparator<Component>() {
+      public int compare( Component component1, Component component2 ) {
+        String name1 = component1.getName().toLowerCase( Locale.ENGLISH );
+        String name2 = component2.getName().toLowerCase( Locale.ENGLISH );
+        return name1.compareTo( name2 );
+      }
+    } );
     return components;
   }
 
@@ -105,25 +113,6 @@ public class UiComponents {
     }
     Collections.sort( result );
     return Collections.unmodifiableList( result );
-  }
-
-  public static final class UIComponentComparator implements Comparator<UiComponent> {
-
-    public int compare( UiComponent component1, UiComponent component2 ) {
-      int result;
-      boolean isApplication1 = component1.isApplication();
-      boolean isApplication2 = component2.isApplication();
-      if( isApplication1 && !isApplication2 ) {
-        result = -1;
-      } else if( !isApplication1 && isApplication2 ) {
-        result = 1;
-      } else {
-        String name1 = component1.getName().toLowerCase( Locale.ENGLISH );
-        String name2 = component2.getName().toLowerCase( Locale.ENGLISH );
-        result = name1.compareTo( name2 );
-      }
-      return result;
-    }
   }
 
 }

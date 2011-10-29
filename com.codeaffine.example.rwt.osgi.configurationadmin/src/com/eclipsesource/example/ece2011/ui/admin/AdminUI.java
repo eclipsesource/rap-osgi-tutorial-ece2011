@@ -10,8 +10,6 @@
  ******************************************************************************/
 package com.eclipsesource.example.ece2011.ui.admin;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.rwt.lifecycle.IEntryPoint;
@@ -35,8 +33,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-
-import com.eclipsesource.example.ece2011.ui.admin.UiComponents.UIComponentComparator;
 
 
 @SuppressWarnings( "serial" )
@@ -160,9 +156,8 @@ public class AdminUI implements IEntryPoint {
 
   private void createTreeItemsForActiveComponents( Tree tree, String port ) {
     clearTreeItems( tree );
-    List<UiComponent> contributions = UiComponents.getActiveComponents( port );
-    Collections.sort( contributions, new UIComponentComparator() );
-    for( UiComponent component : contributions ) {
+    List<UiComponent> components = UiComponents.getActiveComponents( port );
+    for( UiComponent component : components ) {
       if( component.isApplication() ) {
         createContributionItem( tree, component );
       }
@@ -171,7 +166,7 @@ public class AdminUI implements IEntryPoint {
     for( TreeItem parentItem : parentItems ) {
       UiComponent parentComponent = (UiComponent)parentItem.getData();
       String parentName = parentComponent.getName();
-      for( UiComponent component : contributions ) {
+      for( UiComponent component : components ) {
         if( component.isUiContribution() && parentName.equals( component.getApplication() ) ) {
           createContributionItem( parentItem, component );
         }
@@ -183,14 +178,16 @@ public class AdminUI implements IEntryPoint {
 
   private void createTreeItemsForAvailableComponents( Tree tree ) {
     List<UiComponent> components = UiComponents.getAvailableComponents();
-    List<UiComponent> contributions = new ArrayList<UiComponent>();
-    for( UiComponent component : components ) {
-      contributions.add( component );
-    }
-    Collections.sort( contributions, new UIComponentComparator() );
     clearTreeItems( tree );
-    for( UiComponent component : contributions ) {
-      createContributionItem( tree, component );
+    for( UiComponent component : components ) {
+      if( component.isApplication() ) {
+        createContributionItem( tree, component );
+      }
+    }
+    for( UiComponent component : components ) {
+      if( component.isUiContribution() ) {
+        createContributionItem( tree, component );
+      }
     }
     fillEmptyItems( tree, 7 );
   }
