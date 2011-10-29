@@ -68,10 +68,16 @@ public class UiComponents {
 
   public static List<UiComponent> getAvailableComponents() {
     Component[] components = getAllComponents();
+    ArrayList<String> knownComponents = new ArrayList<String>();
     ArrayList<UiComponent> result = new ArrayList<UiComponent>();
     for( Component component : components ) {
       if( "require".equals( component.getConfigurationPolicy() ) ) {
-        result.add( new UiComponent( component, null, null ) );
+        UiComponent uiComponent = new UiComponent( component, null, null );
+        String key = uiComponent.getUniqueKey();
+        if( !knownComponents.contains( key ) ) {
+          result.add( uiComponent );
+          knownComponents.add( key );
+        }
       }
     }
     return result;

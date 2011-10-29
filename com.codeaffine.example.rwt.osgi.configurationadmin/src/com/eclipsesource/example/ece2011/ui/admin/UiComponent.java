@@ -14,11 +14,11 @@ public class UiComponent {
     this.application = application;
     this.deployedOnPort = deployedOnPort;
   }
-  
+
   public String getName() {
     return component.getName();
   }
-  
+
   public String getApplication() {
     return application;
   }
@@ -38,7 +38,7 @@ public class UiComponent {
   public boolean isUiContribution() {
     return implementsService( "com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory" );
   }
-  
+
   public boolean implementsService( String string ) {
     boolean result = false;
     String[] services = component.getServices();
@@ -50,6 +50,11 @@ public class UiComponent {
       }
     }
     return result;
+  }
+
+  String getUniqueKey() {
+    String type = isApplication() ? "application" : "uiContribution";
+    return type + "_" + getName() + "_" + application + "_" + deployedOnPort;
   }
 
 }
