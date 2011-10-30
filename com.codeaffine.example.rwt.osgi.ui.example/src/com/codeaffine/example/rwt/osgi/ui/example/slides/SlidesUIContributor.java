@@ -201,7 +201,9 @@ public class SlidesUIContributor implements UIContributor {
       slides = new String[] {
         registerImage( "rwt-osgi-draft.1.png" ),
         registerImage( "chaos.png" ),
-        registerImage( "container.png" )
+        registerImage( "container.png" ),
+        registerImage( "twitter.png" ),
+        registerImage( "munsters.png" )
       };
     }
     return slides;
