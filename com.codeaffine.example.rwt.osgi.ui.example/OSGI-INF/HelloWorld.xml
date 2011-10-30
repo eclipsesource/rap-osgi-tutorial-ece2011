@@ -5,5 +5,5 @@
       <provide interface="com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory"/>
    </service>
    <property name="type" type="String" value="page"/>
-   <property name="class" type="String" value="com.codeaffine.example.rwt.osgi.ui.example.HelloWorld"/>
+   <property name="class" type="String" value="com.codeaffine.example.rwt.osgi.ui.example.apps.HelloWorld"/>
 </scr:component>

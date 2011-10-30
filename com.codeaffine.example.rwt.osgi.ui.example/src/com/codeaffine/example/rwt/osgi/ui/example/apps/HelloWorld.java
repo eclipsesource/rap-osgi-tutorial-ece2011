@@ -1,4 +1,4 @@
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.apps;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

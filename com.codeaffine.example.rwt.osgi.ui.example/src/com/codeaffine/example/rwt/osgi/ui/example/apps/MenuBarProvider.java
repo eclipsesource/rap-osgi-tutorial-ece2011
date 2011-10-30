@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.apps;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.console;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;

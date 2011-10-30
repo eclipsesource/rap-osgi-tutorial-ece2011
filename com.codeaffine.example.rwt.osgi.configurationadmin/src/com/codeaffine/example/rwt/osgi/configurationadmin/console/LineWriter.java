@@ -16,11 +16,17 @@ class LineWriter {
   void writeLine( final String line ) {
     display.asyncExec( new Runnable() {
       public void run() {
-        consoleWidget.append( "\r\n" + line );
-        consoleWidget.pack();
-        consoleWidget.setSelection( consoleWidget.getText().length() );
-        consoleWidget.getParent().layout( true, true );
+        if( !consoleWidget.isDisposed() ) {
+          doWriteLine( line );
+        }
       }
     } );
+  }
+
+  void doWriteLine( final String line ) {
+    consoleWidget.append( "\r\n" + line );
+    consoleWidget.pack();
+    consoleWidget.setSelection( consoleWidget.getText().length() );
+    consoleWidget.getParent().layout( true, true );
   }
 }

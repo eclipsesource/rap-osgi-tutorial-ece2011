@@ -16,8 +16,8 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import com.codeaffine.example.rwt.osgi.ui.example.BackgroundProvider;
-import com.codeaffine.example.rwt.osgi.ui.example.ContentProvider;
+import com.codeaffine.example.rwt.osgi.ui.example.apps.BackgroundProvider;
+import com.codeaffine.example.rwt.osgi.ui.example.apps.ContentProvider;
 import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider;
 
 

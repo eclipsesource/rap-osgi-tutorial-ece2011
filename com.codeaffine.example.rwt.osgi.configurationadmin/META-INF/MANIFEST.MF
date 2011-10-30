@@ -20,5 +20,6 @@ Service-Component: OSGI-INF/helloworldconfigurator.xml,
  OSGI-INF/datepickerconfigurator.xml,
  OSGI-INF/rwtservicecommandprovider.xml,
  OSGI-INF/osgiconsoleconfigurator.xml
-Export-Package: com.codeaffine.example.rwt.osgi.configurationadmin.console;version="1.0.0"
+Export-Package: com.codeaffine.example.rwt.osgi.configurationadmin.console;version="1.0.0",
+ com.eclipsesource.example.ece2011.ui.admin
 Bundle-ActivationPolicy: lazy

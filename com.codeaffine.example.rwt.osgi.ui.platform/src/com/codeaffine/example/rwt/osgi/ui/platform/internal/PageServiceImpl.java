@@ -63,7 +63,7 @@ public class PageServiceImpl implements PageService {
   public void removePageContibutor( UIContributor pageContributor ) {
     Object[] trackers;
     synchronized( lock ) {
-      pageContributors.remove( pageContributor );
+      pageContributors.remove( pageContributor.getId() );
       trackers = pageTrackers.toArray();
     }
     for( int i = 0; i < trackers.length; i++ ) {

@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import org.eclipse.osgi.framework.console.ConsoleSession;
 import org.eclipse.rwt.RWT;
 import org.eclipse.rwt.lifecycle.UICallBack;
+import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -32,6 +33,7 @@ public class OSGiConsole {
     composite.setLayout( new FillLayout() );
     UICallBack.activate( String.valueOf( composite.hashCode() ) );
     consoleWidget = new Text( composite, SWT.MULTI );
+    consoleWidget.setData( WidgetUtil.CUSTOM_VARIANT, "osgi_console" );
     File consoleIn = createTempFile( "consoleIn" );
     File consoleOut = createTempFile( "consoleOut" );
     registerInputProcessor( consoleWidget, consoleIn );

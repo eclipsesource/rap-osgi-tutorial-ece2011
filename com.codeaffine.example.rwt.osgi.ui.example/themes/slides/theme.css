@@ -10,6 +10,11 @@ Label.footer_separator {
   background-image: url( "/themes/slides/icons/footer_separator.png" );
 }
 
+/* OSGi console */
+Text.osgi_console {
+  font: 12px Lucida Console, Helvetica Mono, sans-serif;
+}
+
 /* slide navigation */
 Composite.navigation {
   background-image: url( "/themes/slides/icons/menubar_background.png" );
@@ -75,12 +80,17 @@ Composite.menubar_background {
 
 /* upload panel */
 Composite.upload-panel {
-  background-color: #dddddf;
+  background-color: #f0f0f0;
   border-radius: 2px;
 }
 
 Label.upload-selection {
   border-radius: 2px;
+}
+
+Button.upload-button {
+  padding: 1px 4px 1px 4px;
+  font: 12px Arial, Helvetica, sans-serif;
 }
 
 /* shell */

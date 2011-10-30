@@ -53,16 +53,11 @@ public class AdminUI implements IEntryPoint {
     shell.layout();
     shell.open();
     UICallBack.activate( UICALLBACK_ID );
-    shell.addDisposeListener( new DisposeListener() {
-
-      public void widgetDisposed( DisposeEvent event ) {
-        dispose();
-      }
-    } );
     return 0;
   }
-
+  
   public void createContent( Composite parent ) {
+    updateShell( parent );
     createImages( parent.getDisplay() );
     parent.setLayout( createMainLayout() );
     Control upperPart = createUpperPart( parent );
@@ -71,6 +66,18 @@ public class AdminUI implements IEntryPoint {
     lowerPart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
     changeTracker = new UiChangeTracker();
     changeTracker.start();
+  }
+
+  private void updateShell( Composite parent ) {
+    if( shell == null ) {
+      shell = parent.getShell();
+    }
+    shell.addDisposeListener( new DisposeListener() {
+
+      public void widgetDisposed( DisposeEvent event ) {
+        dispose();
+      }
+    } );
   }
 
   public void dispose() {
@@ -146,11 +153,13 @@ public class AdminUI implements IEntryPoint {
   }
 
   private void createTreeItemsForActiveComponents() {
-    TabItem[] tabItems = portsTabFolder.getItems();
-    for( TabItem tabItem : tabItems ) {
-      String port = (String)tabItem.getData();
-      Tree tree = (Tree)tabItem.getControl();
-      createTreeItemsForActiveComponents( tree, port );
+    if( !portsTabFolder.isDisposed() ) { // TODO [fappel]: check dispose problem
+      TabItem[] tabItems = portsTabFolder.getItems();
+      for( TabItem tabItem : tabItems ) {
+        String port = ( String )tabItem.getData();
+        Tree tree = ( Tree )tabItem.getControl();
+        createTreeItemsForActiveComponents( tree, port );
+      }
     }
   }
 
@@ -195,20 +204,22 @@ public class AdminUI implements IEntryPoint {
   private void createTabItemsForPorts() {
     List<String> ports = UiComponents.getAvailablePorts();
     String selectedPort = getSelectedPort();
-    TabItem[] items = portsTabFolder.getItems();
-    for( TabItem item : items ) {
-      if( !ports.contains( item.getData() ) ) {
-        item.getControl().dispose();
-        item.dispose();
+    if( !portsTabFolder.isDisposed() ) { // TODO [fappel]: check disposed problem
+      TabItem[] items = portsTabFolder.getItems();
+      for( TabItem item : items ) {
+        if( !ports.contains( item.getData() ) ) {
+          item.getControl().dispose();
+          item.dispose();
+        }
       }
-    }
-    for( String port : ports ) {
-      int insertIndex = getTabInsertPosition( port );
-      if( insertIndex != -1 ) {
-        createPortTabItem( port, insertIndex );
+      for( String port : ports ) {
+        int insertIndex = getTabInsertPosition( port );
+        if( insertIndex != -1 ) {
+          createPortTabItem( port, insertIndex );
+        }
       }
+      selectTabForPort( selectedPort );
     }
-    selectTabForPort( selectedPort );
   }
 
   private String getSelectedPort() {
@@ -255,11 +266,13 @@ public class AdminUI implements IEntryPoint {
   }
 
   private void createContributionItem( Tree parent, UiComponent component ) {
-    TreeItem item = new TreeItem( parent, SWT.NONE );
-    item.setData( component );
-    item.setImage( 0, getTypeImage( component ) );
-    item.setText( 1, component.getName() );
-    item.setText( 2, component.getBundleName() );
+    if( !parent.isDisposed() ) { // TODO [fappel]: check dispose problem
+      TreeItem item = new TreeItem( parent, SWT.NONE );
+      item.setData( component );
+      item.setImage( 0, getTypeImage( component ) );
+      item.setText( 1, component.getName() );
+      item.setText( 2, component.getBundleName() );
+    }
   }
 
   private void createContributionItem( TreeItem parent, UiComponent component ) {
@@ -282,9 +295,11 @@ public class AdminUI implements IEntryPoint {
 
   private static TabItem getSelectedItem( TabFolder folder ) {
     TabItem selectedItem = null;
-    int selectionIndex = folder.getSelectionIndex();
-    if( selectionIndex != -1 ) {
-      selectedItem = folder.getItem( selectionIndex );
+    if( !folder.isDisposed() ) { // TODO [fappel]: check dispose problem
+      int selectionIndex = folder.getSelectionIndex();
+      if( selectionIndex != -1 ) {
+        selectedItem = folder.getItem( selectionIndex );
+      }
     }
     return selectedItem;
   }
@@ -309,25 +324,31 @@ public class AdminUI implements IEntryPoint {
   }
 
   private static void clearTreeItems( Tree tree ) {
-    TreeItem[] items = tree.getItems();
-    for( TreeItem item : items ) {
-      item.dispose();
+    if( !tree.isDisposed() ) { // TODO [fappel]: check dispose problem
+      TreeItem[] items = tree.getItems();
+      for( TreeItem item : items ) {
+        item.dispose();
+      }
     }
   }
 
   private static void fillEmptyItems( Tree tree, int minItemCount ) {
     int itemCount = getFullItemCount( tree );
-    for( int i = itemCount; i < minItemCount; i++ ) {
-      new TreeItem( tree, SWT.NONE );
+    if( !tree.isDisposed() ) { // TODO [fappel]: check dispose problem
+      for( int i = itemCount; i < minItemCount; i++ ) {
+        new TreeItem( tree, SWT.NONE );
+      }
     }
   }
 
   private static int getFullItemCount( Tree tree ) {
     int result = 0;
-    TreeItem[] items = tree.getItems();
-    for( TreeItem item : items ) {
-      result++;
-      result += item.getItemCount();
+    if( !tree.isDisposed() ) { // TODO [fappel]: check dispose problem
+      TreeItem[] items = tree.getItems();
+      for( TreeItem item : items ) {
+        result++;
+        result += item.getItemCount();
+      }
     }
     return result;
   }

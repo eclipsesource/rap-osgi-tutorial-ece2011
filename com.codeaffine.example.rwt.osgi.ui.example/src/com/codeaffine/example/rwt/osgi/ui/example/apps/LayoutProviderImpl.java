@@ -8,7 +8,7 @@
  * Contributors:
  *    Frank Appel - initial API and implementation
  ******************************************************************************/
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.apps;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;

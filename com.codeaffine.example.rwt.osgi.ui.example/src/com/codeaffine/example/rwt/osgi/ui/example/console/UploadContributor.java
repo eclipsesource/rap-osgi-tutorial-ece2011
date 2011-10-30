@@ -1,4 +1,4 @@
-package com.codeaffine.example.rwt.osgi.ui.example;
+package com.codeaffine.example.rwt.osgi.ui.example.console;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,6 +86,7 @@ public class UploadContributor implements UIContributor {
     uploadButton = new Button( container, SWT.PUSH );
     uploadButton.setText( "upload" );
     uploadButton.setEnabled( false );
+    uploadButton.setData( WidgetUtil.CUSTOM_VARIANT, "upload-button" );
     FormData uploadButtonData = new FormData();
     uploadButton.setLayoutData( uploadButtonData );
     uploadButtonData.left = new FormAttachment( selectionLabel, 5 );

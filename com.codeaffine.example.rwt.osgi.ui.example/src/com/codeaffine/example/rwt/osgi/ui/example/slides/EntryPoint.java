@@ -16,9 +16,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-import com.codeaffine.example.rwt.osgi.ui.example.BackgroundProvider;
-import com.codeaffine.example.rwt.osgi.ui.example.ContentProvider;
-import com.codeaffine.example.rwt.osgi.ui.example.HomePageAction;
+import com.codeaffine.example.rwt.osgi.ui.example.apps.BackgroundProvider;
+import com.codeaffine.example.rwt.osgi.ui.example.apps.ContentProvider;
+import com.codeaffine.example.rwt.osgi.ui.example.apps.HomePageAction;
 import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider;
 import com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider;
 import com.codeaffine.example.rwt.osgi.ui.platform.ShellConfigurator;

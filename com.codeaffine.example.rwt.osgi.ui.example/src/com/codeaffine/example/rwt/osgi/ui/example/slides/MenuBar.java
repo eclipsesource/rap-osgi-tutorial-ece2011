@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,6 +32,7 @@ import com.codeaffine.example.rwt.osgi.ui.platform.ServiceProvider;
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
 public class MenuBar implements UIContributor {
+  private static final String PAGE_ID_COOKIE = "pageId";
   public static final String MENU_BAR_CONTROL = MenuBar.class.getName() + "#MENUBAR";
   // NOTE: this value reflects the height of the menubar_background image set via css
   static final int MENU_BAR_HEIGHT = 41;
@@ -37,10 +40,11 @@ public class MenuBar implements UIContributor {
   private static final String MENU_BUTTON = "menu_button";
 
   private final ServiceProvider serviceProvider;
-  Map<UIContributor,Button> buttons = new HashMap<UIContributor,Button>();
+  final Map<String,Button> buttons;
 
   public MenuBar( ServiceProvider serviceProvider ) {
     this.serviceProvider = serviceProvider;
+    this.buttons = new HashMap<String,Button>();
   }
 
   @Override
@@ -62,13 +66,14 @@ public class MenuBar implements UIContributor {
 
       @Override
       public void pageAdded( UIContributor page ) {
-        buttons.put( page, createMenuButton( result, pageService, page.getId() ) );
+        buttons.put( page.getId(), createMenuButton( result, pageService, page.getId() ) );
       }
 
       @Override
       public void pageRemoved( UIContributor page ) {
-        Button removed = buttons.remove( page );
+        Button removed = buttons.remove( page.getId() );
         removed.dispose();
+        selectMenuBarButton();
       }
     } );
     
@@ -94,11 +99,38 @@ public class MenuBar implements UIContributor {
         unselectButtons();
         pageService.selectPage( pageId );
         result.setSelection( true );
+        updatePageToSelect( pageId );
       }
     } );
+    
+    if( getPageToSelect().equals( pageId ) ) {
+      pageService.selectPage( pageId );
+      result.setSelection( true );
+      updatePageToSelect( pageId );
+    }
+    selectMenuBarButton();
     parent.layout( true, true );
-    pageService.selectPage( pageId );
-    result.setSelection( true );
+    return result;
+  }
+
+  void selectMenuBarButton() {
+    Button toSelect = buttons.get( getPageToSelect() );
+    if( toSelect != null ) {
+      unselectButtons();
+      toSelect.setSelection( true );
+    }
+  }
+
+  void updatePageToSelect( String pageId ) {
+    CookieUtil.setCookie( PAGE_ID_COOKIE, pageId );
+  }
+
+  String getPageToSelect() {
+    Cookie cookie = CookieUtil.getCookie( PAGE_ID_COOKIE );
+    String result = SlidesUIContributor.ID; 
+    if( cookie != null ) {
+      result = cookie.getValue();
+    }
     return result;
   }
 
