@@ -18,23 +18,45 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
 
 public class SlidesUIContributor implements UIContributor {
-
+  
   static final String ID = "Slides";
   private static final String SLIDE_COOKIE = "slide";
-
+  
   private static String[] slides;
-
+  
   private Composite slidesHolder;
   private Label counter;
   private Browser slide;
+  NavigationKeyBinding keyBindingListener;
   int selection;
+
+  class NavigationKeyBinding implements Listener {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public void handleEvent( Event event ) {
+      if( event.stateMask == ( SWT.CTRL | SWT.ALT ) && event.character == 'N' ) {
+        showNextSlide();
+      } else if( event.stateMask == ( SWT.CTRL | SWT.ALT )  && event.character == 'F' ) {
+        showPreviousSlide();
+      }
+    }
+
+    public String[] getActiveKeys() {
+      return new String[] { "CTRL+ALT+N", "CTRL+ALT+F" };
+    }
+  }
 
   @Override
   public String getId() {
@@ -53,7 +75,6 @@ public class SlidesUIContributor implements UIContributor {
     slidesHolder = new Composite( parent, SWT.NONE );
     slidesHolder.setLayout( new FillLayout() );
     slide = new Browser( slidesHolder, SWT.NONE );
-    
     initializeSelection();
   }
 
@@ -78,7 +99,15 @@ public class SlidesUIContributor implements UIContributor {
     final Composite navigation = createNavigationControl();
     createNavigationContent( navigation );
     layoutNavigation( navigation );
+    registerKeyBindings( navigation );
     addDisposeWatchdog( navigation );
+  }
+
+  private void registerKeyBindings( Composite navigation ) {
+    final Display display = navigation.getDisplay();
+    keyBindingListener = new NavigationKeyBinding();
+    display.setData( RWT.ACTIVE_KEYS, keyBindingListener.getActiveKeys() );
+    display.addFilter( SWT.KeyDown, keyBindingListener );
   }
 
   private void addDisposeWatchdog( final Composite navigation ) {
@@ -87,6 +116,8 @@ public class SlidesUIContributor implements UIContributor {
 
       @Override
       public void widgetDisposed( DisposeEvent event ) {
+        final Display display = navigation.getDisplay();
+        display.removeFilter( SWT.KeyDown, keyBindingListener );
         if( !navigation.isDisposed() ) {
           navigation.dispose();
         }
@@ -130,10 +161,7 @@ public class SlidesUIContributor implements UIContributor {
       
       @Override
       public void widgetSelected( SelectionEvent e ) {
-        if( getSlides().length > selection ) {
-          selection++;
-          selectSlide();
-        }
+        showNextSlide();
       }
     } );
   }
@@ -154,10 +182,7 @@ public class SlidesUIContributor implements UIContributor {
 
       @Override
       public void widgetSelected( SelectionEvent e ) {
-        if( 1 < selection ) {
-          selection--;
-          selectSlide();
-        }
+        showPreviousSlide();
       }
     } );
   }
@@ -186,5 +211,19 @@ public class SlidesUIContributor implements UIContributor {
     String result = "/" + Application.RESOURCES + "/" + name;
     RWT.getResourceManager().register( name, getClass().getResourceAsStream( name ) );
     return result;
+  }
+
+  void showNextSlide() {
+    if( getSlides().length > selection ) {
+      selection++;
+      selectSlide();
+    }
+  }
+
+  void showPreviousSlide() {
+    if( 1 < selection ) {
+      selection--;
+      selectSlide();
+    }
   }
 }
