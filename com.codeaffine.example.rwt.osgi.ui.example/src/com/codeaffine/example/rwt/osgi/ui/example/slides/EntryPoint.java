@@ -48,6 +48,7 @@ public class EntryPoint implements IEntryPoint {
     LayoutProvider layoutProvider = new Layout();
     ShellConfigurator configurator = new ShellConfigurator( serviceProvider );
     shell = configurator.configure( pageStructureProviders, layoutProvider );
+    shell.setMaximized( true );
   }
 
   private void initializeServiceProvider() {

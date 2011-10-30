@@ -62,7 +62,6 @@ public class ShellConfigurator {
       {
         if( ConfiguratorTracker.matchesType( UI_CONTRIBUTOR_TYPE_PAGE, reference ) ) {
           pageService.removePageContibutor( service );
-//          pageService.selectHomePage();
         }
       }
     };

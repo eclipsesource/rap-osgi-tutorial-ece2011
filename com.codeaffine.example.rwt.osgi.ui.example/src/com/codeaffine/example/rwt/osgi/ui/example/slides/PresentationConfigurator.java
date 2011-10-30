@@ -14,7 +14,6 @@ import org.eclipse.rwt.application.ApplicationConfiguration;
 import org.eclipse.rwt.application.ApplicationConfigurator;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.ConfiguratorTracker;
-import com.codeaffine.example.rwt.osgi.ui.platform.ShellPositioner;
 
 
 public class PresentationConfigurator implements ApplicationConfigurator {
@@ -25,7 +24,6 @@ public class PresentationConfigurator implements ApplicationConfigurator {
     configuration.addEntryPoint( "default", EntryPoint.class );
     configuration.addStyleSheet( SLIDES, "themes/slides/theme.css" );
     configuration.addBranding( new Branding() );
-    configuration.addPhaseListener( new ShellPositioner() );
     new ConfiguratorTracker( this, configuration ).open();
   }
 }
