@@ -30,6 +30,10 @@ public class AdminConfigurator implements ApplicationConfigurator {
       public String getServletName() {
         return "admin";
       }
+      @Override
+      public String getTitle() {
+        return "RAP Admin UI";
+      }
     } );
     configuration.addStyleSheet( "org.eclipse.rap.rwt.theme.Default", "resources/addon.css" );
   }
