@@ -46,15 +46,15 @@ public class SlidesUIContributor implements UIContributor {
 
     @Override
     public void handleEvent( Event event ) {
-      if( event.stateMask == ( SWT.CTRL | SWT.ALT ) && event.character == 'N' ) {
+      if( event.stateMask == ( SWT.CTRL | SWT.ALT ) && event.character == 'F' ) {
         showNextSlide();
-      } else if( event.stateMask == ( SWT.CTRL | SWT.ALT )  && event.character == 'F' ) {
+      } else if( event.stateMask == ( SWT.CTRL | SWT.ALT )  && event.character == 'B' ) {
         showPreviousSlide();
       }
     }
 
     public String[] getActiveKeys() {
-      return new String[] { "CTRL+ALT+N", "CTRL+ALT+F" };
+      return new String[] { "CTRL+ALT+F", "CTRL+ALT+B" };
     }
   }
 
