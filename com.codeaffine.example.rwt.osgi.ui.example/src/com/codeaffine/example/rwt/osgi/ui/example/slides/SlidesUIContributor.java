@@ -2,13 +2,15 @@ package com.codeaffine.example.rwt.osgi.ui.example.slides;
 
 import javax.servlet.http.Cookie;
 
+import org.eclipse.rwt.RWT;
+import org.eclipse.rwt.application.Application;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -16,7 +18,6 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -28,11 +29,11 @@ public class SlidesUIContributor implements UIContributor {
   static final String ID = "Slides";
   private static final String SLIDE_COOKIE = "slide";
 
-  private static Image[] slides;
+  private static String[] slides;
 
   private Composite slidesHolder;
   private Label counter;
-  private Label slide;
+  private Browser slide;
   int selection;
 
   @Override
@@ -51,7 +52,8 @@ public class SlidesUIContributor implements UIContributor {
   private void createSlidesHolder( Composite parent ) {
     slidesHolder = new Composite( parent, SWT.NONE );
     slidesHolder.setLayout( new FillLayout() );
-    slide = new Label( slidesHolder, SWT.NONE );
+    slide = new Browser( slidesHolder, SWT.NONE );
+    
     initializeSelection();
   }
 
@@ -67,8 +69,8 @@ public class SlidesUIContributor implements UIContributor {
   }
 
   void selectSlide() {
-    Image image = getSlides()[ selection - 1 ];
-    slide.setImage( image );
+    String slideName = getSlides()[ selection - 1 ];
+    slide.setText( "<img src=\"" + slideName + "\" width=\"100%\" height=\"100%\" />" );
     updateCounterLabel();
   }
 
@@ -169,15 +171,20 @@ public class SlidesUIContributor implements UIContributor {
     return selection + "/" + getSlides().length;
   }
   
-  Image[] getSlides() {
+  String[] getSlides() {
     if( slides == null ) {
-      Display display = Display.getDefault();
-      slides = new Image[] {
-        new Image( display, getClass().getResourceAsStream( "rwt-osgi-draft.1.png" ) ),
-        new Image( display, getClass().getResourceAsStream( "chaos.png" ) ),
-        new Image( display, getClass().getResourceAsStream( "container.png" ) )
+      slides = new String[] {
+        registerImage( "rwt-osgi-draft.1.png" ),
+        registerImage( "chaos.png" ),
+        registerImage( "container.png" )
       };
     }
     return slides;
+  }
+
+  private String registerImage( String name ) {
+    String result = "/" + Application.RESOURCES + "/" + name;
+    RWT.getResourceManager().register( name, getClass().getResourceAsStream( name ) );
+    return result;
   }
 }

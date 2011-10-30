@@ -76,12 +76,11 @@ public class Layout implements LayoutProvider {
   private void layoutContent() {
     FormData layoutData = new FormData();
     content.setLayoutData( layoutData );
-//    content.pack();
-    layoutData.top = new FormAttachment( 0, CONTENT_OFFSET + 4 );
+    layoutData.top = new FormAttachment( 0, CONTENT_OFFSET - 10 );
     layoutData.left = new FormAttachment( 0, 10 );
     layoutData.right = new FormAttachment( 100, -10 );
     int height = calculateHeight();
-    layoutData.height = height - 5;
+    layoutData.height = height +19 - OFFSET;
     layoutData.width = content.getSize().x - 4;
   }
 
@@ -108,7 +107,7 @@ public class Layout implements LayoutProvider {
   private void layoutFooter() {
     FormData layoutData = new FormData();
     footer.setLayoutData( layoutData );
-    layoutData.top = new FormAttachment( content );
+    layoutData.top = new FormAttachment( content, OFFSET - 10 );
     layoutData.left = new FormAttachment( 0, 0 );
     layoutData.right = new FormAttachment( 100, 0 );
     layoutData.height = Footer.FOOTER_HEIGHT;
