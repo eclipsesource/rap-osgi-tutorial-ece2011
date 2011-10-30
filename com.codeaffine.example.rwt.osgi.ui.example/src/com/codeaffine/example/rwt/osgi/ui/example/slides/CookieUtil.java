@@ -12,9 +12,11 @@ public class CookieUtil {
     HttpServletRequest request = RWT.getRequest();
     Cookie[] cookies = request.getCookies();
     Cookie result = null;
-    for( int i = 0; result == null && i < cookies.length; i++ ) {
-      if( cookieName.equals( cookies[ i ].getName() ) ) {
-        result = cookies[ i ];
+    if( cookies != null ) {
+      for( int i = 0; result == null && i < cookies.length; i++ ) {
+        if( cookieName.equals( cookies[ i ].getName() ) ) {
+          result = cookies[ i ];
+        }
       }
     }
     return result;
