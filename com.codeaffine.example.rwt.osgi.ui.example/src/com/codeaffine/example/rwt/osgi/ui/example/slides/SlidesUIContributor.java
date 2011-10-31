@@ -5,6 +5,7 @@ import javax.servlet.http.Cookie;
 import org.eclipse.rwt.RWT;
 import org.eclipse.rwt.application.Application;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
+import org.eclipse.rwt.resources.IResourceManager.RegisterOptions;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.DisposeEvent;
@@ -90,8 +91,12 @@ public class SlidesUIContributor implements UIContributor {
   }
 
   void selectSlide() {
-    String slideName = getSlides()[ selection - 1 ];
-    slide.setText( "<img src=\"" + slideName + "\" width=\"100%\" height=\"100%\" />" );
+    String slideHTMLSnippet = getSlides()[ selection - 1 ];
+    if( slideHTMLSnippet.startsWith( "http://" ) ) {
+      slide.setUrl( slideHTMLSnippet );
+    } else {
+      slide.setText( slideHTMLSnippet );
+    }
     updateCounterLabel();
   }
 
@@ -198,19 +203,62 @@ public class SlidesUIContributor implements UIContributor {
   
   String[] getSlides() {
     if( slides == null ) {
+      registerImage( "/resources/chart/admin_9090.png" );
+      registerImage( "/resources/chart/admin_9091.png" );
+      registerImage( "/resources/chart/admin_app_conf.png" );
+      registerImage( "/resources/chart/admin_app.png" );
+      registerImage( "/resources/chart/base.png" );
+      registerImage( "/resources/chart/example_9090.png" );
+      registerImage( "/resources/chart/example_9091.png" );
+      registerImage( "/resources/chart/example_app_conf.png" );
+      registerImage( "/resources/chart/example_app.png" );
+      registerImage( "/resources/chart/example_bundles.png" );
+      registerImage( "/resources/chart/http_jetty.png" );
+      registerImage( "/resources/chart/jetty.png" );
+      registerImage( "/resources/chart/port_9090.png" );
+      registerImage( "/resources/chart/port_9091.png" );
+      registerImage( "/resources/chart/rwt_osgi.png" );
+      registerImage( "/resources/chart/rwt.png" );
+      
+      String jQuery = "/resources/jquery-1.5.min.js";
+      RWT.getResourceManager().register( jQuery, 
+                                         getClass().getClassLoader().getResourceAsStream( jQuery ), 
+                                         "Cp1252", 
+                                         RegisterOptions.NONE );
+      String chart = "/resources/chart/chart.js";
+      RWT.getResourceManager().register( chart, 
+                                         getClass().getClassLoader().getResourceAsStream( chart ), 
+                                         "Cp1252", 
+                                         RegisterOptions.NONE );
+      String chartPage = "/resources/chart/chart.html";
+      RWT.getResourceManager().register( chartPage, 
+                                         getClass().getClassLoader().getResourceAsStream( chartPage ), 
+                                         "Cp1252", 
+                                         RegisterOptions.NONE );
+      
+      int localPort = RWT.getRequest().getLocalPort();
+
       slides = new String[] {
-        registerImage( "rwt-osgi-draft.1.png" ),
-        registerImage( "chaos.png" ),
-        registerImage( "container.png" ),
-        registerImage( "twitter.png" ),
-        registerImage( "munsters.png" )
+        getHTMLSnippet( registerImage( "rwt-osgi-draft.1.png" ) ),
+        getHTMLSnippet( registerImage( "chaos.png" ) ),
+        getHTMLSnippet( registerImage( "container.png" ) ),
+        getHTMLSnippet( registerImage( "twitter.png" ) ),
+        getHTMLSnippet( registerImage( "munsters.png" ) ),
+        "http://localhost:" + localPort + "/" + Application.RESOURCES + chartPage
       };
     }
     return slides;
   }
 
+  private String getHTMLSnippet( String slideName ) {
+    return "<img src=\"" + slideName + "\" width=\"100%\" height=\"100%\" />";
+  }
+
   private String registerImage( String name ) {
     String result = "/" + Application.RESOURCES + "/" + name;
+    if( name.startsWith( "/" ) ) {
+      result = "/" + Application.RESOURCES + name;
+    }
     RWT.getResourceManager().register( name, getClass().getResourceAsStream( name ) );
     return result;
   }

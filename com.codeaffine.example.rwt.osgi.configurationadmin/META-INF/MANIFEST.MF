@@ -15,11 +15,8 @@ Import-Package: com.codeaffine.example.rwt.osgi.ui.platform;version="1.0.0",
  org.osgi.service.http;version="[1.2.1,2.0.0)",
  org.osgi.util.tracker;version="1.5.0"
 Require-Bundle: org.eclipse.rap.rwt;bundle-version="1.5.0"
-Service-Component: OSGI-INF/helloworldconfigurator.xml,
- OSGI-INF/adminconfigurator.xml,
- OSGI-INF/datepickerconfigurator.xml,
- OSGI-INF/rwtservicecommandprovider.xml,
- OSGI-INF/osgiconsoleconfigurator.xml
+Service-Component: OSGI-INF/adminconfigurator.xml,
+ OSGI-INF/rwtservicecommandprovider.xml
 Export-Package: com.codeaffine.example.rwt.osgi.configurationadmin.console;version="1.0.0",
  com.eclipsesource.example.ece2011.ui.admin
 Bundle-ActivationPolicy: lazy
