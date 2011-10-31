@@ -1,3 +1,25 @@
+
+* {
+  font: 14px Verdana, "Lucida Sans", Arial, Helvetica, sans-serif;
+}
+
+Tree-Cell {
+  spacing: 8px;
+  padding: 8px;
+}
+
+Tree-GridLine {
+  color: transparent;
+}
+
+TreeColumn {
+  padding: 2px 7px 3px;
+}
+
+Label.header {
+  font: 18px bold Verdana, "Lucida Sans", Arial, Helvetica, sans-serif;
+}
+
 Label.logo {
   background-image: url( "/themes/slides/icons/logo.png" );
 }
@@ -12,7 +34,7 @@ Label.footer_separator {
 
 /* OSGi console */
 Text.osgi_console {
-  font: 12px Lucida Console, Helvetica Mono, sans-serif;
+  font: 14px Lucida Console, Helvetica Mono, sans-serif;
 }
 
 /* slide navigation */
@@ -20,7 +42,7 @@ Composite.navigation {
   background-image: url( "/themes/slides/icons/menubar_background.png" );
 }
 
-Button.slide_navigation_forward {
+Button[PUSH].slide_navigation_forward {
   color: #ffffff;
   background-color: transparent;
   background-image: none;
@@ -29,11 +51,11 @@ Button.slide_navigation_forward {
   border: none;
 }
 
-Button.slide_navigation_forward:hover {
-  border: 1px solid #A4A4A4;
+Button[PUSH].slide_navigation_forward:hover {
+  border: none;
 }
 
-Button.slide_navigation_back {
+Button[PUSH].slide_navigation_back {
   color: #ffffff;
   background-color: transparent;
   background-image: none;
@@ -42,8 +64,16 @@ Button.slide_navigation_back {
   border: none;
 }
 
-Button.slide_navigation_back:hover {
-  border: 1px solid #A4A4A4;
+Button[PUSH].slide_navigation_back:hover {
+  border: none;
+}
+
+Button-FocusIndicator[PUSH].slide_navigation_forward,
+Button-FocusIndicator[PUSH].slide_navigation_back
+{
+  background-color: transparent; 
+  border: none;
+  opacity: 0;
 }
 
 Label.slide_counter {
@@ -52,7 +82,7 @@ Label.slide_counter {
 }
 
 /* menu bar */
-Button.menu_button {
+Button[TOGGLE].menu_button {
   color: #ffffff;
   background-color: transparent;
   background-image: none;
@@ -61,7 +91,7 @@ Button.menu_button {
   border: none;
 }
 
-Button.menu_button:selected, Button-FocusIndicator {
+Button[TOGGLE].menu_button:selected {
   color: #505050;
   background-color: #ffffff;
   background-image: none;
@@ -70,8 +100,20 @@ Button.menu_button:selected, Button-FocusIndicator {
   border: none;
 }
 
-Button.menu_button:hover {
-  border: 1px solid #A4A4A4;
+Button[TOGGLE].menu_button:hover {
+  background-color: white;
+  color: #aaaaaa;
+}
+
+Button[TOGGLE].menu_button:selected:hover {
+  background-color: white;
+  color: #505050;
+}
+
+Button-FocusIndicator[TOGGLE].menu_button {
+  background-color: transparent;
+  border: none;
+  opacity: 0;
 }
 
 Composite.menubar_background {
