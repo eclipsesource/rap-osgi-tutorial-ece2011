@@ -29,12 +29,12 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
 
 public class SlidesUIContributor implements UIContributor {
-  
+
   static final String ID = "Slides";
   private static final String SLIDE_COOKIE = "slide";
-  
+
   private static String[] slides;
-  
+
   private Composite slidesHolder;
   private Label counter;
   private Browser slide;
@@ -161,9 +161,9 @@ public class SlidesUIContributor implements UIContributor {
     forward.setText( "+" );
     forward.setData( WidgetUtil.CUSTOM_VARIANT, "slide_navigation_forward" );
     forward.addSelectionListener( new SelectionAdapter() {
-      
+
       private static final long serialVersionUID = 1L;
-      
+
       @Override
       public void widgetSelected( SelectionEvent e ) {
         showNextSlide();
@@ -182,7 +182,7 @@ public class SlidesUIContributor implements UIContributor {
     back.setText( "-" );
     back.setData( WidgetUtil.CUSTOM_VARIANT, "slide_navigation_back" );
     back.addSelectionListener( new SelectionAdapter() {
-      
+
       private static final long serialVersionUID = 1L;
 
       @Override
@@ -200,7 +200,7 @@ public class SlidesUIContributor implements UIContributor {
   private String calculateSelection() {
     return selection + "/" + getSlides().length;
   }
-  
+
   String[] getSlides() {
     if( slides == null ) {
       registerImage( "/resources/chart/admin_9090.png" );
@@ -219,29 +219,32 @@ public class SlidesUIContributor implements UIContributor {
       registerImage( "/resources/chart/port_9091.png" );
       registerImage( "/resources/chart/rwt_osgi.png" );
       registerImage( "/resources/chart/rwt.png" );
-      
+
       String jQuery = "/resources/jquery-1.5.min.js";
-      RWT.getResourceManager().register( jQuery, 
-                                         getClass().getClassLoader().getResourceAsStream( jQuery ), 
-                                         "Cp1252", 
+      RWT.getResourceManager().register( jQuery,
+                                         getClass().getClassLoader().getResourceAsStream( jQuery ),
+                                         "UTF-8",
                                          RegisterOptions.NONE );
       String chart = "/resources/chart/chart.js";
-      RWT.getResourceManager().register( chart, 
-                                         getClass().getClassLoader().getResourceAsStream( chart ), 
-                                         "Cp1252", 
+      RWT.getResourceManager().register( chart,
+                                         getClass().getClassLoader().getResourceAsStream( chart ),
+                                         "UTF-8",
                                          RegisterOptions.NONE );
       String chartPage = "/resources/chart/chart.html";
-      RWT.getResourceManager().register( chartPage, 
-                                         getClass().getClassLoader().getResourceAsStream( chartPage ), 
-                                         "Cp1252", 
+      RWT.getResourceManager().register( chartPage,
+                                         getClass().getClassLoader().getResourceAsStream( chartPage ),
+                                         "UTF-8",
                                          RegisterOptions.NONE );
-      
+
       int localPort = RWT.getRequest().getLocalPort();
 
       slides = new String[] {
-        getHTMLSnippet( registerImage( "rwt-osgi-draft.1.png" ) ),
+        getHTMLSnippet( registerImage( "start.png" ) ),
+        getHTMLSnippet( registerImage( "widget-toolkit.png" ) ),
+        getHTMLSnippet( registerImage( "modularity.png" ) ),
         getHTMLSnippet( registerImage( "chaos.png" ) ),
         getHTMLSnippet( registerImage( "container.png" ) ),
+        getHTMLSnippet( registerImage( "dynamic.png" ) ),
         getHTMLSnippet( registerImage( "twitter.png" ) ),
         getHTMLSnippet( registerImage( "munsters.png" ) ),
         "http://localhost:" + localPort + "/" + Application.RESOURCES + chartPage
