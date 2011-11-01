@@ -1,6 +1,5 @@
 
 var names = [
-  'base',
   'rwt',
   'jetty',
   'http_jetty',
@@ -35,10 +34,7 @@ var regions = [
 var createLayer = function( name ) {
   var parent = $( '#images' );
   var image = $( '<img class="layer" id="' + name + '" src="' + name + '.png"/>' );
-  image.click( function( event ) { handleClick( event ); } );
-  if( name != 'base' ) {
-    image.hide();
-  }
+  image.hide();
   parent.append( image );
 }
 
@@ -63,8 +59,9 @@ var adjustVisibility = function() {
 }
 
 var handleClick = function( event ) {
-  var x = event.layerX / event.target.width * 100;
-  var y = event.layerY / event.target.height * 100;
+  var x = event.layerX / $( event.target ).width() * 100;
+  var y = event.layerY / $( event.target ).height() * 100;
+  console.log( x, y, event );
   for( var i = 0; i < regions.length; i++ ) {
     var region = regions[ i ];
     if( x >= region[ 0 ] && y >= region[1] && x <= region[2] && y <= region[3] ) {
@@ -76,8 +73,27 @@ var handleClick = function( event ) {
   }
 }
 
+var layout = function( name ) {
+  var body = $( 'body' );
+  var width  = body.width();
+  var height = body.height();
+  var boxWidth = height * 1476 / 1107;
+  var boxHeight = height;
+  var offset = ( width - boxWidth ) / 2;
+  console.log( "layout", width, height, boxWidth, boxHeight );
+  $( '#images' ).css( { left: offset, top: 0, width: boxWidth, height: boxHeight } );
+  $( '.layer' ).css( { left: 0, top: 0, width: boxWidth, height: boxHeight } );
+}
+
 $( document ).ready( function() {
   for( var i = 0; i < names.length; i++ ) {
     createLayer( names[ i ] );
   }
+  $( '#images' ).click( function( event ) {
+      handleClick( event ); 
+  } );
+  $( window ).resize( function() {
+    layout();
+  } );
+  layout();
 } );

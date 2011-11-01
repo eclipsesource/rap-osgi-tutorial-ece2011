@@ -207,7 +207,6 @@ public class SlidesUIContributor implements UIContributor {
       registerImage( "/resources/chart/admin_9091.png" );
       registerImage( "/resources/chart/admin_app_conf.png" );
       registerImage( "/resources/chart/admin_app.png" );
-      registerImage( "/resources/chart/base.png" );
       registerImage( "/resources/chart/example_9090.png" );
       registerImage( "/resources/chart/example_9091.png" );
       registerImage( "/resources/chart/example_app_conf.png" );
