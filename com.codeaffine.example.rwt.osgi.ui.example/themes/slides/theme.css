@@ -35,6 +35,7 @@ Label.footer_separator {
 /* OSGi console */
 Text.osgi_console {
   font: 14px Lucida Console, Helvetica Mono, sans-serif;
+  background-color: white;
 }
 
 /* slide navigation */
