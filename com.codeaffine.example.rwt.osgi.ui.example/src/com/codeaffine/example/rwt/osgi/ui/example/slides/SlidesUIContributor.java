@@ -247,8 +247,8 @@ public class SlidesUIContributor implements UIContributor {
         getHTMLSnippet( registerImage( "dynamic.png" ) ),
         getHTMLSnippet( registerImage( "twitter.png" ) ),
         getHTMLSnippet( registerImage( "munsters.png" ) ),
-        getHTMLSnippet( registerImage( "resources.png" ) ),
-        "http://localhost:" + localPort + "/" + Application.RESOURCES + chartPage
+        "http://localhost:" + localPort + "/" + Application.RESOURCES + chartPage,
+        getHTMLSnippet( registerImage( "resources.png" ) )
       };
     }
     return slides;
