@@ -240,12 +240,14 @@ public class SlidesUIContributor implements UIContributor {
       slides = new String[] {
         getHTMLSnippet( registerImage( "start.png" ) ),
         getHTMLSnippet( registerImage( "widget-toolkit.png" ) ),
+        getHTMLSnippet( registerImage( "widgets.png" ) ),
         getHTMLSnippet( registerImage( "modularity.png" ) ),
         getHTMLSnippet( registerImage( "chaos.png" ) ),
         getHTMLSnippet( registerImage( "container.png" ) ),
         getHTMLSnippet( registerImage( "dynamic.png" ) ),
         getHTMLSnippet( registerImage( "twitter.png" ) ),
         getHTMLSnippet( registerImage( "munsters.png" ) ),
+        getHTMLSnippet( registerImage( "resources.png" ) ),
         "http://localhost:" + localPort + "/" + Application.RESOURCES + chartPage
       };
     }
