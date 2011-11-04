@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.6"?>
+
+<target name="basic" sequenceNumber="4">
+<locations>
+<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.rap.runtime.requirements.feature.group" version="1.5.0.20111104-0117"/>
+<unit id="org.eclipse.rap.runtime.feature.group" version="1.5.0.20111104-0117"/>
+<repository location="jar:file:/home/ralf/Desktop/ece-stick/repo/rap-runtime-1.5.0-N-20111104-0112.zip!/"/>
+</location>
+</locations>
+</target>
