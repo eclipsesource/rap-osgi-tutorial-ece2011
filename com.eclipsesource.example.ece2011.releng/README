@@ -1,0 +1,9 @@
+
+Switch to the releng project inside the git repository and run maven.
+
+$ cd com.eclipsesource.example.ece2011.releng
+$ mvn clean package
+
+The output can be grabbed from these locations:
+
+* WAR file: war/target/example.war
