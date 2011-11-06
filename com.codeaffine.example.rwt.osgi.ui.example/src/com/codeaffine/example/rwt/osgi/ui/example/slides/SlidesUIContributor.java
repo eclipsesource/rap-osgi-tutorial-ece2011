@@ -194,6 +194,7 @@ public class SlidesUIContributor implements UIContributor {
 
   private void updateCounterLabel() {
     counter.setText( calculateSelection() );
+    counter.getParent().pack();
     CookieUtil.setCookie( SLIDE_COOKIE, String.valueOf( selection ) );
   }
 
