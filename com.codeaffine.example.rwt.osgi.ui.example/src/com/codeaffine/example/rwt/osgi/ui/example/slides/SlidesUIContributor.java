@@ -240,6 +240,8 @@ public class SlidesUIContributor implements UIContributor {
 
       slides = new String[] {
         getHTMLSnippet( registerImage( "start.png" ) ),
+        getHTMLSnippet( registerImage( "web-frameworks-1.png" ) ),
+        getHTMLSnippet( registerImage( "web-frameworks-2.png" ) ),
         getHTMLSnippet( registerImage( "widget-toolkit.png" ) ),
         getHTMLSnippet( registerImage( "widgets.png" ) ),
         getHTMLSnippet( registerImage( "modularity.png" ) ),
