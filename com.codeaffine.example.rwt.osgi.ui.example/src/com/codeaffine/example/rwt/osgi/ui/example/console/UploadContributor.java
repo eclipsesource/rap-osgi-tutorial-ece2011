@@ -33,7 +33,7 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 public class UploadContributor implements UIContributor {
 
   private static final int OFFSET = 5;
-  
+
   FileUpload fileChooserButton;
   Label selectionLabel;
   FileUploadHandler handler;
@@ -132,7 +132,7 @@ public class UploadContributor implements UIContributor {
       throw new IllegalArgumentException( "Unable to register regulation bundle: " + location, be );
     }
   }
-  
+
 
   Bundle getBundle() {
     return FrameworkUtil.getBundle( getClass() );

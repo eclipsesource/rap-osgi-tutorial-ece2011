@@ -23,7 +23,7 @@ class Branding extends AbstractBranding {
   public String getThemeId() {
     return PresentationConfigurator.SLIDES;
   }
-  
+
   @Override
   public String getTitle() {
     return "Slides";

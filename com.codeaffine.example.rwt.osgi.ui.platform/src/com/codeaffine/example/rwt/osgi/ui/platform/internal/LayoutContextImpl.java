@@ -20,14 +20,14 @@ import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider.LayoutContext;
 
 
 public class LayoutContextImpl implements LayoutContext {
-  
+
   private final Map<String, Control> controls;
   private Shell shell;
 
   public LayoutContextImpl() {
     this.controls = new HashMap<String,Control>();
   }
-  
+
   @Override
   public Control getControl( String key ) {
     return controls.get( key );

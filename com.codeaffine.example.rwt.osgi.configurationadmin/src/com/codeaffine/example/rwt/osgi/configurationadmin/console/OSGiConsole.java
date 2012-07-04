@@ -21,7 +21,7 @@ import org.osgi.framework.ServiceRegistration;
 
 
 public class OSGiConsole {
-  
+
   private Composite composite;
   private OutputProcessor outputProcessor;
   private ExecutorService executorService;
@@ -42,22 +42,22 @@ public class OSGiConsole {
     ConsoleCloser consoleCloser = new ConsoleCloser( this );
     RWT.getSessionStore().addSessionStoreListener( consoleCloser );
   }
-  
+
   public Control getControl() {
     return composite;
   }
-  
+
   private void registerInputProcessor( Text consoleWidget, File consoleIn ) {
     InputProcessor inputProcessor = new InputProcessor( consoleIn );
     consoleWidget.addKeyListener( new CommandParser( inputProcessor, consoleWidget ) );
   }
-  
+
   private void registerOutputProcessor( Text consoleWidget, File consoleOut ) {
     executorService = Executors.newSingleThreadExecutor();
     outputProcessor = new OutputProcessor( consoleOut, new LineWriter( consoleWidget ) );
     executorService.execute( outputProcessor );
   }
-  
+
   private void registerConsoleSession( File consoleIn, File consoleOut ) {
     BundleContext context = FrameworkUtil.getBundle( getClass() ).getBundleContext();
     OSGiConsoleSession session = new OSGiConsoleSession( consoleIn, consoleOut );
@@ -65,7 +65,7 @@ public class OSGiConsole {
     properties.put( "console.systemInOut", Boolean.TRUE );
     serviceRegistration = context.registerService( ConsoleSession.class, session, properties );
   }
-  
+
   private File createTempFile( String prefix ) {
     try {
       File result = File.createTempFile( prefix, "tmp" );
@@ -75,7 +75,7 @@ public class OSGiConsole {
       throw new IllegalStateException( shouldNotHappen );
     }
   }
-  
+
   public void dispose() {
     if( composite != null ) {
       UICallBack.deactivate( String.valueOf( composite.hashCode() ) );

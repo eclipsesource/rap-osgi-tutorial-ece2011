@@ -28,7 +28,7 @@
       <param-value>false</param-value>
     </init-param>
 
-    <load-on-startup>1</load-on-startup>    
+    <load-on-startup>1</load-on-startup>
 
     <!--
       org.eclipse.equinox.servletbridge and the Servlet API are exported automatically to the

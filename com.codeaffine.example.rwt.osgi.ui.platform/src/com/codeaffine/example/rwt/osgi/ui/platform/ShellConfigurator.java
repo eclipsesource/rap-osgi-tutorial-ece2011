@@ -20,13 +20,13 @@ import com.codeaffine.example.rwt.osgi.ui.platform.internal.ShellProvider;
 
 public class ShellConfigurator {
   private static final String UI_CONTRIBUTOR_TYPE_PAGE = "page";
-  
+
   private final ServiceProvider serviceProvider;
 
   public ShellConfigurator( ServiceProvider serviceProvider ) {
     this.serviceProvider = serviceProvider;
   }
-  
+
   public Shell configure( UIContributor[] pageStructureProviders, LayoutProvider layoutProvider ) {
     LayoutContextImpl layoutContext = new LayoutContextImpl();
     PageServiceImpl pageService = new PageServiceImpl( layoutProvider, layoutContext );
@@ -40,9 +40,9 @@ public class ShellConfigurator {
 
   private void trackUIContributions( final PageServiceImpl pageService ) {
     new UIContributorTracker() {
-      
+
       private boolean initialized;
-      
+
       @Override
       public void addingService( ServiceReference<UIContributorFactory> reference,
                                  UIContributor contributor )
@@ -55,7 +55,7 @@ public class ShellConfigurator {
           }
         }
       }
-      
+
       @Override
       public void removedService( ServiceReference<UIContributorFactory> reference,
                                   UIContributor service )

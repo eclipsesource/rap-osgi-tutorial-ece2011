@@ -23,7 +23,7 @@ class UIBranding extends AbstractBranding {
   public String getThemeId() {
     return App1.EXAMPLE_UI;
   }
-  
+
   @Override
   public String getTitle() {
     return "Dynamic Duo";

@@ -31,7 +31,7 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributorTracker;
 
 public class HomePageTab implements UIContributor {
   private static final int UPLOAD_HEIGHT = 33;
-  
+
   ServiceProvider serviceProvider;
   UIContributor bundleUploadContributor;
   Composite parent;
@@ -41,9 +41,9 @@ public class HomePageTab implements UIContributor {
   private void createUIContributionTracker() {
     if( uiContributorTracker == null ) {
       uiContributorTracker = new UIContributorTracker() {
-        
+
         @Override
-        public void addingService( ServiceReference<UIContributorFactory> reference, 
+        public void addingService( ServiceReference<UIContributorFactory> reference,
                                    UIContributor result )
         {
           if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
@@ -51,7 +51,7 @@ public class HomePageTab implements UIContributor {
             updatePage();
           }
         }
-        
+
         @Override
         public void removedService( ServiceReference<UIContributorFactory> reference,
                                     UIContributor service )
@@ -59,9 +59,9 @@ public class HomePageTab implements UIContributor {
           if( ConfiguratorTracker.matchesType( "BundleUpload", reference ) ) {
             bundleUploadContributor = null;
             updatePage();
-          }        
+          }
         }
-  
+
         private void updatePage() {
           if( composite != null && !composite.isDisposed() ) {
             composite.dispose();
@@ -76,7 +76,7 @@ public class HomePageTab implements UIContributor {
   void setServiceProvider( ServiceProvider serviceProvider ) {
     this.serviceProvider = serviceProvider;
   }
-  
+
   @Override
   public String getId() {
     return "Home";
@@ -98,7 +98,7 @@ public class HomePageTab implements UIContributor {
     Control osgiConsole = createOSGiConsole( parent );
     layoutOSGiConsole( osgiConsole );
   }
-  
+
   private Control createUploadPanel( Composite parent ) {
     Composite result = new Composite( parent, SWT.NONE );
     result.setLayout( new FillLayout() );
@@ -132,7 +132,7 @@ public class HomePageTab implements UIContributor {
     result.setFocus();
     return osgiConsole.getControl();
   }
-  
+
   private void layoutOSGiConsole( Control osgiConsole ) {
     FormData data = new FormData();
     osgiConsole.setLayoutData( data );
@@ -141,7 +141,7 @@ public class HomePageTab implements UIContributor {
     data.right = new FormAttachment( 100, -5 );
     data.bottom = new FormAttachment( 100, -5 );
   }
-  
+
   private int getUploadHeight() {
     return hasBundleUploadContributor() ? UPLOAD_HEIGHT : 0;
   }

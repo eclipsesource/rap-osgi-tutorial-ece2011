@@ -50,7 +50,7 @@ public class MenuBarProvider implements UIContributor {
     final Composite result = new Composite( parent, SWT.INHERIT_DEFAULT );
     result.setData( WidgetUtil.CUSTOM_VARIANT, MENUBAR_BACKGROUND );
     result.setLayout( new RowLayout() );
-    
+
     final PageService pageService = serviceProvider.get( PageService.class );
     pageService.addPageTracker( new PageTracker() {
       Map<UIContributor,Button> buttons = new HashMap<UIContributor,Button>();
@@ -66,7 +66,7 @@ public class MenuBarProvider implements UIContributor {
         removed.dispose();
       }
     } );
-    
+
     return result;
   }
 

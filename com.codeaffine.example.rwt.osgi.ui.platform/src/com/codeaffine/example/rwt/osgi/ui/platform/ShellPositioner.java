@@ -28,12 +28,12 @@ public class ShellPositioner implements PhaseListener {
   static final int APPLICATION_SHELL_WIDTH = 900;
 
   private final boolean useMaximumHeight;
-  
-  
+
+
   public ShellPositioner( boolean useMaximumHeight ) {
     this.useMaximumHeight = useMaximumHeight;
   }
-  
+
   public ShellPositioner() {
     this( true );
   }
@@ -52,7 +52,7 @@ public class ShellPositioner implements PhaseListener {
   public PhaseId getPhaseId() {
     return PhaseId.RENDER;
   }
-  
+
   void computeShellBounds( Display display ) {
     Shell applicationShell = findApplicationShell( display );
     Rectangle displayBounds = display.getBounds();

@@ -13,13 +13,13 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributorFactory;
 
 
 public class UIContributorTrackerService {
-  
+
   final ServiceTracker<UIContributorFactory, UIContributorFactory> serviceTracker;
   final Map<ServiceReference<UIContributorFactory>,UIContributorFactory> contributors;
   final Map<Tracker,TrackerAdapter> trackers;
   final Object lock;
   private TrackerAdapter trackerAdapter;
-  
+
   public interface Tracker {
     void removedService( ServiceReference<UIContributorFactory> reference, UIContributor service );
     void addingService( ServiceReference<UIContributorFactory> reference, UIContributor service );
@@ -34,7 +34,7 @@ public class UIContributorTrackerService {
       this.tracker = tracker;
       contribs = new ConcurrentHashMap<ServiceReference<UIContributorFactory>, UIContributor>();
     }
-    
+
     @Override
     public void removedService( ServiceReference<UIContributorFactory> reference,
                                 UIContributor service )
@@ -44,18 +44,18 @@ public class UIContributorTrackerService {
     }
 
     @Override
-    public void addingService( final ServiceReference<UIContributorFactory> reference, 
+    public void addingService( final ServiceReference<UIContributorFactory> reference,
                                final UIContributor service )
     {
       tracker.addingService( reference, service );
       contribs.put( reference, service );
     }
-    
+
     UIContributor getContributor( ServiceReference<UIContributorFactory> reference ) {
       return contribs.get( reference );
     }
   }
-  
+
   public UIContributorTrackerService( BundleContext context ) {
     Class<UIContributorFactory> type = UIContributorFactory.class;
     this.lock = new Object();
@@ -96,7 +96,7 @@ public class UIContributorTrackerService {
     };
     serviceTracker.open();
   }
-  
+
   @SuppressWarnings( "unchecked" )
   public void addTracker( Tracker tracker ) {
     Object[] references;
@@ -108,11 +108,11 @@ public class UIContributorTrackerService {
       services = contributors.values().toArray();
     }
     for( int i = 0; i < services.length; i++ ) {
-      trackerAdapter.addingService( ( ServiceReference<UIContributorFactory> )references[ i ], 
+      trackerAdapter.addingService( ( ServiceReference<UIContributorFactory> )references[ i ],
                                     ( ( UIContributorFactory )services[ i ] ).create() );
     }
   }
-  
+
   @SuppressWarnings( "unchecked" )
   public void removeTracker( Tracker tracker ) {
     Object[] references;

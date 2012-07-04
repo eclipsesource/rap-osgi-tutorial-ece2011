@@ -36,7 +36,7 @@ public class FooterProvider implements UIContributor {
   public String getId() {
     return FOOTER_CONTROL;
   }
-  
+
   @Override
   public Control contribute( Composite parent ) {
     Composite result = new Composite( parent, SWT.INHERIT_DEFAULT );
@@ -50,7 +50,7 @@ public class FooterProvider implements UIContributor {
     separatorData.left = new FormAttachment( 0, 0 );
     separatorData.right = new FormAttachment( 100, 0 );
     separatorData.height = SEPARATOR_HEIGHT;
-    
+
     Label versionInfo = new Label( result, SWT.NONE );
     versionInfo.setText( getVersionInfo() );
     versionInfo.pack();

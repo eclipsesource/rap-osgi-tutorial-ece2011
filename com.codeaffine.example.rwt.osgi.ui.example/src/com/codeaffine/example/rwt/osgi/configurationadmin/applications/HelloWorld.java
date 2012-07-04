@@ -24,10 +24,10 @@ public class HelloWorld implements IEntryPoint {
     Shell shell = new Shell( display, SWT.TITLE | SWT.MAX | SWT.RESIZE );
     shell.setBounds( new Rectangle( 30, 30, 300, 250 ) );
     shell.setLayout( new FillLayout() );
-    
+
     Label label = new Label( shell, SWT.NONE );
     label.setText( "HelloWorld" );
-    
+
     shell.open();
     return 0;
   }

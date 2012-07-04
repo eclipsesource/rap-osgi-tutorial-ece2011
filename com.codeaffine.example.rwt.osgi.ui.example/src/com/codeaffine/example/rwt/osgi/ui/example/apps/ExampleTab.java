@@ -20,7 +20,7 @@ public class ExampleTab implements UIContributor {
   public Control contribute( Composite parent ) {
     Composite result = new Composite( parent, SWT.NONE );
     result.setLayout( new RowLayout( SWT.VERTICAL ) );
-    
+
     for( int i = 0; i < 20; i++ ) {
       Label label = new Label( result, SWT.NONE );
       label.setText( "This is row " + i +" of the demo page content." );

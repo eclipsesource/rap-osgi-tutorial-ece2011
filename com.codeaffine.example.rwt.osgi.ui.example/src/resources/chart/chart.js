@@ -90,7 +90,7 @@ $( document ).ready( function() {
     createLayer( names[ i ] );
   }
   $( '#images' ).click( function( event ) {
-      handleClick( event ); 
+      handleClick( event );
   } );
   $( window ).resize( function() {
     layout();

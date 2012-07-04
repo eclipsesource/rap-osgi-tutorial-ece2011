@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 class InputProcessor {
-  
+
   private final PrintWriter printWriter;
   private final StringBuilder command;
 
@@ -23,7 +23,7 @@ class InputProcessor {
     printWriter.flush();
     command.setLength( 0 );
   }
-  
+
   void removeLastCommandCharacter() {
     if( command.length() > 0 ) {
       command.deleteCharAt( command.length() - 1 );
@@ -31,6 +31,6 @@ class InputProcessor {
   }
 
   public void appendCommandCharacter( String character ) {
-    command.append( character );      
+    command.append( character );
   }
 }

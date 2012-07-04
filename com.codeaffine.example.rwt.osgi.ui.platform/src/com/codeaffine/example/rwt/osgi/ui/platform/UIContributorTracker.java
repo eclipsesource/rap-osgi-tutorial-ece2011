@@ -28,7 +28,7 @@ public class UIContributorTracker {
     {
       if( !display.isDisposed() ) {
         display.asyncExec( new Runnable() {
-  
+
           @Override
           public void run() {
             if( canRun( reference ) ) {
@@ -45,7 +45,7 @@ public class UIContributorTracker {
     {
       if( !display.isDisposed() ) {
         display.asyncExec( new Runnable() {
-          
+
           @Override
           public void run() {
             if( canRun( reference ) ) {
@@ -69,7 +69,7 @@ public class UIContributorTracker {
       super( getBundleContext(), UIContributorTrackerService.class, null );
     }
   }
-  
+
   public UIContributorTracker() {
     display = Display.getDefault();
     int hashCode = display.hashCode();
@@ -111,7 +111,7 @@ public class UIContributorTracker {
       }
     } );
   }
-    
+
   static BundleContext getBundleContext() {
     return FrameworkUtil.getBundle( UIContributorTracker.class ).getBundleContext();
   }

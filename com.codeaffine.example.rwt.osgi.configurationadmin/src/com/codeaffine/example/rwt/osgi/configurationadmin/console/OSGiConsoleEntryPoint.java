@@ -15,11 +15,11 @@ public class OSGiConsoleEntryPoint implements IEntryPoint {
     Shell shell = new Shell( display, SWT.TITLE | SWT.MAX | SWT.RESIZE );
     shell.setBounds( new Rectangle( 30, 30, 700, 500 ) );
     shell.setLayout( new FillLayout() );
-    
+
     OSGiConsole console = new OSGiConsole();
     console.create( shell );
     console.getControl().setFocus();
-    
+
     shell.open();
     return 0;
   }

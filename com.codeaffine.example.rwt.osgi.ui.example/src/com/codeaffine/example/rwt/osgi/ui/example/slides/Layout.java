@@ -24,7 +24,7 @@ import com.codeaffine.example.rwt.osgi.ui.platform.LayoutProvider;
 public class Layout implements LayoutProvider {
 
   private static final int OFFSET = 20;
-  private static final int CONTENT_OFFSET 
+  private static final int CONTENT_OFFSET
     = Header.HEADER_HEIGHT + MenuBar.MENU_BAR_HEIGHT + 20;
 
   private Control content;
@@ -38,7 +38,7 @@ public class Layout implements LayoutProvider {
     readControls( context );
     configureLayout();
   }
-  
+
   private void readControls( LayoutContext context ) {
     header = context.getControl( Header.HEADER_CONTROL );
     menuBar = context.getControl( MenuBar.MENU_BAR_CONTROL );
@@ -96,10 +96,10 @@ public class Layout implements LayoutProvider {
   private int getMaximumHeight() {
     int height;
     Rectangle bounds = Display.getCurrent().getBounds();
-    height =   bounds.height 
-             - Footer.FOOTER_HEIGHT 
-             - Header.HEADER_HEIGHT 
-             - MenuBar.MENU_BAR_HEIGHT 
+    height =   bounds.height
+             - Footer.FOOTER_HEIGHT
+             - Header.HEADER_HEIGHT
+             - MenuBar.MENU_BAR_HEIGHT
              - OFFSET;
     return height;
   }

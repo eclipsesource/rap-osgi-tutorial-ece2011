@@ -66,7 +66,7 @@ class CommandParser implements KeyListener {
   private boolean backSpacePressed( KeyEvent event ) {
     return event.character == 8;
   }
-  
+
   private boolean enterPressed( KeyEvent event ) {
     return event.character == 13;
   }

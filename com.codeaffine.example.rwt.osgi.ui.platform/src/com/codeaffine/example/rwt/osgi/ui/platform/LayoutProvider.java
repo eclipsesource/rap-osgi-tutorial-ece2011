@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Control;
 
 
 public interface LayoutProvider {
-  
+
   public interface LayoutContext {
     Control getControl( String controlKey );
   }

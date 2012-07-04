@@ -21,20 +21,20 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 public class ShellProvider {
   public static final String APPLICATION_SHELL
     = ShellProvider.class.getName() + "#APPLICATION_SHELL";
-  
+
   private final UIContributor[] uiProviders;
   private final LayoutProvider layoutProvider;
   private final LayoutContextImpl layoutContext;
 
-  public ShellProvider( UIContributor[] uiProviders, 
-                        LayoutProvider layoutProvider, 
+  public ShellProvider( UIContributor[] uiProviders,
+                        LayoutProvider layoutProvider,
                         LayoutContextImpl ctx )
   {
     this.uiProviders = uiProviders;
     this.layoutProvider = layoutProvider;
     this.layoutContext = ctx;
   }
-  
+
   public Shell createShell() {
     Shell result = createApplicationShell();
     createContent( result );
@@ -59,7 +59,7 @@ public class ShellProvider {
     result.setLayout( new FormLayout() );
     return result;
   }
-   
+
   public static boolean isApplicationShell( Shell shell ) {
     return shell.getData( APPLICATION_SHELL ) != null;
   }

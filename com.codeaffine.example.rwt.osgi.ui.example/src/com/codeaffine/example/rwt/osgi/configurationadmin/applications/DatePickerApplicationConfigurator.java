@@ -14,7 +14,7 @@ import org.eclipse.rwt.branding.AbstractBranding;
 
 
 public class DatePickerApplicationConfigurator implements ApplicationConfigurator {
-  
+
   public void configure( ApplicationConfiguration configuration ) {
     configuration.addEntryPoint( "default", DatePicker.class );
     configuration.addBranding( new AbstractBranding() {

@@ -25,13 +25,13 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
 
 public class PageServiceImpl implements PageService {
-  
+
   private final LayoutProvider layoutProvider;
   private final LayoutContextImpl layoutContext;
   private final Map<String, UIContributor> pageContributors;
   private final Set<PageTracker> pageTrackers;
   private final Object lock;
-  
+
   private Composite contentParent;
   private String pageId;
   private UIContributor homePageContributor;
@@ -48,7 +48,7 @@ public class PageServiceImpl implements PageService {
   public void registerContentParent( Composite contentParent ) {
     this.contentParent = contentParent;
   }
-  
+
   public void addPageContributor( UIContributor pageContributor ) {
     Object[] trackers;
     synchronized( lock ) {
@@ -59,7 +59,7 @@ public class PageServiceImpl implements PageService {
       ( ( PageTracker )trackers[ i ] ).pageAdded( pageContributor );
     }
   }
-  
+
   public void removePageContibutor( UIContributor pageContributor ) {
     Object[] trackers;
     synchronized( lock ) {
@@ -70,12 +70,12 @@ public class PageServiceImpl implements PageService {
       ( ( PageTracker )trackers[ i ] ).pageRemoved( pageContributor );
     }
   }
-  
+
   void setHomePageContributor( UIContributor homePageContributor ) {
     addPageContributor( homePageContributor );
     this.homePageContributor = homePageContributor;
   }
-  
+
   @Override
   public void selectPage( String pageId ) {
     if( !pageId.equals( this.pageId ) ) {
@@ -85,7 +85,7 @@ public class PageServiceImpl implements PageService {
       this.pageId = pageId;
     }
   }
-  
+
   @Override
   public void selectHomePage() {
     if( homePageContributor != null ) {

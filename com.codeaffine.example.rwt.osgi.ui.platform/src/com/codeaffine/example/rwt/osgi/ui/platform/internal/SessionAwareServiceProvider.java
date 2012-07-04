@@ -16,7 +16,7 @@ public class SessionAwareServiceProvider implements ServiceProvider {
   public <T> T get( Class<T> service ) {
     return getProvider().get( service );
   }
-  
+
   private ServiceProvider getProvider() {
     return ( ServiceProvider )SessionSingletonBase.getInstance( ServiceProviderImpl.class );
   }

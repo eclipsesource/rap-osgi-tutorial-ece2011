@@ -23,8 +23,8 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 
 public class ApplicationLauncherCommandProvider implements CommandProvider {
-  
-  private static final String CUSTOMIZER_CLASS 
+
+  private static final String CUSTOMIZER_CLASS
     = JettyConstants.class.getPackage().getName() + "." + JettyConstants.CUSTOMIZER_CLASS;
   private static final String HTTP_SERVER_MANAGER_ID = "org.eclipse.equinox.http.jetty.config";
 
@@ -33,7 +33,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   public void _sh( CommandInterpreter commandInterpreter ) {
     _startHttpService( commandInterpreter );
   }
-  
+
   public void _startHttpService( CommandInterpreter commandInterpreter ) {
     String port = getPort( commandInterpreter );
     boolean jettyCustomizerFlag = getJettyCustomizerFlag( commandInterpreter );
@@ -44,7 +44,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
 
   public void _hh( CommandInterpreter commandInterpreter ) {
     _stopHttpService( commandInterpreter );
-  }  
+  }
 
   public void _stopHttpService( CommandInterpreter commandInterpreter ) {
     String port = getPort( commandInterpreter );
@@ -69,7 +69,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   public void _ua( CommandInterpreter commandInterpreter ) {
     _undeployApplication( commandInterpreter );
   }
-  
+
   public void _undeployApplication( CommandInterpreter commandInterpreter ) {
     String configurator = getApplicationConfigurator( commandInterpreter );
     String port = getPort( commandInterpreter );
@@ -78,11 +78,11 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
       undeployApplication( configurator, port, contextName );
     }
   }
-  
+
   public void _du( CommandInterpreter commandInterpreter ) {
     _deployUIContribution( commandInterpreter );
   }
-  
+
   public void _deployUIContribution( CommandInterpreter commandInterpreter ) {
     String contributor = getUIContributor( commandInterpreter );
     String configurator = getApplicationConfigurator( commandInterpreter );
@@ -96,7 +96,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   public void _uu( CommandInterpreter commandInterpreter ) {
     _undeployUIContribution( commandInterpreter );
   }
-  
+
   public void _undeployUIContribution( CommandInterpreter commandInterpreter ) {
     String contributor = getUIContributor( commandInterpreter );
     String configurator = getApplicationConfigurator( commandInterpreter );
@@ -116,21 +116,21 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
            + "\tdeployUIContribution (du) <contributor name>|<configurator name>|<port>|<context name(optional)>\n"
            + "\tundeployUIContribution (uu) <contributor name>|<configurator name>|<port>|<context name(optional)>\n";
   }
-  
+
   public void activate( BundleContext bundleContext ) {
     this.bundleContext = bundleContext;
   }
-  
+
   public void deactivate( BundleContext bundleContext ) {
     this.bundleContext = null;
   }
-  
+
   private boolean getJettyCustomizerFlag( CommandInterpreter commandInterpreter ) {
     String jettyCustomizerFlag = getArgument( commandInterpreter, null );
     return "jcf".equals( jettyCustomizerFlag );
   }
 
-  
+
   private String getPort( CommandInterpreter commandInterpreter ) {
     return getArgument( commandInterpreter, "Parameter port must not be null" );
   }
@@ -138,11 +138,11 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   private String getApplicationConfigurator( CommandInterpreter commandInterpreter ) {
     return getArgument( commandInterpreter, "Parameter configurator must not be null" );
   }
-  
+
   private String getUIContributor( CommandInterpreter commandInterpreter ) {
     return getArgument( commandInterpreter, "Parameter contributor must not be null" );
   }
-  
+
   private String getArgument( CommandInterpreter commandInterpreter, String message ) {
     String result = commandInterpreter.nextArgument();
     if( result == null && message != null ) {
@@ -175,13 +175,13 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   private void undeployApplication( String configurator, String port, String contextName ) {
     new DeploymentHelper().undeployApplication( configurator, port, contextName );
   }
-  
+
   private String createPortFilter( String port ) {
     return "(" + JettyConstants.HTTP_PORT + "=" + port + ")";
   }
-  
+
   static String createTargetKey( Class<?> targetType ) {
-    StringBuilder result = new StringBuilder(); 
+    StringBuilder result = new StringBuilder();
     result.append( targetType.getSimpleName().substring( 0, 1 ).toLowerCase() );
     result.append( targetType.getSimpleName().substring( 1 ) );
     result.append( ".target" );

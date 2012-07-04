@@ -16,7 +16,7 @@ import com.codeaffine.example.rwt.osgi.ui.platform.internal.Activator;
 public class ConfiguratorTracker
   extends ServiceTracker<ApplicationConfigurator, ApplicationConfigurator>
 {
-  
+
   private static final String CONFIGURATOR_REFERENCE = "ApplicationReference";
 
   private final ApplicationConfiguration configuration;
@@ -39,7 +39,7 @@ public class ConfiguratorTracker
     }
     return result;
   }
-  
+
   public static boolean matches( ServiceReference<UIContributorFactory> contributorReference ) {
     boolean result = true;
     if( hasApplicationConfiguration() ) {
@@ -65,7 +65,7 @@ public class ConfiguratorTracker
     ServiceReference serviceReference = getConfiguratorReference();
     return null != serviceReference.getProperty( getConfiguratorKey() );
   }
-  
+
   public static boolean matchesType( String value,
                                      ServiceReference<UIContributorFactory> contributorReference )
   {
@@ -77,7 +77,7 @@ public class ConfiguratorTracker
       throw new IllegalStateException( shouldNotHappen );
     }
   }
-  
+
   private static String createFilterExpression() {
     @SuppressWarnings( "rawtypes" )
     ServiceReference serviceReference = getConfiguratorReference();
@@ -106,7 +106,7 @@ public class ConfiguratorTracker
   private boolean isTrackedConfigurator( ApplicationConfigurator result ) {
     return result == configurator;
   }
-  
+
   private static BundleContext getBundleContext() {
     return Activator.getBundleContext();
   }

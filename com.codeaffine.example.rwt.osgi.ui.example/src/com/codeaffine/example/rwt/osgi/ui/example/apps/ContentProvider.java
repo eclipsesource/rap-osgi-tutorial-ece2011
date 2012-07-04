@@ -21,18 +21,18 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 
 public class ContentProvider implements UIContributor {
   public static final String CONTENT_CONTROL = ContentProvider.class.getName() + "#CONTENT";
-  
+
   private final ServiceProvider serviceProvider;
 
   public ContentProvider( ServiceProvider serviceProvider ) {
     this.serviceProvider = serviceProvider;
   }
-  
+
   @Override
   public String getId() {
     return CONTENT_CONTROL;
   }
-  
+
   @Override
   public Control contribute( Composite parent ) {
     Composite result = new Composite( parent, SWT.INHERIT_DEFAULT );

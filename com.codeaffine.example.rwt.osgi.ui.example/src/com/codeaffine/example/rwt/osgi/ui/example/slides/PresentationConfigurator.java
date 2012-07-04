@@ -18,7 +18,7 @@ import com.codeaffine.example.rwt.osgi.ui.platform.ConfiguratorTracker;
 
 public class PresentationConfigurator implements ApplicationConfigurator {
   static final String SLIDES = "slides";
-  
+
   @Override
   public void configure( ApplicationConfiguration configuration ) {
     configuration.addEntryPoint( "default", EntryPoint.class );

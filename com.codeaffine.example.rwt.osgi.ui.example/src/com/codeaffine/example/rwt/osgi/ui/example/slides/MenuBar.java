@@ -60,7 +60,7 @@ public class MenuBar implements UIContributor {
     layout.marginTop = 8;
     layout.marginLeft = 30;
     result.setLayout( layout );
-    
+
     final PageService pageService = serviceProvider.get( PageService.class );
     pageService.addPageTracker( new PageTracker() {
 
@@ -76,7 +76,7 @@ public class MenuBar implements UIContributor {
         selectMenuBarButton();
       }
     } );
-    
+
     return result;
   }
 
@@ -102,7 +102,7 @@ public class MenuBar implements UIContributor {
         updatePageToSelect( pageId );
       }
     } );
-    
+
     if( getPageToSelect().equals( pageId ) ) {
       pageService.selectPage( pageId );
       result.setSelection( true );
@@ -127,7 +127,7 @@ public class MenuBar implements UIContributor {
 
   String getPageToSelect() {
     Cookie cookie = CookieUtil.getCookie( PAGE_ID_COOKIE );
-    String result = SlidesUIContributor.ID; 
+    String result = SlidesUIContributor.ID;
     if( cookie != null ) {
       result = cookie.getValue();
     }

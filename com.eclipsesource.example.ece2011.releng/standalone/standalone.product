@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Example Product" uid="standalone.product.id" id="standalone.product" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="false">
+
+   <configIni use="default">
+      <linux>/com.eclipsesource.example.ece2011.releng/standalone/config.ini</linux>
+   </configIni>
+
+   <launcherArgs>
+   </launcherArgs>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="com.eclipsesource.example.ece2011.releng.standalone.feature"/>
+   </features>
+
+   <configurations>
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
+   </configurations>
+
+</product>

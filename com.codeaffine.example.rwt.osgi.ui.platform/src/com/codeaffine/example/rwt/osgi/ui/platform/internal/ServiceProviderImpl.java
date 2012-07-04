@@ -22,13 +22,13 @@ public class ServiceProviderImpl implements ServiceProvider {
   public ServiceProviderImpl() {
     services = new HashMap<Class<?>, Object>();
   }
-  
+
   @Override
   public <T> T register( Class<T> service, T instance ) {
     services.put( service, instance );
     return instance;
   }
-  
+
   @Override
   @SuppressWarnings("unchecked")
   public <T> T get( Class<T> service ) {

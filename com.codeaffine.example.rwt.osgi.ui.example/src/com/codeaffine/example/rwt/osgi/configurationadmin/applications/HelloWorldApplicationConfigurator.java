@@ -14,7 +14,7 @@ import org.eclipse.rwt.branding.AbstractBranding;
 
 
 public class HelloWorldApplicationConfigurator implements ApplicationConfigurator {
-  
+
   public void configure( ApplicationConfiguration configuration ) {
     configuration.addEntryPoint( "default", HelloWorld.class );
     configuration.addBranding( new AbstractBranding() {

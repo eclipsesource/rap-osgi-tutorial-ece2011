@@ -20,19 +20,19 @@ import com.codeaffine.example.rwt.osgi.ui.platform.UIContributor;
 public class HeaderProvider implements UIContributor {
   public static final String HEADER_CONTROL = HeaderProvider.class.getName() + "#HEADER";
   static final int HEADER_HEIGHT = 80;
-  
+
   @Override
   public String getId() {
     return HEADER_CONTROL;
   }
-  
+
   @Override
   public Control contribute( Composite parent ) {
     Composite result = new Composite( parent, SWT.INHERIT_DEFAULT );
     result.setData( WidgetUtil.CUSTOM_VARIANT, "header" );
-    
+
     result.setLayout( new FormLayout() );
-    
+
     Label logo = new Label( result, SWT.NONE );
     logo.setData( WidgetUtil.CUSTOM_VARIANT, "logo" );
     FormData logoData = new FormData();
@@ -41,7 +41,7 @@ public class HeaderProvider implements UIContributor {
     logoData.left = new FormAttachment( 0, 10 );
     logoData.width = 199;
     logoData.height = 61;
-    
+
     Label appname = new Label( result, SWT.NONE );
     appname.setData( WidgetUtil.CUSTOM_VARIANT, "appname" );
     FormData appnameData = new FormData();

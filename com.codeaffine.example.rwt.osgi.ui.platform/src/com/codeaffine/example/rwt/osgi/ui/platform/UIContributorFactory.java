@@ -9,9 +9,9 @@ import org.osgi.service.component.ComponentContext;
 
 
 public class UIContributorFactory {
-  
+
   private static final String CLASS = "class";
-  
+
   private Class<UIContributor> type;
   private ServiceProvider serviceProvider;
 
@@ -48,7 +48,7 @@ public class UIContributorFactory {
     }
     return result;
   }
-  
+
   @SuppressWarnings( "unchecked" )
   void activate( ComponentContext context ) throws ClassNotFoundException {
     String className = ( String )context.getProperties().get( CLASS );
@@ -56,7 +56,7 @@ public class UIContributorFactory {
     Bundle bundle = bundleContext.getBundle();
     type = ( Class<UIContributor> )bundle.loadClass( className );
   }
-  
+
   public void setServiceProvider( ServiceProvider serviceProvider ) {
     this.serviceProvider = serviceProvider;
   }

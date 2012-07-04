@@ -72,7 +72,7 @@ Button[PUSH].slide_navigation_back:hover {
 Button-FocusIndicator[PUSH].slide_navigation_forward,
 Button-FocusIndicator[PUSH].slide_navigation_back
 {
-  background-color: transparent; 
+  background-color: transparent;
   border: none;
   opacity: 0;
 }

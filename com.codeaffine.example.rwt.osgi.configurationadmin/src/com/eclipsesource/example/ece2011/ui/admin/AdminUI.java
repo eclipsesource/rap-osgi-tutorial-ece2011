@@ -55,7 +55,7 @@ public class AdminUI implements IEntryPoint {
     UICallBack.activate( UICALLBACK_ID );
     return 0;
   }
-  
+
   public void createContent( Composite parent ) {
     updateShell( parent );
     createImages( parent.getDisplay() );

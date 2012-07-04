@@ -19,7 +19,7 @@ import com.codeaffine.example.rwt.osgi.ui.platform.ShellPositioner;
 
 public class App2 implements ApplicationConfigurator {
   static final String EXAMPLE_UI = "example";
-  
+
   @Override
   public void configure( ApplicationConfiguration configuration ) {
     configuration.addEntryPoint( "default", UIEntryPoint.class );

@@ -84,7 +84,7 @@ public class DeploymentHelper {
     }
     return result;
   }
-  
+
   private void deleteConfiguration( String filter ) {
     try {
       ServiceReference<ConfigurationAdmin> reference = getConfigurationAdmin();
@@ -144,7 +144,7 @@ public class DeploymentHelper {
   }
 
   private static String createTargetKey( Class<?> targetType ) {
-    StringBuilder result = new StringBuilder(); 
+    StringBuilder result = new StringBuilder();
     result.append( targetType.getSimpleName().substring( 0, 1 ).toLowerCase() );
     result.append( targetType.getSimpleName().substring( 1 ) );
     result.append( ".target" );
@@ -154,7 +154,7 @@ public class DeploymentHelper {
   private static String getConfiguratorKey() {
     return ApplicationConfigurator.class.getSimpleName();
   }
-  
+
   private static String createPortFilter( String port ) {
     return "(" + JettyConstants.HTTP_PORT + "=" + port + ")";
   }
@@ -173,7 +173,7 @@ public class DeploymentHelper {
     String key = createApplicationKey( configurator, port, contextName );
     return "(" + key + "=" + port + ")";
   }
-  
+
   private static String createApplicationKey( String configurator, String port, String contextName ) {
     return port + "_" + configurator + "_" + contextName;
   }

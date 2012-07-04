@@ -39,11 +39,11 @@ public class EntryPoint implements IEntryPoint {
 
   private void configureShell() {
     UIContributor[] pageStructureProviders = new UIContributor[] {
-      new Header(), 
+      new Header(),
       new MenuBar( serviceProvider ),
       new ContentProvider( serviceProvider ),
       new Footer(),
-      new BackgroundProvider() 
+      new BackgroundProvider()
     };
     LayoutProvider layoutProvider = new Layout();
     ShellConfigurator configurator = new ShellConfigurator( serviceProvider );
