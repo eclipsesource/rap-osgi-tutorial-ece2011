@@ -32,7 +32,7 @@ public class UiComponent {
   }
 
   public boolean isApplication() {
-    return implementsService( "org.eclipse.rwt.application.ApplicationConfigurator" );
+    return implementsService( "org.eclipse.rwt.application.ApplicationConfiguration" );
   }
 
   public boolean isUiContribution() {

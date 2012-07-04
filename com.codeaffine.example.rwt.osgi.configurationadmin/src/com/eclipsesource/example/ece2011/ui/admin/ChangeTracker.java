@@ -1,6 +1,6 @@
 package com.eclipsesource.example.ece2011.ui.admin;
 
-import org.eclipse.rwt.application.ApplicationConfigurator;
+import org.eclipse.rwt.application.ApplicationConfiguration;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
@@ -20,7 +20,7 @@ public class ChangeTracker {
     BundleContext bundleContext = DeploymentHelper.getBundleContext();
     httpServiceTracker = new UpdateServiceTracker( bundleContext, HttpService.class.getName() );
     appConfigServiceTracker = new UpdateServiceTracker( bundleContext,
-                                                        ApplicationConfigurator.class.getName() );
+                                                        ApplicationConfiguration.class.getName() );
     uiContribServiceTracker = new UpdateServiceTracker( bundleContext,
                                                         UIContributorFactory.class.getName() );
   }

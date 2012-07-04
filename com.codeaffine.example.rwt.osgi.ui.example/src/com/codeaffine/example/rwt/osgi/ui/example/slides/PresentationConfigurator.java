@@ -10,20 +10,25 @@
  ******************************************************************************/
 package com.codeaffine.example.rwt.osgi.ui.example.slides;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.rwt.application.Application;
 import org.eclipse.rwt.application.ApplicationConfiguration;
-import org.eclipse.rwt.application.ApplicationConfigurator;
+import org.eclipse.rwt.client.WebClient;
 
 import com.codeaffine.example.rwt.osgi.ui.platform.ConfiguratorTracker;
 
 
-public class PresentationConfigurator implements ApplicationConfigurator {
-  static final String SLIDES = "slides";
+public class PresentationConfigurator implements ApplicationConfiguration {
 
   @Override
-  public void configure( ApplicationConfiguration configuration ) {
-    configuration.addEntryPoint( "default", EntryPoint.class );
-    configuration.addStyleSheet( SLIDES, "themes/slides/theme.css" );
-    configuration.addBranding( new Branding() );
+  public void configure( Application configuration ) {
+    Map<String, String> properties = new HashMap<String, String>();
+    properties.put( WebClient.THEME_ID, "slides.theme" );
+    properties.put( WebClient.PAGE_TITLE, "Slides" );
+    configuration.addEntryPoint( "/slides", EntryPoint.class, properties  );
+    configuration.addStyleSheet( "slides.theme", "themes/slides/theme.css" );
     new ConfiguratorTracker( this, configuration ).open();
   }
 }

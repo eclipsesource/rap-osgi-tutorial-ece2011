@@ -14,7 +14,7 @@ import java.util.Hashtable;
 
 import org.eclipse.equinox.http.jetty.JettyConstants;
 import org.eclipse.rap.rwt.osgi.ApplicationLauncher;
-import org.eclipse.rwt.application.ApplicationConfigurator;
+import org.eclipse.rwt.application.ApplicationConfiguration;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -152,7 +152,7 @@ public class DeploymentHelper {
   }
 
   private static String getConfiguratorKey() {
-    return ApplicationConfigurator.class.getSimpleName();
+    return ApplicationConfiguration.class.getSimpleName();
   }
 
   private static String createPortFilter( String port ) {

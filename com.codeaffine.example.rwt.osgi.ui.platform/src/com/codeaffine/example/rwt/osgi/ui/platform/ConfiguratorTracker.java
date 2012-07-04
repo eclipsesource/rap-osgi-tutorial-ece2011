@@ -1,8 +1,8 @@
 package com.codeaffine.example.rwt.osgi.ui.platform;
 
 import org.eclipse.rwt.RWT;
+import org.eclipse.rwt.application.Application;
 import org.eclipse.rwt.application.ApplicationConfiguration;
-import org.eclipse.rwt.application.ApplicationConfigurator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
@@ -14,25 +14,25 @@ import com.codeaffine.example.rwt.osgi.ui.platform.internal.Activator;
 
 
 public class ConfiguratorTracker
-  extends ServiceTracker<ApplicationConfigurator, ApplicationConfigurator>
+  extends ServiceTracker<ApplicationConfiguration, ApplicationConfiguration>
 {
 
   private static final String CONFIGURATOR_REFERENCE = "ApplicationReference";
 
-  private final ApplicationConfiguration configuration;
-  private final ApplicationConfigurator configurator;
+  private final Application configuration;
+  private final ApplicationConfiguration configurator;
 
-  public ConfiguratorTracker( ApplicationConfigurator configurator,
-                              ApplicationConfiguration configuration )
+  public ConfiguratorTracker( ApplicationConfiguration configurator,
+                              Application configuration )
   {
-    super( getBundleContext(), ApplicationConfigurator.class, null );
+    super( getBundleContext(), ApplicationConfiguration.class, null );
     this.configurator = configurator;
     this.configuration = configuration;
   }
 
   @Override
-  public ApplicationConfigurator addingService( ServiceReference<ApplicationConfigurator> ref ) {
-    ApplicationConfigurator result = super.addingService( ref );
+  public ApplicationConfiguration addingService( ServiceReference<ApplicationConfiguration> ref ) {
+    ApplicationConfiguration result = super.addingService( ref );
     if( isTrackedConfigurator( result ) ) {
       storeConfiguratorServiceReference( ref );
       close();
@@ -42,7 +42,7 @@ public class ConfiguratorTracker
 
   public static boolean matches( ServiceReference<UIContributorFactory> contributorReference ) {
     boolean result = true;
-    if( hasApplicationConfiguration() ) {
+    if( hasApplication() ) {
       try {
         result = doMatches( contributorReference );
       } catch( InvalidSyntaxException shouldNotHappen ) {
@@ -60,7 +60,7 @@ public class ConfiguratorTracker
     return filter.match( contributorReference );
   }
 
-  private static boolean hasApplicationConfiguration() {
+  private static boolean hasApplication() {
     @SuppressWarnings( "rawtypes" )
     ServiceReference serviceReference = getConfiguratorReference();
     return null != serviceReference.getProperty( getConfiguratorKey() );
@@ -96,14 +96,14 @@ public class ConfiguratorTracker
   }
 
   private static String getConfiguratorKey() {
-    return ApplicationConfigurator.class.getSimpleName();
+    return ApplicationConfiguration.class.getSimpleName();
   }
 
-  private void storeConfiguratorServiceReference( ServiceReference<ApplicationConfigurator> ref ) {
+  private void storeConfiguratorServiceReference( ServiceReference<ApplicationConfiguration> ref ) {
     configuration.setAttribute( ConfiguratorTracker.CONFIGURATOR_REFERENCE, ref );
   }
 
-  private boolean isTrackedConfigurator( ApplicationConfigurator result ) {
+  private boolean isTrackedConfigurator( ApplicationConfiguration result ) {
     return result == configurator;
   }
 

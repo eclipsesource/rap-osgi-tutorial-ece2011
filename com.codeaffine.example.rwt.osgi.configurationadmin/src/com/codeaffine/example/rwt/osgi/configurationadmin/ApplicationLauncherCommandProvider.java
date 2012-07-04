@@ -58,7 +58,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   }
 
   public void _deployApplication( CommandInterpreter commandInterpreter ) {
-    String configurator = getApplicationConfigurator( commandInterpreter );
+    String configurator = getApplicationConfiguration( commandInterpreter );
     String port = getPort( commandInterpreter );
     String contextName = commandInterpreter.nextArgument();
     if( port != null && configurator != null ) {
@@ -71,7 +71,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
   }
 
   public void _undeployApplication( CommandInterpreter commandInterpreter ) {
-    String configurator = getApplicationConfigurator( commandInterpreter );
+    String configurator = getApplicationConfiguration( commandInterpreter );
     String port = getPort( commandInterpreter );
     String contextName = commandInterpreter.nextArgument();
     if( port != null && configurator != null ) {
@@ -85,7 +85,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
 
   public void _deployUIContribution( CommandInterpreter commandInterpreter ) {
     String contributor = getUIContributor( commandInterpreter );
-    String configurator = getApplicationConfigurator( commandInterpreter );
+    String configurator = getApplicationConfiguration( commandInterpreter );
     String port = getPort( commandInterpreter );
     String contextName = commandInterpreter.nextArgument();
     if( contributor != null && port != null && configurator != null ) {
@@ -99,7 +99,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
 
   public void _undeployUIContribution( CommandInterpreter commandInterpreter ) {
     String contributor = getUIContributor( commandInterpreter );
-    String configurator = getApplicationConfigurator( commandInterpreter );
+    String configurator = getApplicationConfiguration( commandInterpreter );
     String port = getPort( commandInterpreter );
     String contextName = commandInterpreter.nextArgument();
     if( contributor != null && port != null && configurator != null ) {
@@ -135,7 +135,7 @@ public class ApplicationLauncherCommandProvider implements CommandProvider {
     return getArgument( commandInterpreter, "Parameter port must not be null" );
   }
 
-  private String getApplicationConfigurator( CommandInterpreter commandInterpreter ) {
+  private String getApplicationConfiguration( CommandInterpreter commandInterpreter ) {
     return getArgument( commandInterpreter, "Parameter configurator must not be null" );
   }
 

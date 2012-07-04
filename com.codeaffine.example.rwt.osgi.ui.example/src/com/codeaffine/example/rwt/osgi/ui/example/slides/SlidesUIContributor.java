@@ -3,7 +3,6 @@ package com.codeaffine.example.rwt.osgi.ui.example.slides;
 import javax.servlet.http.Cookie;
 
 import org.eclipse.rwt.RWT;
-import org.eclipse.rwt.application.Application;
 import org.eclipse.rwt.lifecycle.WidgetUtil;
 import org.eclipse.rwt.resources.IResourceManager.RegisterOptions;
 import org.eclipse.swt.SWT;
@@ -247,7 +246,7 @@ public class SlidesUIContributor implements UIContributor {
         getHTMLSnippet( registerImage( "dynamic.png" ) ),
         getHTMLSnippet( registerImage( "twitter.png" ) ),
         getHTMLSnippet( registerImage( "munsters.png" ) ),
-        "http://localhost:" + localPort + "/" + Application.RESOURCES + chartPage,
+        "http://localhost:" + localPort + "/rwt-resources/" + chartPage,
         getHTMLSnippet( registerImage( "resources.png" ) )
       };
     }
@@ -259,10 +258,7 @@ public class SlidesUIContributor implements UIContributor {
   }
 
   private String registerImage( String name ) {
-    String result = "/" + Application.RESOURCES + "/" + name;
-    if( name.startsWith( "/" ) ) {
-      result = "/" + Application.RESOURCES + name;
-    }
+    String result = "/rwt-resources" + ( name.startsWith( "/" ) ? name : "/" + name );
     RWT.getResourceManager().register( name, getClass().getResourceAsStream( name ) );
     return result;
   }

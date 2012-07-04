@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" configuration-policy="require" name="ExampleUI1">
    <implementation class="com.codeaffine.example.rwt.osgi.ui.example.apps.App1"/>
    <service>
-      <provide interface="org.eclipse.rwt.application.ApplicationConfigurator"/>
+      <provide interface="org.eclipse.rwt.application.ApplicationConfiguration"/>
    </service>
 </scr:component>

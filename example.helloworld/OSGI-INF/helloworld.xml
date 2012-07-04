@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="example.helloworld">
    <implementation class="example.helloworld.HelloWorldConfigurator"/>
    <service>
-      <provide interface="org.eclipse.rwt.application.ApplicationConfigurator"/>
+      <provide interface="org.eclipse.rwt.application.ApplicationConfiguration"/>
    </service>
 </scr:component>

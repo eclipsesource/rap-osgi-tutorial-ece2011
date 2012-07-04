@@ -8,20 +8,14 @@
 
 package com.codeaffine.example.rwt.osgi.configurationadmin.applications;
 
+import org.eclipse.rwt.application.Application;
 import org.eclipse.rwt.application.ApplicationConfiguration;
-import org.eclipse.rwt.application.ApplicationConfigurator;
-import org.eclipse.rwt.branding.AbstractBranding;
 
 
-public class HelloWorldApplicationConfigurator implements ApplicationConfigurator {
+public class DatePickerApplicationConfiguration implements ApplicationConfiguration {
 
-  public void configure( ApplicationConfiguration configuration ) {
-    configuration.addEntryPoint( "default", HelloWorld.class );
-    configuration.addBranding( new AbstractBranding() {
-      @Override
-      public String getServletName() {
-        return "helloworld";
-      }
-    } );
+  @Override
+  public void configure( Application configuration ) {
+    configuration.addEntryPoint( "/datepicker", DatePicker.class, null );
   }
 }

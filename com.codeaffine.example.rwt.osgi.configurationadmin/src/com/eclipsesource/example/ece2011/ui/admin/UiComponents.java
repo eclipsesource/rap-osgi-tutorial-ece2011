@@ -21,7 +21,7 @@ import java.util.Locale;
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
 import org.eclipse.equinox.http.jetty.JettyConstants;
-import org.eclipse.rwt.application.ApplicationConfigurator;
+import org.eclipse.rwt.application.ApplicationConfiguration;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -38,7 +38,7 @@ public class UiComponents {
     BundleContext bundleContext = DeploymentHelper.getBundleContext();
     Collection<ServiceReference<?>> serviceReferences = new ArrayList<ServiceReference<?>>();
     try {
-      serviceReferences.addAll( bundleContext.getServiceReferences( ApplicationConfigurator.class, null ) );
+      serviceReferences.addAll( bundleContext.getServiceReferences( ApplicationConfiguration.class, null ) );
       serviceReferences.addAll( bundleContext.getServiceReferences( UIContributorFactory.class, null ) );
     } catch( InvalidSyntaxException shouldNotHappen ) {
       throw new RuntimeException( shouldNotHappen );
@@ -49,7 +49,7 @@ public class UiComponents {
       if( expected.equals( portProperty ) ) {
         ids.add( ( Long )serviceReference.getProperty( "component.id" ) );
       }
-      Object appConfProperty = serviceReference.getProperty( "ApplicationConfigurator" );
+      Object appConfProperty = serviceReference.getProperty( "ApplicationConfiguration" );
       if( appConfProperty != null && ((String)appConfProperty).contains( port + "_" ) ) {
         ids.add( ( Long )serviceReference.getProperty( "component.id" ) );
       }
@@ -58,7 +58,7 @@ public class UiComponents {
     Component[] allComponents = getAllComponents();
     for( Component component : allComponents ) {
       if( ids.contains( Long.valueOf( component.getId() ) ) ) {
-        String property = ( String )component.getProperties().get( "ApplicationConfigurator" );
+        String property = ( String )component.getProperties().get( "ApplicationConfiguration" );
         String application = property.replaceFirst( ".*_(.*)_.*", "$1" );
         result.add( new UiComponent( component, application, port ) );
       }
