@@ -60,7 +60,7 @@ public class EntryPoint implements IEntryPoint {
     Class<ServiceProvider> type = ServiceProvider.class;
     BundleContext context = FrameworkUtil.getBundle( getClass() ).getBundleContext();
     ServiceReference<ServiceProvider> serviceReference = context.getServiceReference( type );
-    serviceProvider = ( ServiceProvider )context.getService( serviceReference );
+    serviceProvider = context.getService( serviceReference );
   }
 
   private void openShell() {

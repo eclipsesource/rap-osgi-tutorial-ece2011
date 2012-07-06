@@ -18,6 +18,6 @@ public class SessionAwareServiceProvider implements ServiceProvider {
   }
 
   private ServiceProvider getProvider() {
-    return ( ServiceProvider )SessionSingletonBase.getInstance( ServiceProviderImpl.class );
+    return SessionSingletonBase.getInstance( ServiceProviderImpl.class );
   }
 }

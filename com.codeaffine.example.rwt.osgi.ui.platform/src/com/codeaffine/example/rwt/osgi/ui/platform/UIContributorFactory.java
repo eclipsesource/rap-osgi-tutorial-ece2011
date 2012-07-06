@@ -28,7 +28,7 @@ public class UIContributorFactory {
   }
 
   private void injectServiceProvider( UIContributor result )
-    throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    throws IllegalAccessException, InvocationTargetException
   {
     Method method = getMethod( result.getClass() );
     if( method != null ) {

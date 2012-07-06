@@ -5,7 +5,6 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-
 package com.codeaffine.example.rwt.osgi.configurationadmin;
 
 import java.io.IOException;
@@ -25,10 +24,10 @@ import org.osgi.service.http.HttpService;
 
 public class DeploymentHelper {
 
-  private BundleContext bundleContext;
+  private final BundleContext bundleContext;
 
   public DeploymentHelper() {
-    this.bundleContext = getBundleContext();
+    bundleContext = getBundleContext();
   }
 
   public static BundleContext getBundleContext() {
@@ -121,15 +120,14 @@ public class DeploymentHelper {
     return result;
   }
 
-  @SuppressWarnings( { "rawtypes", "unchecked" } )
-  private static Dictionary createSettings( String contributor,
-                                            String configurator,
-                                            String port,
-                                            String contextName )
+  private static Dictionary<String, String> createSettings( String contributor,
+                                                            String configurator,
+                                                            String port,
+                                                            String contextName )
   {
     String key = createUIContributorKey( contributor, configurator, port, contextName );
     String value = createApplicationKey( configurator, port, contextName );
-    Hashtable result = new Hashtable();
+    Hashtable<String, String> result = new Hashtable<String, String>();
     result.put( key, value );
     result.put( getConfiguratorKey(), value );
     return result;

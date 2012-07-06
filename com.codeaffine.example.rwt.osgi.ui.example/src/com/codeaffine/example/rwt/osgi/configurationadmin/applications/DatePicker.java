@@ -36,9 +36,9 @@ public class DatePicker implements IEntryPoint {
     private final DateSelectionService dateSelectionService;
 
     public UI1( DateSelectionService dateSelectionService ) {
-      this.shell = createShell();
-      this.calendar = createCalendar();
-      this.selectedDate = createSelectedDate();
+      shell = createShell();
+      calendar = createCalendar();
+      selectedDate = createSelectedDate();
       this.dateSelectionService = dateSelectionService;
       registerDateSelectionListener();
     }
@@ -84,6 +84,7 @@ public class DatePicker implements IEntryPoint {
 
     private void registerDateSelectionListener() {
       dateSelectionService.addServiceListener( new DateSelectionListener() {
+        @Override
         public void notify( String date ) {
           changeSelectedDate( date );
         }
@@ -95,10 +96,11 @@ public class DatePicker implements IEntryPoint {
     private final Shell shell;
 
     UI2( DateSelectionService dateSelectionService ) {
-      this.shell = DatePicker.createShell( new Rectangle( 360, 30, 300, 250 ) );
+      shell = DatePicker.createShell( new Rectangle( 360, 30, 300, 250 ) );
       final Text text = new Text( shell, SWT.BORDER | SWT.SINGLE );
 
       dateSelectionService.addServiceListener( new DateSelectionListener() {
+        @Override
         public void notify( String date ) {
           text.setText( date );
         }
@@ -134,6 +136,7 @@ public class DatePicker implements IEntryPoint {
     }
   }
 
+  @Override
   public int createUI() {
     RWT.getSettingStore();
     new Display();

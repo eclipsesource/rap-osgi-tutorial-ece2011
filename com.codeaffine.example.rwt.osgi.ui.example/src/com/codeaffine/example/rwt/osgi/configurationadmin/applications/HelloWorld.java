@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class HelloWorld implements IEntryPoint {
 
+  @Override
   public int createUI() {
     Display display = new Display();
     Shell shell = new Shell( display, SWT.TITLE | SWT.MAX | SWT.RESIZE );
